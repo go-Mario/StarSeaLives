@@ -11,11 +11,11 @@
 @keyframes livesArrive{from{opacity:0;transform:translateY(10px) scale(.992)}to{opacity:1;transform:translateY(0) scale(1)}}
 @keyframes cluePulse{0%,100%{box-shadow:0 3px 15px #0005,0 0 0 0 #d7bf7940}50%{box-shadow:0 3px 17px #0008,0 0 0 7px #d7bf7900}}
 @keyframes starDrift{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
-.hero,.intro-grid,.layout,.ending,.journal,.settings,.rest-center{animation:livesArrive .5s cubic-bezier(.2,.75,.25,1) both}
+.enter .hero,.enter .intro-grid,.enter .layout,.enter .ending,.enter .journal,.enter .settings,.enter .rest-center{animation:livesArrive .5s cubic-bezier(.2,.75,.25,1) both}
 .hero-art{animation:starDrift 9s ease-in-out infinite}
 .role{transition:transform .22s,border-color .22s,background .22s,box-shadow .22s}
 .role:hover{transform:translateY(-4px);box-shadow:0 15px 32px #0004}
-.scene{animation:livesArrive .45s ease-out both}
+.enter .scene{animation:livesArrive .45s ease-out both}
 .hotspot:not(.read){animation:cluePulse 3.2s ease-in-out infinite}
 .hotspot:hover{transform:translate(-50%,-53%);transition:transform .16s}
 .life-edition{display:block;width:max-content;max-width:100%;margin:12px auto 0;color:#554a37;text-decoration:none;font-size:12px;letter-spacing:.03em;padding:8px 14px;border:1px solid #ac9b7b;border-radius:4px;transition:background .2s,transform .2s}

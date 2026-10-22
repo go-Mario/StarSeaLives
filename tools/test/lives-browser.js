@@ -3,7 +3,7 @@ const BASE=process.env.SS_URL||'http://127.0.0.1:8766/index.html',OUT=process.ar
 (async()=>{await fs.mkdir(OUT,{recursive:true});const browser=await chromium.launch();try{
  for(const [language,width,height] of [['zh',1365,900],['en',390,844]]){
   const ctx=await browser.newContext({viewport:{width,height}}),page=await ctx.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
-  await page.goto(BASE);await page.selectOption('#language',language);assert.match(await page.locator('[data-act=\"sound\"]').textContent(),/Sound|音效/);await page.click('[data-act=\"sound\"]');assert.equal(await page.evaluate(()=>LIFE_AUDIO.enabled),true);await page.click('[data-act=\"sound\"]');
+  await page.goto(BASE);await page.selectOption('#language',language);assert.match(await page.locator('[data-act=\"sound\"]').textContent(),/Sound|音效/);const snd0=await page.evaluate(()=>LIFE_AUDIO.enabled);await page.click('[data-act=\"sound\"]');assert.equal(await page.evaluate(()=>LIFE_AUDIO.enabled),!snd0);await page.click('[data-act=\"sound\"]');assert.equal(await page.evaluate(()=>LIFE_AUDIO.enabled),snd0);assert.equal(await page.evaluate(()=>LIFE_AUDIO.enabled),true);await page.click('[data-act=\"sound\"]');
   await page.screenshot({path:path.join(OUT,language+'-cover.png'),fullPage:true});
   assert.equal(await page.locator('.cover-title').isVisible(),true,'entry cover is missing');
   await page.click('[data-act="begin"]');

@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0d1721">
+<title>星海公约 · 人间星海 3D</title>
+<link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+<canvas id="scene"></canvas>
+
+<div class="hud" id="hud" class="hidden">
+  <div class="topbar">
+    <span class="brand">星海公约 · 人间星海 3D</span>
+    <span class="pill" id="net">…</span>
+    <span class="pill" id="online"><b>0</b> 在线</span>
+    <span class="sp"></span>
+    <select id="language" aria-label="Language / 语言">
+      <option value="zh">中文</option>
+      <option value="en">English</option>
+    </select>
+    <button class="pill" id="helpBtn">?</button>
+  </div>
+
+  <div class="center-tip hidden" id="centerTip">
+    <div class="record-prompt">
+      <span id="recordName">记录终端</span>
+      <small id="recordHint">按 <span class="key">E</span> 读取</small>
+    </div>
+  </div>
+
+  <div class="record-panel hidden" id="recordPanel">
+    <div class="eyebrow" id="rpEyebrow"></div>
+    <h2 id="rpTitle"></h2>
+    <p id="rpBody"></p>
+    <div class="who" id="rpWho"></div>
+    <div class="count" id="rpCount"></div>
+    <button class="close" id="rpClose">合上</button>
+  </div>
+
+  <div class="chat">
+    <div class="chat-log" id="chatLog"></div>
+    <div class="chat-input" id="chatInput">
+      <input id="chatText" maxlength="140" placeholder="说点什么…">
+      <button id="chatSend">发送</button>
+    </div>
+  </div>
+
+  <div class="touch-ui" id="touchUi">
+    <div id="stick"><div class="knob"></div></div>
+    <div class="touch-btns">
+      <button id="btnUp">▲</button>
+      <button id="btnDown">▼</button>
+      <button id="btnRead">读</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="joinOverlay">
+  <div class="card">
+    <h1 id="joinTitle">星海公约 · 人间星海 3D</h1>
+    <div class="sub" id="joinSub">归港空间站 · 多人联机样片。走进去，读取六份记录，听听这座站上四个人的一生。</div>
+    <input id="nameInput" maxlength="12" placeholder="你的名字">
+    <br>
+    <button class="go" id="joinBtn">进入空间站</button>
+    <div class="keys" id="joinKeys">
+      <b>操作：</b><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> 移动 · <kbd>Q</kbd><kbd>E</kbd> 升降 · 拖动鼠标转视角 · <kbd>Shift</kbd> 快走 · <kbd>Enter</kbd> 聊天 · <kbd>E</kbd> 读记录<br>
+      <b>手机：</b>左下摇杆移动，右下拖动转视角，按钮升降与读记录。
+    </div>
+  </div>
+</div>
+
+<div class="overlay hidden" id="helpOverlay">
+  <div class="card">
+    <h1>操作 / Controls</h1>
+    <div class="keys" style="text-align:left">
+      <b>电脑：</b><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> 移动 · <kbd>Q</kbd><kbd>E</kbd> 升降 · 拖动鼠标转视角 · <kbd>Shift</kbd> 快走 · <kbd>Enter</kbd> 聊天 · <kbd>E</kbd> 读记录<br>
+      <b>手机：</b>左下摇杆移动，右下拖动转视角，按钮升降与读记录。<br>
+      <b>目标：</b>找到站上六份发光的记录终端，读取它们，拼出四个人的一生。
+    </div>
+    <br>
+    <button class="go" id="helpClose">好</button>
+  </div>
+</div>
+
+<script src="js/vendor/three.min.js"></script>
+<script src="js/client.js"></script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+:root{color-scheme:dark;--bg:#0d1721;--card:#15232de6;--ink:#e6e9e5;--muted:#a8b5b9;--line:#34464f;--gold:#dfbd87;--safe:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0}
+#scene{position:fixed;inset:0;display:block}
+.hud{position:fixed;inset:0;pointer-events:none;z-index:5}
+.hud>*{pointer-events:auto}
+
+/* 顶栏 */
+.topbar{position:absolute;top:0;left:0;right:0;display:flex;align-items:center;gap:10px;padding:calc(10px + var(--safe)) 14px 10px;background:linear-gradient(180deg,#0d1721cc,#0d172100);font-size:13px}
+.topbar .brand{font-family:Georgia,"Songti SC",serif;font-size:16px;letter-spacing:.08em;color:var(--gold);white-space:nowrap}
+.topbar .sp{flex:1}
+.pill{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:5px 12px;font-size:12px;color:var(--muted);white-space:nowrap}
+.pill b{color:var(--ink);font-weight:600}
+.pill.ok{border-color:#4a7a5e;color:#bcd9c6}
+.pill.warn{border-color:#8a6a3a;color:#e3cfa8}
+select.pill{padding:5px 8px}
+.topbar select{background:#182a34;border:1px solid #50616a;border-radius:5px;padding:4px 6px;font-size:12px}
+
+/* 中央提示 */
+.center-tip{position:absolute;left:50%;bottom:22%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
+.record-prompt{background:var(--card);border:1px solid var(--gold);border-radius:10px;padding:12px 18px;font-size:14px;max-width:min(420px,86vw);box-shadow:0 8px 30px #0008}
+.record-prompt small{display:block;color:var(--muted);font-size:11px;margin-top:4px}
+.record-prompt .key{display:inline-block;border:1px solid var(--gold);border-radius:4px;padding:0 6px;font-size:12px;color:var(--gold);margin:0 2px}
+
+/* 记录面板 */
+.record-panel{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(560px,92vw);max-height:76vh;overflow:auto;background:#f2eade;color:#293c44;border-radius:12px;padding:28px;box-shadow:0 24px 80px #000b}
+.record-panel .eyebrow{font-size:11px;letter-spacing:.17em;color:#6c7461;text-transform:uppercase}
+.record-panel h2{font-family:Georgia,"Songti SC",serif;font-size:24px;font-weight:400;margin:8px 0 12px}
+.record-panel p{font-size:14px;line-height:1.9;white-space:pre-line}
+.record-panel .who{margin-top:14px;padding-top:12px;border-top:1px solid #c9bfa9;font-size:12px;color:#5e7277}
+.record-panel .close{margin-top:16px;background:#dfbd87;color:#223038;border-radius:6px;padding:10px 20px;font-weight:600}
+.record-panel .count{font-size:11px;color:#7a8a8d;margin-top:10px}
+
+/* 聊天 */
+.chat{position:absolute;left:14px;bottom:14px;width:min(320px,70vw);display:flex;flex-direction:column;gap:6px}
+.chat-log{max-height:26vh;overflow-y:auto;display:flex;flex-direction:column;gap:4px;font-size:12px;padding-right:4px}
+.chat-log div{background:#15232dcc;border-radius:6px;padding:5px 9px;line-height:1.5;word-break:break-word}
+.chat-log .sys{color:var(--muted);font-style:italic}
+.chat-log b{color:var(--gold);font-weight:600}
+.chat-input{display:none;gap:6px}
+.chat-input.on{display:flex}
+.chat-input input{flex:1;background:#182a34;border:1px solid #50616a;border-radius:6px;padding:8px 10px;font-size:13px}
+.chat-input button{background:var(--gold);color:#223038;border-radius:6px;padding:8px 14px;font-weight:600}
+
+/* 摇杆（手机） */
+.touch-ui{display:none;position:absolute;inset:0;pointer-events:none}
+.touch-ui.on{display:block}
+#stick{position:absolute;left:26px;bottom:26px;width:120px;height:120px;border-radius:50%;background:#15232d80;border:1px solid var(--line);pointer-events:auto}
+#stick .knob{position:absolute;left:50%;top:50%;width:52px;height:52px;border-radius:50%;background:#dfbd87cc;transform:translate(-50%,-50%)}
+.touch-btns{position:absolute;right:22px;bottom:26px;display:flex;flex-direction:column;gap:10px;pointer-events:auto}
+.touch-btns button{width:58px;height:58px;border-radius:50%;background:#15232de6;border:1px solid var(--line);font-size:18px;color:var(--ink)}
+.touch-btns button:active{background:#22384a}
+
+/* 帮助与加入 */
+.overlay{position:absolute;inset:0;display:grid;place-items:center;background:#0d1721e0;z-index:10;padding:20px}
+.overlay .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:30px;width:min(480px,94vw);text-align:center}
+.overlay h1{font-family:Georgia,"Songti SC",serif;font-size:26px;font-weight:400;color:var(--gold);margin-bottom:6px}
+.overlay .sub{font-size:13px;color:var(--muted);line-height:1.8;margin-bottom:18px}
+.overlay input{width:100%;background:#182a34;border:1px solid #50616a;border-radius:8px;padding:12px;font-size:15px;text-align:center;margin-bottom:12px}
+.overlay .go{background:var(--gold);color:#223038;border-radius:8px;padding:12px 28px;font-weight:600;font-size:15px}
+.overlay .keys{margin-top:18px;font-size:12px;color:var(--muted);line-height:2;text-align:left;background:#0f1c26;border-radius:8px;padding:12px 16px}
+.overlay .keys b{color:var(--ink)}
+kbd{display:inline-block;border:1px solid #50616a;border-bottom-width:2px;border-radius:4px;padding:0 5px;font-size:11px;font-family:ui-monospace,monospace;background:#1a2b36;margin:0 1px}
+.hidden{display:none!important}
+
+@media(max-width:760px){
+ .topbar .brand{font-size:13px}
+ .pill{font-size:11px;padding:4px 9px}
+ .chat{width:min(250px,64vw)}
+}

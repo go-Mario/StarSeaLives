@@ -144,13 +144,110 @@ h1[tabindex="-1"]:focus,[tabindex="-1"]:focus{outline:none}
 @keyframes screenIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 button{transition:transform .12s ease,background-color .18s ease,border-color .18s ease,color .18s ease}
 button:active{transform:translateY(1px)}
-.role{transition:transform .2s ease,border-color .2s ease,background-color .2s ease}
-.role:hover{transform:translateY(-3px)}
-.hotspot{transition:transform .18s ease,border-color .18s ease}
-.hotspot:hover{transform:translateY(-2px)}
-.paper,.document{animation:paperIn .42s cubic-bezier(.2,.7,.3,1) both}
+.role{transition:border-color .2s ease,background-color .2s ease,box-shadow .2s ease}
+.role:hover{border-color:var(--gold);box-shadow:0 10px 30px rgba(0,0,0,.28)}
 @keyframes paperIn{from{opacity:0;transform:translateY(8px) scale(.995)}to{opacity:1;transform:none}}
-.side .card{animation:screenIn .4s both}
+
+/* ===================== 场景：层叠空间 ===================== */
+.scene{position:relative;border-radius:10px;overflow:hidden;background:#0a121b;
+  box-shadow:0 24px 60px rgba(0,0,0,.42),0 0 0 1px rgba(223,189,135,.14) inset}
+.scene svg{display:block;width:100%;height:auto;aspect-ratio:1200/720}
+.scene::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(120% 90% at 50% 42%,transparent 55%,rgba(3,7,11,.55) 100%)}
+.scene-tint{position:absolute;inset:0;pointer-events:none;mix-blend-mode:soft-light;
+  background:radial-gradient(80% 70% at 62% 28%,var(--tint,#3a5c6b) 0%,transparent 70%);opacity:.5}
+.scene-grain{position:absolute;inset:-30%;pointer-events:none;opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation:grainDrift 7s steps(6) infinite}
+@keyframes grainDrift{0%{transform:translate(0,0)}20%{transform:translate(-2%,1%)}40%{transform:translate(1%,-2%)}60%{transform:translate(-1%,2%)}80%{transform:translate(2%,-1%)}100%{transform:translate(0,0)}}
+.scene-caption{position:absolute;left:16px;bottom:14px;z-index:3;font-size:11px;letter-spacing:.14em;
+  color:#cfd8d4;text-shadow:0 2px 10px #000;pointer-events:none;line-height:1.7}
+.scene .hotspot{position:absolute;z-index:4;transform:translate(-50%,-50%);display:inline-flex;align-items:center;gap:8px;
+  background:rgba(10,18,26,.82);border:1px solid rgba(223,189,135,.5);color:#f2ecdd;padding:9px 14px 9px 10px;border-radius:999px;
+  font-size:12.5px;line-height:1.2;min-height:44px;max-width:52%;cursor:pointer;backdrop-filter:blur(3px);
+  box-shadow:0 8px 24px rgba(0,0,0,.45);transition:border-color .18s ease,background-color .18s ease,box-shadow .18s ease}
+.scene .hotspot i{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;flex:0 0 auto;
+  background:rgba(223,189,135,.16);border:1px solid rgba(223,189,135,.55);color:#f0d9a8;font-size:11px;font-style:normal;font-weight:600}
+.scene .hotspot:hover{border-color:var(--gold);background:rgba(18,30,38,.92);box-shadow:0 0 0 4px rgba(223,189,135,.12),0 10px 26px rgba(0,0,0,.5)}
+.scene .hotspot.read{border-color:rgba(140,170,150,.55);color:#cfd8d2;background:rgba(10,18,26,.7)}
+.scene .hotspot.read i{background:rgba(110,150,125,.22);border-color:rgba(140,180,150,.6);color:#bfe0c8}
+.scene .hotspot:focus-visible{outline:3px solid #ffc56c;outline-offset:3px}
+@media(max-width:650px){
+ .scene svg{aspect-ratio:1200/820}
+ .scene .hotspot{font-size:11px;padding:7px 11px 7px 8px;max-width:60%}
+ .scene .hotspot i{width:22px;height:22px;font-size:10px}
+ .scene-caption{font-size:10px;left:12px;bottom:10px}
+}
+
+/* ===================== 记录卡浮层 ===================== */
+.reader{position:fixed;inset:0;z-index:60;display:grid;place-items:center;padding:20px}
+.reader-back{position:absolute;inset:0;background:rgba(4,8,12,.72);backdrop-filter:blur(4px);animation:fadeIn .22s ease both}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.reader-card{position:relative;width:min(680px,94vw);max-height:82vh;overflow:auto;padding:34px 38px 28px;
+  background:var(--paper);color:var(--dark);border-radius:6px;
+  box-shadow:0 40px 90px rgba(0,0,0,.55),0 0 0 1px rgba(120,100,70,.35);
+  animation:cardIn .34s cubic-bezier(.2,.7,.3,1) both}
+@keyframes cardIn{from{opacity:0;transform:translateY(18px) scale(.98)}to{opacity:1;transform:none}}
+.reader-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;border-bottom:1px solid #c9bfa9;padding-bottom:10px}
+.reader-top .eyebrow{color:#6c7461}
+.reader-no{font-size:11px;letter-spacing:.14em;color:#8a8f7d}
+.reader-card h2{margin:16px 0 14px;font-size:26px;line-height:1.4}
+.reader-text{font-size:15px;line-height:2.1;white-space:pre-line}
+.reader-foot{margin-top:22px;padding-top:16px;border-top:1px solid #c9bfa9;text-align:right}
+.reader-foot .button.alt{background:transparent;color:var(--dark);border:1px solid #a89c84}
+.reader-foot .button.alt:hover{border-color:var(--dark)}
+.doc-open{color:var(--gold);font-size:13px;letter-spacing:.04em}
+@media(max-width:650px){
+ .reader{padding:0}
+ .reader-card{width:100%;max-height:100vh;height:100%;border-radius:0;padding:calc(22px + var(--safe)) 20px 22px}
+ .reader-card h2{font-size:21px}
+ .reader-text{font-size:14.5px;line-height:2}
+}
+
+/* ===================== 线索托盘 ===================== */
+.tray{display:flex;align-items:center;gap:14px;margin:12px 0 26px;padding:10px 12px;
+  background:linear-gradient(180deg,#132430,#0e1b25);border:1px solid var(--line);border-radius:10px}
+.tray-label{flex:0 0 auto;font-size:11px;letter-spacing:.16em;color:var(--muted)}
+.tray-label b{display:block;font-size:17px;letter-spacing:.04em;color:var(--gold);margin-top:2px}
+.tray-cards{display:flex;gap:10px;flex:1;min-width:0}
+.tray-card{display:flex;align-items:center;gap:9px;flex:1;min-width:0;text-align:left;
+  background:#0f1e28;border:1px dashed #3d5563;border-radius:8px;padding:9px 11px;font-size:12px;color:#9fb2b6;
+  min-height:48px;transition:border-color .2s ease,background-color .2s ease,color .2s ease}
+.tray-card i{display:grid;place-items:center;width:24px;height:24px;border-radius:6px;flex:0 0 auto;
+  background:#16292f;border:1px solid #35505c;font-size:11px;font-style:normal;color:#7e949c}
+.tray-card span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tray-card.got{border-style:solid;border-color:rgba(223,189,135,.5);background:#15242c;color:var(--ink)}
+.tray-card.got i{background:rgba(223,189,135,.16);border-color:rgba(223,189,135,.5);color:#f0d9a8}
+.tray-card:hover{border-color:var(--gold);color:var(--ink)}
+@media(max-width:650px){.tray{flex-direction:column;align-items:stretch;gap:8px}.tray-label{display:flex;justify-content:space-between;align-items:baseline}.tray-label b{display:inline;margin-left:6px}}
+
+/* ===================== 结论卡 ===================== */
+.conclusions{display:grid;gap:10px;margin:14px 0 4px}
+.choice{position:relative;display:block;width:100%;text-align:left;background:#132430;border:1px solid var(--line);
+  border-radius:10px;padding:16px 18px 16px 64px;font-size:14.5px;line-height:1.85;color:var(--ink);
+  transition:border-color .18s ease,background-color .18s ease,transform .18s ease}
+.choice i{position:absolute;left:14px;top:16px;font-style:normal;font-size:10px;letter-spacing:.12em;color:var(--gold);
+  border:1px solid rgba(223,189,135,.4);border-radius:999px;padding:3px 8px}
+.choice:hover{border-color:var(--gold);background:#1a2f3a;transform:translateX(3px)}
+.choice:focus-visible{outline:3px solid #ffc56c;outline-offset:3px}
+@keyframes stampIn{0%{opacity:0;transform:scale(1.12) rotate(-3deg)}60%{transform:scale(.98) rotate(-3deg)}100%{opacity:1;transform:scale(1) rotate(-3deg)}}
+@keyframes shakeX{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
+.choice.wrong{animation:shakeX .34s ease;border-color:#8a4a4a}
+
+/* 网格项允许收缩，避免场景把列撑宽（手机横向溢出） */
+.layout>main,.layout>.side{min-width:0}
+.scene{max-width:100%}
+.scene svg{max-width:100%;width:100%}
+.tray,.tray-cards{max-width:100%}
+
+/* ===================== 推断反馈 ===================== */
+.choice.right{border-color:#7fae8b;background:#16261f}
+.stamp{position:absolute;right:14px;top:50%;transform:translateY(-50%) rotate(-9deg);
+  font-size:12px;letter-spacing:.22em;color:#9fd0ae;border:2px solid #7fae8b;border-radius:4px;
+  padding:5px 10px;background:rgba(10,20,15,.55);animation:stampIn .34s cubic-bezier(.2,.7,.3,1) both;pointer-events:none}
+
+/* 引导提示 */
+.gate-hint{color:#c8b48a;font-size:13px;border-left:2px solid rgba(223,189,135,.5);padding-left:12px;margin:10px 0 4px}
 
 </style>
 </head>
@@ -435,7 +532,7 @@ const LIFE_MODEL=(()=>{
 const LIFE=(()=>{
  const KEY='SS_ORDINARY_LIVES_v1',BACKUP=KEY+'.backup';
  const $=id=>document.getElementById(id),esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
- let state=LIFE_MODEL.fresh(),blocked=false,storageProblem='',screen='title',selected=null,documentIndex=null,tab='scene',caseIndex=null,hint='',restMode=null,memory=null,confirmAction=null,lastScreen=null;
+ let state=LIFE_MODEL.fresh(),blocked=false,deduceLock=false,storageProblem='',screen='title',selected=null,documentIndex=null,tab='scene',caseIndex=null,hint='',restMode=null,memory=null,confirmAction=null,lastScreen=null;
  try{
   const raw=localStorage.getItem(KEY),backup=localStorage.getItem(BACKUP);
   if(raw!==null||backup!==null){
@@ -462,8 +559,67 @@ const LIFE=(()=>{
  function orbital(){let stars='';for(let i=0;i<65;i++)stars+='<circle cx="'+((i*149)%650)+'" cy="'+((i*97)%440)+'" r="'+(i%4===0?1.4:.7)+'" fill="#c0cbd0" opacity="'+(.15+(i%5)*.14)+'"/>';return '<svg class="orbital" viewBox="0 0 650 470" role="img" aria-label="'+T('归港空间站与远处的地球','Homeward Station above a distant Earth')+'"><defs><radialGradient id="planet"><stop stop-color="#87b6bc"/><stop offset=".6" stop-color="#355d72"/><stop offset="1" stop-color="#11202e"/></radialGradient></defs>'+stars+'<circle cx="410" cy="245" r="159" fill="url(#planet)"/><path d="M290 170q130-75 253 75m-260-5q170-60 264 54" fill="none" stroke="#b6d3c5" opacity=".19" stroke-width="13"/><g transform="translate(295 250) rotate(-25)"><ellipse rx="245" ry="77" fill="none" stroke="#7c969b" stroke-width="3"/><ellipse rx="226" ry="59" fill="none" stroke="#3d5b68" stroke-width="13"/><path d="M-245 0H245M0-77V77" stroke="#9baba9" stroke-width="5"/><rect x="-73" y="-20" width="146" height="40" rx="8" fill="#a7ada1"/><rect x="-57" y="-10" width="114" height="20" fill="#263e4c"/><g stroke="#cfb783" stroke-width="5"><path d="M-44-8v16m22-16v16m22-16v16m22-16v16m22-16v16"/></g></g><path d="M54 400h80m-40-9v18" stroke="#bcad8c"/><text x="145" y="404" fill="#b9c3c5" font-size="10" letter-spacing="3">'+T('归港站 / 2077','HOMEWARD / 2077')+'</text></svg>';}
  function home(){return '<section class="hero"><div><h1>'+T('宇宙很大。<br>先过好<br>这一生。','A vast universe.<br>A life of<br>your own.')+'</h1><p class="lead">'+E(LIVES.premise)+'</p></div><div class="hero-art">'+orbital()+'<div class="hero-caption">'+T('归港站 / 有人正等着下班','Homeward Station / Someone is waiting for a shift to end')+'</div></div></section><section><div class="section-title"><h2>'+T('从谁的人生开始？','Whose life will you live?')+'</h2><p>'+T('每个人都是主角。每次只知道 ta 能知道的事。','Each person is a protagonist. You know only what they can know.')+'</p></div><div class="roles">'+Object.entries(LIVES.roles).map(([id,r])=>'<button class="role" data-act="select" data-id="'+id+'"><div class="job">'+E(r.job)+'</div>'+portrait(id)+'<h2>'+E(r.name)+'</h2><p class="tag">'+E(r.tag)+'</p><span class="enter">'+(state.runs[id]?T('继续 / 回看这段人生','Continue / revisit this life'):T('走进 ta 的故事','Step into this life'))+' →</span></button>').join('')+'</div><p class="footer">'+T('四位主角，六个相互牵连的事件，五十年的生活。游玩时长随阅读与探索而异。角色存档分别保留，重玩另一人会开启另一种可能。','Four protagonists. Six connected events. Fifty years of life. Take your time reading and exploring. Each character has a separate save; another life explores another possibility.')+'</p></section>';}
  function selection(){const r=LIVES.roles[selected],saved=state.runs[selected];return '<div class="intro-grid">'+portrait(selected)+'<div class="intro-copy"><div class="eyebrow">'+E(r.job)+' · '+T('起点年龄 ','Age at the beginning: ')+(2077-r.born)+'</div><h1>'+E(r.name)+'</h1><p>'+E(r.bio)+'</p><p class="inset">'+E(r.want)+'</p><p class="muted compact">'+T('选择后，整条故事都从这个人的视角展开。其他人的生活会通过你能接触到的记录、来信和相遇进入故事。','Once chosen, the story stays with this person. Other lives enter through records, messages and encounters available to you.')+'</p><div class="actions">'+button(saved?T('继续这段人生','Continue this life'):T('从 2077 年开始','Begin in 2077'),'start',selected)+(saved?button(T('重新开始','Start again'),'restart',selected,'button alt'):'')+button(T('返回','Back'),'home','','quiet')+'</div></div></div>';}
- function sceneArt(r){const act=LIVES.acts[r.act],d=SCENES[r.role][r.act],labels=[d.docs[0].name,d.docs[1].name,B('交叉核对','Cross-check')];return '<div class="scene"><svg viewBox="0 0 800 480" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><linearGradient id="room" x2="1" y2="1"><stop stop-color="#243e4b"/><stop offset="1" stop-color="#101c28"/></linearGradient></defs><rect width="800" height="480" fill="url(#room)"/><path d="M0 390h800v90H0" fill="#16222d"/><path d="M0 390L90 320h620l90 70M0 480l120-160m560 0 120 160" stroke="#42535a" fill="none"/><rect x="350" y="65" width="340" height="222" rx="90" fill="#090f1a" stroke="#546b76" stroke-width="13"/><circle cx="577" cy="223" r="119" fill="'+(['#355b6b','#395862','#56715e','#4e5169','#315469','#7b8272'][r.act])+'"/><path d="M380 180h280m-160-100v205" stroke="#283e4e" stroke-width="6"/><circle cx="424" cy="121" r="2" fill="#e9ddb9"/><circle cx="611" cy="103" r="2" fill="#e9ddb9"/><rect x="72" y="93" width="190" height="174" rx="7" fill="#435b63"/><rect x="85" y="105" width="164" height="140" fill="#203944"/><path d="M104 128h105m-105 15h75m-75 15h118m-118 44h90" stroke="#81aaa9" stroke-width="3"/><rect x="40" y="298" width="260" height="40" rx="6" fill="#786e58"/><path d="M65 338v81m210-81v81" stroke="#434544" stroke-width="10"/><path d="M125 291v-24h35v24" stroke="#c7b99c" stroke-width="4" fill="none"/><rect x="455" y="350" width="190" height="55" rx="7" fill="#3e5357"/><rect x="475" y="332" width="150" height="30" rx="4" fill="#bcab86"/><path d="M695 400v-95q-46-40-47-81 52 12 55 53 32-45 54-46-7 49-52 67" fill="#4c766a" stroke="#29483f" stroke-width="3"/><path d="M680 393h46l-5 35h-36z" fill="#9e765b"/></svg><div class="scene-caption">'+E(act.place)+'<br>'+E(act.weather)+'</div>'+labels.map((label,i)=>'<button class="hotspot '+(r.read.includes(i)?'read':'')+'" style="left:'+([23,69,50][i])+'%;top:'+([48,78,32][i])+'%" data-act="read" data-id="'+i+'">'+(r.read.includes(i)?'✓ ':'＋ ')+E(label)+'</button>').join('')+'</div>';}
- function clockPuzzle(r){
+ function sceneArt(r){
+ const d=SCENES[r.role][r.act],act=LIVES.acts[r.act];
+ const labels=[d.docs[0].name,d.docs[1].name,B('交叉核对','Cross-check')];
+ const tint=['#3a5c6b','#2f5560','#3d5a4e','#39405a','#31485c','#5a5340'][r.act];
+ return '<div class="scene">'
+  +'<svg viewBox="0 0 1200 720" preserveAspectRatio="xMidYMid slice" aria-hidden="true">'
+  +'<defs>'
+  +'<linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#0a121b"/><stop offset=".55" stop-color="#101d29"/><stop offset="1" stop-color="#0b141d"/></linearGradient>'
+  +'<linearGradient id="glass" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#0c1a24"/><stop offset=".6" stop-color="#15303e"/><stop offset="1" stop-color="#1d4256"/></linearGradient>'
+  +'<radialGradient id="earthg" cx=".38" cy=".34"><stop stop-color="#5c93a3"/><stop offset=".55" stop-color="#2c5566"/><stop offset="1" stop-color="#12293a"/></radialGradient>'
+  +'<linearGradient id="beam" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#ffe9bf" stop-opacity=".30"/><stop offset="1" stop-color="#ffe9bf" stop-opacity="0"/></linearGradient>'
+  +'<linearGradient id="desk" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#4a3f30"/><stop offset="1" stop-color="#241d15"/></linearGradient>'
+  +'<linearGradient id="floor" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#0f1a23"/><stop offset="1" stop-color="#070d13"/></linearGradient>'
+  +'</defs>'
+  +'<rect width="1200" height="720" fill="url(#sky)"/>'
+  +'<g fill="#e8f0f2">'+[ [72,84,1.6],[168,52,1.1],[286,120,1.9],[404,66,1.2],[520,38,1.5],[640,96,1.1],[742,58,1.7],[860,110,1.2],[968,70,1.5],[1084,132,1.1],[1132,54,1.8],[120,168,1.2],[330,190,1.0],[900,196,1.3],[1046,176,1.1] ]
+    .map(([x,y,rr])=>'<circle cx="'+x+'" cy="'+y+'" r="'+rr+'" opacity="'+(0.35+Math.random()*0.5).toFixed(2)+'"/>').join('')+'</g>'
+  +'<g><rect x="150" y="70" width="620" height="420" rx="52" fill="url(#glass)"/>'
+  +'<circle cx="470" cy="300" r="150" fill="url(#earthg)"/>'
+  +'<path d="M330 250c40-22 78-8 96 14s-6 52-38 62-70-6-84-28 4-38 26-48z" fill="#4e7a63" opacity=".55"/>'
+  +'<path d="M512 348c30-12 58 2 66 22s-14 44-40 46-52-14-54-32 18-26 28-36z" fill="#456e5c" opacity=".45"/>'
+  +'<ellipse cx="470" cy="300" rx="150" ry="26" fill="#0a121b" opacity=".25"/>'
+  +'<rect x="150" y="70" width="620" height="420" rx="52" fill="none" stroke="#5d7a86" stroke-width="16"/>'
+  +'<path d="M150 250h620M150 310h620M300 70v420M620 70v420" stroke="#22333d" stroke-width="7" opacity=".8"/>'
+  +'<circle cx="228" cy="148" r="5" fill="#dfbd87" opacity=".8"/>'
+  +'</g>'
+  +'<path d="M170 490 L840 190 L1200 150 L1200 720 L170 720 Z" fill="url(#beam)"/>'
+  +'<rect x="880" y="0" width="320" height="720" fill="#0e1a24"/>'
+  +'<rect x="940" y="330" width="200" height="390" rx="10" fill="#132430" stroke="#2c4351" stroke-width="6"/>'
+  +'<circle cx="932" cy="520" r="9" fill="#dfbd87" opacity=".85"/>'
+  +'<rect x="940" y="60" width="200" height="26" rx="4" fill="#1a2c38"/>'
+  +'<rect x="940" y="96" width="200" height="26" rx="4" fill="#16262f"/>'
+  +'<path d="M60 470h1080v34H60z" fill="url(#desk)"/>'
+  +'<path d="M60 504h1080v216H60z" fill="#0c151d"/>'
+  +'<rect x="60" y="470" width="1080" height="34" fill="none" stroke="#6b5a42" stroke-width="2" opacity=".6"/>'
+  +'<g><rect x="300" y="196" width="330" height="212" rx="14" fill="#0b131a" stroke="#5b7280" stroke-width="10"/>'
+  +'<rect x="318" y="214" width="294" height="176" rx="8" fill="#0e2a38"/>'
+  +'<path d="M330 350h270M330 320h210M330 290h250M330 260h180" stroke="#4d8ea0" stroke-width="7" opacity=".55"/>'
+  +'<circle cx="600" cy="248" r="6" fill="#dfbd87"/>'
+  +'<rect x="440" y="408" width="50" height="40" fill="#243440"/><rect x="380" y="446" width="170" height="14" rx="4" fill="#243440"/></g>'
+  +'<g><rect x="330" y="478" width="270" height="20" rx="6" fill="#2c3d47"/><path d="M340 488h250" stroke="#4a6a76" stroke-width="3"/></g>'
+  +'<g><rect x="660" y="474" width="150" height="110" rx="4" fill="#e6ddc8" transform="rotate(-4 735 529)"/><path d="M680 500h110M680 520h96M680 540h120" stroke="#9aa08c" stroke-width="5" transform="rotate(-4 735 529)"/></g>'
+  +'<g><rect x="216" y="424" width="52" height="60" rx="8" fill="#c9b48c"/><path d="M268 440h18a14 14 0 0 1 0 28h-18" fill="none" stroke="#c9b48c" stroke-width="8"/><path d="M228 410c6-10-4-16 2-26M248 410c6-10-4-16 2-26" stroke="#cbbda3" stroke-width="4" opacity=".5" fill="none"/></g>'
+  +'<g><rect x="880" y="230" width="300" height="12" rx="4" fill="#33454f"/>'
+  +'<rect x="906" y="176" width="26" height="54" fill="#7a5c46"/><rect x="938" y="168" width="30" height="62" fill="#5d6f5a"/><rect x="974" y="184" width="22" height="46" fill="#6d5a70"/>'
+  +'<rect x="1024" y="150" width="66" height="80" rx="6" fill="#2b4450" stroke="#4f6f7c" stroke-width="4"/><circle cx="1057" cy="186" r="20" fill="none" stroke="#8fb0ba" stroke-width="4"/><path d="M1057 166v22l14 10" stroke="#8fb0ba" stroke-width="5" fill="none"/>'
+  +'<path d="M1130 230c-18-14-18-44 0-58 18 14 18 44 0 58z" fill="#4c766a"/></g>'
+  +'<g><path d="M138 470c-14-40-6-80 10-104 6 26 4 66-10 104z" fill="#4c766a"/><path d="M148 470c16-30 44-44 72-40-16 22-40 34-72 40z" fill="#5b8a76"/><path d="M120 470c-20-16-30-42-26-66 20 12 34 34 26 66z" fill="#3f6a5c"/>'
+  +'<path d="M108 470h72l-8 40h-56z" fill="#7a5c46"/></g>'
+  +'<rect y="504" width="1200" height="216" fill="url(#floor)"/>'
+  +'<path d="M170 720 L840 504 L1200 504 L1200 720 Z" fill="#ffe9bf" opacity=".05"/>'
+  +'<path d="M0 560h1200M0 620h1200" stroke="#1b2b35" stroke-width="3" opacity=".7"/>'
+  +'<path d="M880 720c0-90 20-140 60-160h180c40 20 60 70 60 160z" fill="#0a1016" opacity=".92"/>'
+  +'</svg>'
+  +'<div class="scene-caption">'+E(act.place)+'<br>'+E(act.weather)+'</div>'
+  +'<div class="scene-tint" style="--tint:'+tint+'"></div>'
+  +'<div class="scene-grain" aria-hidden="true"></div>'
+  +labels.map((label,i)=>'<button class="hotspot '+(r.read.includes(i)?'read':'')+'" style="left:'+([20,66,52][i])+'%;top:'+([74,60,34][i])+'%" data-act="read" data-id="'+i+'"><i>'+(r.read.includes(i)?'✓':'0'+(i+1))+'</i>'+E(label)+'</button>').join('')
+  +'</div>';
+ }
+function clockPuzzle(r){
   if(r.act!==0||r.role!=='lin'||!r.read.includes(2))return '';
   if(r.investigationDone)return archiveSearch(r);
   return '<div class="clock-lab"><div class="eyebrow">'+T('设备校时 · 归港站','DEVICE CALIBRATION · HOMEWARD')+'</div><h3>'+T('让两条记录对上','Bring the two records into alignment')+'</h3><p>'+T('门禁记录：03:18:44。食堂终端：03:17:20。拖动旋钮，找出门禁时钟快了多少秒。','Door reader: 03:18:44. Canteen terminal: 03:17:20. Adjust the dial to find how many seconds the door clock runs ahead.')+'</p><div class="clock-readings"><span>'+T('校正后门禁时间','Door reader after correction')+'<b id="adjustedTime">03:18:44</b></span><span>'+T('食堂终端','Canteen terminal')+'<b>03:17:20</b></span></div><label class="clock-slider">'+T('校正秒数','Seconds to correct')+' <output id="clockShiftOut">0</output> s<input id="clockShift" type="range" min="0" max="120" value="0" aria-label="'+T('校正门禁时钟的秒数','Seconds to correct the door clock')+'"></label><button class="button alt" data-act="alignClock">'+T('对齐两条记录','Align the records')+'</button>'+(r.clockAligned?'<p role="status">'+T('时间吻合。现在可以继续调查。','The times match. Continue the investigation.')+'</p>':'')+'</div>';
@@ -484,11 +640,37 @@ const LIFE=(()=>{
  function ripple(r){if(r.act===0)return '';const prev=LIVES.acts[r.act-1].flag;return t(RIPPLE[prev][r.history[r.act-1].choice]);}
  function aside(r){const role=LIVES.roles[r.role];return '<aside class="side">'+portrait(r.role,r.act>=4)+'<div class="eyebrow">'+T('你所扮演的人','Your perspective')+'</div><h2>'+E(role.name)+'</h2><p>'+E(role.job)+'<br>'+E(role.person)+'</p><div style="clear:both"></div><p>'+E(role.want)+'</p><div class="progress">'+LIVES.acts.map((_,i)=>'<i class="'+(i<r.history.length?'done':'')+'"></i>').join('')+'</div><p>'+T('这一年已查看 ','Records examined this year: ')+r.read.length+' / 3</p><div class="note-list">'+r.read.map(i=>button(E(i===2?B('交叉核对','Cross-check'):SCENES[r.role][r.act].docs[i].name),'read',i,'')).join('')+'</div><hr>'+button(T('人物手记','Life journal'),'journal','','button alt')+button(T('下班 / 休息舱','Off duty / rest cabin'),'rest','','button alt')+(r.role==='jian'?button(T('另一条主线 · 六份卷宗','The other thread · six case files'),'cases','','button alt'):'')+'<p class="compact">'+T('休息不会锁住剧情；没有体力付费或倒计时。','Rest never gates the story. No energy purchases or countdowns.')+'</p></aside>';}
  function lateClue(r){const w=LIFE_MODEL.world(r);return t(LIVES.acts[r.act].clue)+(r.act===4?"\n\n"+(w.traceable&&w.investigated?T('你以前保存的身份线索和供水材料已经能互相核对。这次可以争取把共同证据变成安置规则。','Your earlier identity trail and water records can now corroborate one another. This time, shared evidence can support a resettlement rule.'):T('你手里的旧记录仍不完整。可以先争取临时席位，但不能把尚未核实的部分写成已经证明。','The older records available to you are still incomplete. You can seek provisional places, but cannot present unverified parts as proven.')):"");}
+ function gateHint(r){
+  const a=LIVES.acts[r.act];
+  if(r.read.length<2)return T('还差 '+(2-r.read.length)+' 份材料：点场景里的标记，或托盘上的空卡。','Still '+(2-r.read.length)+' record(s) short: tap a marker in the scene or an empty card in the tray.');
+  if(r.act===0&&!r.investigationDone)return T('材料齐了。完成上面这一步，才能继续。','You have the records. Finish the step above to continue.');
+  if(r.act===0&&!r.searchDone)return T('现在用找到的编号或地点，去检索站内记录。','Now use the code or place you found to search the station archive.');
+  return T('可以连起来了。挑一个材料能支持的理解。','You can connect them now. Pick the reading the records support.');
+ }
+ function clueTray(r){
+  const d=SCENES[r.role][r.act];
+  const names=[d.docs[0].name,d.docs[1].name,B('交叉核对','Cross-check')];
+  const read=r.read.length;
+  return '<div class="tray" role="group" aria-label="'+T('线索托盘','Evidence tray')+'">'
+   +'<span class="tray-label">'+T('线索','Evidence')+'<b>'+read+'/3</b></span>'
+   +'<div class="tray-cards">'+names.map((n,i)=>'<button class="tray-card '+(r.read.includes(i)?'got':'')+'" data-act="read" data-id="'+i+'"><i>'+(r.read.includes(i)?'✓':'0'+(i+1))+'</i><span>'+E(n)+'</span></button>').join('')+'</div>'
+   +'</div>';
+ }
+ function readerCard(r,idx){
+  const d=SCENES[r.role][r.act],title=E(idx===2?B('交叉核对','Cross-check'):d.docs[idx].name),text=idx===2?esc(lateClue(r)):E(d.docs[idx].text);
+  const source=idx===2?B('两份记录放在一起','Two records side by side'):B('现场取得','Taken from the scene');
+  return '<div class="reader" id="document" role="dialog" aria-modal="true" aria-label="'+title+'">'
+   +'<div class="reader-back" data-act="closeDoc"></div>'
+   +'<article class="reader-card paper"><div class="reader-top"><span class="eyebrow">'+E(source)+'</span><span class="reader-no">'+T('记录 ','Record ')+(idx===2?'03':'0'+(idx+1))+' / 03</span></div>'
+   +'<h2>'+title+'</h2><p class="reader-text">'+text+'</p>'
+   +'<div class="reader-foot"><button class="button ghost" data-act="nextDoc">'+T('下一份','Next record')+'</button><button class="button alt" data-act="closeDoc">'+T('收好这份记录','Put this record away')+'</button></div></article></div>';
+ }
  function play(){const r=current();if(r.act>=6)return ending();const a=LIVES.acts[r.act],d=SCENES[r.role][r.act],role=LIVES.roles[r.role],canDeduce=r.read.length>=2&&(r.act!==0||(r.investigationDone&&r.searchDone));let body='';
  if(r.history.length>r.act){const c=r.history[r.act].choice===0?d.a:d.b;body='<section class="paper"><div class="eyebrow">'+T('这一年的选择','The choice you made')+'</div><h2>'+E(c.title)+'</h2><p>'+E(c.result)+'</p>'+(r.act===4?'<p class="ripple">'+E(SETTLEMENTS[LIFE_MODEL.world(r).settlement])+'</p>':'')+'<p class="ripple">'+E(a.reveal)+'</p>'+button(r.act===5?T('走向余生','The years that followed'):T('继续生活 · ','Life goes on · ')+LIVES.acts[r.act+1].year,'next')+'</section>';}
  else if(r.solved){body='<section class="paper"><div class="eyebrow">'+T('真相之后，生活还在继续','Life continues after the discovery')+'</div><h2>'+E(a.question)+'</h2><p>'+E(a.reveal)+'</p><p class="muted">'+T('你能决定的是自己下一步怎样做。两条路都留下一些东西，也失去一些东西。','You can decide what you do next. Each path preserves something and gives something up.')+'</p>'+[d.a,d.b].map((c,i)=>'<button class="choice" data-act="choose" data-id="'+i+'"><b>'+E(c.title)+'</b><span>'+E(c.detail)+'</span></button>').join('')+'</section>';}
- else{body='<section class="paper" id="document"><div class="eyebrow">'+T('你的现场','Your part of the scene')+'</div><p>'+E(d.opening)+'</p>'+(r.act?'<p class="ripple">'+esc(ripple(r))+'</p>':'')+(documentIndex!==null?'<hr><h2>'+E(documentIndex===2?B('交叉核对','Cross-check'):d.docs[documentIndex].name)+'</h2><p>'+(documentIndex===2?esc(lateClue(r)):E(d.docs[documentIndex].text))+'</p>':'<p class="muted">'+T('点击场景里的标记，查看你能接触到的材料。','Explore the marked places to examine records available to you.')+'</p>')+openingAction(r)+'<hr><h2>'+E(a.question)+'</h2>'+(canDeduce?'<p class="muted">'+T('试着把线索连起来。不确定时可以继续查看，没有惩罚。','Connect the clues. You can keep exploring; an uncertain answer carries no penalty.')+'</p>'+deductions(r).map((x,i)=>'<button class="choice" data-act="deduce" data-id="'+i+'">'+E(x.text)+'</button>').join(''):'<p class="muted">'+T('先查看至少两处材料，完成职业操作，再检索站内记录。','Examine at least two records, complete your role-specific task, then search the station archive.')+'</p>')+(hint&&!(r.act===0&&r.investigationDone&&!r.searchDone)?'<p role="status" class="hint">'+esc(hint)+'</p>':'')+'</section>';}
- return '<div class="chapter-head"><div><div class="eyebrow">'+a.year+' · '+T('第 ','Chapter ')+(r.act+1)+T(' 幕','')+'</div><h1>'+E(a.title)+'</h1></div><div class="age">'+E(role.name)+' · '+(a.year-role.born)+' '+T('岁','years old')+'</div></div><div class="layout"><main>'+(!r.solved&&r.history.length===r.act?sceneArt(r):'')+body+'</main>'+aside(r)+'</div>';}
+ else{body='<section class="paper" id="document"><div class="eyebrow">'+T('你的现场','Your part of the scene')+'</div><p>'+E(d.opening)+'</p>'+(r.act?'<p class="ripple">'+esc(ripple(r))+'</p>':'')+(documentIndex===null?'<p class="muted">'+T('点击场景里的标记，查看你能接触到的材料。','Explore the marked places to examine records available to you.')+'</p>':'<p class="doc-open">'+T('正在阅读：','Now reading: ')+E(documentIndex===2?B('交叉核对','Cross-check'):d.docs[documentIndex].name)+'</p>')+openingAction(r)+'<hr><h2>'+E(a.question)+'</h2>'+(canDeduce?'<p class="muted">'+T('试着把线索连起来。不确定时可以继续查看，没有惩罚。','Connect the clues. You can keep exploring; an uncertain answer carries no penalty.')+'</p>'+'<div class="conclusions">'+deductions(r).map((x,i)=>'<button class="choice" data-act="deduce" data-id="'+i+'"><i>'+T('推断 ','Infer ')+(i+1)+'</i>'+E(x.text)+'</button>').join('')+'</div>':'<p class="gate-hint">'+gateHint(r)+'</p>')+(hint&&!(r.act===0&&r.investigationDone&&!r.searchDone)?'<p role="status" class="hint">'+esc(hint)+'</p>':'')+'</section>';}
+ const reader=documentIndex===null?'':readerCard(r,documentIndex);
+  return '<div class="chapter-head"><div><div class="eyebrow">'+a.year+' · '+T('第 ','Chapter ')+(r.act+1)+T(' 幕','')+'</div><h1>'+E(a.title)+'</h1></div><div class="age">'+E(role.name)+' · '+(a.year-role.born)+' '+T('岁','years old')+'</div></div><div class="layout"><main>'+(!r.solved&&r.history.length===r.act?sceneArt(r)+clueTray(r):'')+body+'</main>'+aside(r)+'</div>'+reader;}
  function deductions(r){const a=LIVES.acts[r.act],items=[{text:a.answer,correct:true},...a.wrong.map(text=>({text,correct:false}))];for(let i=0;i<(r.act+Object.keys(LIVES.roles).indexOf(r.role))%3;i++)items.push(items.shift());return items;}
  function journal(){const r=current();return '<section class="journal"><div class="eyebrow">'+E(LIVES.roles[r.role].name)+'</div><h1>'+T('我走过的年岁','The years I have lived')+'</h1><p class="muted">'+T('这里只记下你亲历的事，不展示其他人的秘密或尚未发生的结局。','Only what you have lived through appears here—not others’ secrets or futures you have not reached.')+'</p>'+(!r.history.length?'<p>'+T('第一篇还没有写完。','The first entry is still being written.')+'</p>':'')+r.history.map((h,i)=>{const a=LIVES.acts[i],c=h.choice===0?SCENES[r.role][i].a:SCENES[r.role][i].b;return '<article class="timeline-entry"><small>'+a.year+'</small><h2>'+E(a.title)+'</h2><p>'+E(c.result)+'</p>'+(h.searched?'<p class="archive-note">'+T('站内检索：','Archive search: ')+E(LIVES.searches[r.role].system)+' · '+E(LIVES.searches[r.role].hits[0].title)+'</p>':'')+(h.rested?'<p>'+T('那一年，你也为自己留过一段休息。','That year, you made some time to rest, too.')+'</p>':'')+'</article>';}).join('')+button(T('回到我的人生','Return to my life'),'resume')+'</section>';}
  function ending(){const r=current(),role=LIVES.roles[r.role],o=LIFE_MODEL.outcome(r),titles={witness:B('让名字留下的人','The one who kept the names'),keeper:B('给人留灯的人','The one who left a light on'),bridge:B('在两岸之间的人','The one between the shores')},texts={witness:B('你一次次让私下发生的事进入公共记录。后来的人不必再从一片空白开始。但有些晚饭、班次和相聚，没有等到你。','Again and again, you brought private events into the public record. Those who followed did not begin with blank pages. Some dinners, departures and reunions did not wait for you.'),keeper:B('你把很多时间留给眼前的人。有人记得一碗饭、一趟陪伴，或者一扇开过的门。公共档案仍有缺口，你没有办法独自填平。','You gave much of your time to the person in front of you. Someone remembers a meal, a journey or a door that opened. The public archive still has gaps you could not fill alone.'),bridge:B('你没有始终站在同一边。有时保存记录，有时照顾生活。后来的人从你的矛盾里，读到了一个真实的人。','You did not always stand on the same side. Sometimes you preserved the record; sometimes you tended a life. Those who came later found a real person in your contradictions.')},last={lin:B('2137 年，林渡去世。家人把那把旧钥匙留了下来，没有把它磨亮。','Lin Du died in 2137. The family kept the old key without polishing it.'),su:B('2135 年，苏弥去世。店里仍留着一张不需要预约的桌子。','Su Mi died in 2135. The canteen still keeps one table that needs no reservation.'),xu:B('2140 年，许照去世。旧路线图被阿棠的家人装进相框，折痕没有压平。','Xu Zhao died in 2140. A Tang’s family framed the route map, creases intact.'),jian:B('2138 年，简去世。那支钢笔又换了一个笔尖，仍有人用它记下当事人真正想说的话。','Jian died in 2138. The pen received another nib. Someone still uses it to record what clients actually want to say.')};return '<section class="ending">'+portrait(r.role,true)+'<div class="eyebrow">'+T('一生的尾声','A life, in closing')+' · '+E(role.name)+'</div><h1>'+E(titles[o.kind])+'</h1><blockquote>'+E(role.want)+'</blockquote><p>'+E(texts[o.kind])+'</p><p>'+T('你为自己留下了 '+o.breaks+' 段休息。它们没有改变新闻标题，却改变了这些日子怎样被记住。','You made room for '+o.breaks+' breaks. They did not change the headlines. They changed how those days were remembered.')+'</p><p>'+E(last[r.role])+'</p><div class="paper"><div class="eyebrow">'+T('世界留下的痕迹','What remains in the world')+'</div><p>'+E(SETTLEMENTS[LIFE_MODEL.world(r).settlement])+'</p>'+r.history.slice(0,5).map((h,i)=>'<p>'+E(RIPPLE[LIVES.acts[i].flag][h.choice])+'</p>').join('')+'</div><p class="muted">'+T('这不是一个总分。你的六次选择、私人生活和留下的公共痕迹，共同构成这条人生。','This is not a final score. Your six choices, private life and public traces make up this life.')+'</p><div class="actions">'+button(T('翻看一生的手记','Read the life journal'),'journal')+button(T('另一个人的一生','Another person’s life'),'home','','button alt')+button(T('休息舱','Rest cabin'),'rest','','button alt')+(r.role==='jian'?button(T('六份卷宗','Six case files'),'cases','','button alt'):'')+'</div></section>';}
@@ -534,9 +716,15 @@ const LIFE=(()=>{
  function resume(){if(!current()){screen='home';}else screen='play';documentIndex=null;hint='';restMode=null;render();}
  function start(id){if(!LIVES.roles[id])return;if(!state.runs[id])state.runs[id]=LIFE_MODEL.run(id);state.active=id;persist();resume();}
  function exportSave(){const data=JSON.stringify({format:'StellarLives',exportedAt:new Date().toISOString(),state},null,2),url=URL.createObjectURL(new Blob([data],{type:'application/json'})),a=document.createElement('a');a.href=url;a.download='Stellar-Covenant-Lives.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),30000);}
- const acts={begin:()=>{screen='home';LIFE_AUDIO.enter();render();},home:()=>{screen='home';render();},settings:()=>{screen='settings';render();},sound:()=>{LIFE_AUDIO.toggle();render(false);},alignClock:()=>{const r=current();if(!r||r.role!=='lin'||r.act!==0||!r.read.includes(2))return;const v=Number($('clockShift')?.value);if(v!==84){LIFE_AUDIO.wrong();hint=T('时钟仍有偏差，继续微调；不会扣分。','The clocks are still apart. Keep adjusting; there is no penalty.');render(false);return;}r.clockAligned=true;r.investigationDone=true;LIFE_AUDIO.solve();persist();render(false);},searchRecord:()=>{const r=current(),query=$('archiveQuery')?.value;if(LIFE_MODEL.searchRecord(r,query)){hint='';LIFE_AUDIO.solve();persist();}else{hint=T('没有找到匹配记录。回看工牌、订单或路线上的编号和地点；可以反复试，不扣分。','No matching record. Recheck the code or place on the badge, order, or route. You can try again without penalty.');LIFE_AUDIO.wrong();}render(false);},dispatchMeal:id=>{const r=current();if(!r||r.role!=='su'||r.act!==0||!r.read.includes(2))return;if(id==='allergy'){r.investigationDone=true;hint='';LIFE_AUDIO.solve();persist();}else{hint=T('再看一眼饭盒上留下的提示：什么信息是安全出餐必需的？','Look again at the labels on the boxes: what information is essential for a safe meal?');LIFE_AUDIO.wrong();}render(false);},triage:id=>{const r=current();if(!r||r.role!=='jian'||r.act!==0||!r.read.includes(2))return;if(id==='care'){r.investigationDone=true;hint='';LIFE_AUDIO.solve();persist();}else{hint=T('她已经说清楚了眼下最急的事，也划定了哪些内容暂不公开。','She has stated what is urgent and what must remain private for now.');LIFE_AUDIO.wrong();}render(false);},routeStep:id=>{const r=current(),result=LIFE_MODEL.advanceRoute(r,Number(id));if(result.done){hint='';LIFE_AUDIO.solve();persist();}else if(!result.ok){hint=T('顺序不对，缓存没有丢；从第九泊位重新拼。','That order does not fit. The cache is safe; rebuild from Berth Nine.');LIFE_AUDIO.wrong();persist();}else{hint='';LIFE_AUDIO.read();persist();}render(false);},select:id=>{selected=id;screen='select';render();},start,restart:id=>ask(T('只重置这个人物的一生？其他人物不受影响。建议先导出备份。','Restart only this character’s life? Other lives are unaffected. Export a backup first.'),()=>{state.runs[id]=LIFE_MODEL.run(id);start(id);}),resume,
- read:id=>{const r=current(),n=Number(id);if(LIFE_MODEL.read(r,n)){LIFE_AUDIO.read();documentIndex=n;hint='';persist();render(false);const el=$('document');el.tabIndex=-1;el.focus();}},
- deduce:id=>{const r=current(),item=deductions(r)[Number(id)];if(!item||r.read.length<2)return;if(item.correct){LIFE_AUDIO.solve();LIFE_MODEL.solve(r);hint='';persist();render(false);}else{LIFE_AUDIO.wrong();hint=T('这一步还超出了材料能说明的范围。再看一眼“交叉核对”，或者换一个理解。','That goes beyond what the records support. Revisit the cross-check or try another interpretation.');render(false);}},
+ const acts={closeDoc:()=>{documentIndex=null;LIFE_AUDIO.read();render(false);},
+ nextDoc:()=>{const r=current(),nxt=(documentIndex+1)%3;if(!r.read.includes(nxt)){LIFE_MODEL.read(r,nxt);persist();}documentIndex=nxt;LIFE_AUDIO.read();render(false);},begin:()=>{screen='home';LIFE_AUDIO.enter();render();},home:()=>{screen='home';render();},settings:()=>{screen='settings';render();},sound:()=>{LIFE_AUDIO.toggle();render(false);},alignClock:()=>{const r=current();if(!r||r.role!=='lin'||r.act!==0||!r.read.includes(2))return;const v=Number($('clockShift')?.value);if(v!==84){LIFE_AUDIO.wrong();hint=T('时钟仍有偏差，继续微调；不会扣分。','The clocks are still apart. Keep adjusting; there is no penalty.');render(false);return;}r.clockAligned=true;r.investigationDone=true;LIFE_AUDIO.solve();persist();render(false);},searchRecord:()=>{const r=current(),query=$('archiveQuery')?.value;if(LIFE_MODEL.searchRecord(r,query)){hint='';LIFE_AUDIO.solve();persist();}else{hint=T('没有找到匹配记录。回看工牌、订单或路线上的编号和地点；可以反复试，不扣分。','No matching record. Recheck the code or place on the badge, order, or route. You can try again without penalty.');LIFE_AUDIO.wrong();}render(false);},dispatchMeal:id=>{const r=current();if(!r||r.role!=='su'||r.act!==0||!r.read.includes(2))return;if(id==='allergy'){r.investigationDone=true;hint='';LIFE_AUDIO.solve();persist();}else{hint=T('再看一眼饭盒上留下的提示：什么信息是安全出餐必需的？','Look again at the labels on the boxes: what information is essential for a safe meal?');LIFE_AUDIO.wrong();}render(false);},triage:id=>{const r=current();if(!r||r.role!=='jian'||r.act!==0||!r.read.includes(2))return;if(id==='care'){r.investigationDone=true;hint='';LIFE_AUDIO.solve();persist();}else{hint=T('她已经说清楚了眼下最急的事，也划定了哪些内容暂不公开。','She has stated what is urgent and what must remain private for now.');LIFE_AUDIO.wrong();}render(false);},routeStep:id=>{const r=current(),result=LIFE_MODEL.advanceRoute(r,Number(id));if(result.done){hint='';LIFE_AUDIO.solve();persist();}else if(!result.ok){hint=T('顺序不对，缓存没有丢；从第九泊位重新拼。','That order does not fit. The cache is safe; rebuild from Berth Nine.');LIFE_AUDIO.wrong();persist();}else{hint='';LIFE_AUDIO.read();persist();}render(false);},select:id=>{selected=id;screen='select';render();},start,restart:id=>ask(T('只重置这个人物的一生？其他人物不受影响。建议先导出备份。','Restart only this character’s life? Other lives are unaffected. Export a backup first.'),()=>{state.runs[id]=LIFE_MODEL.run(id);start(id);}),resume,
+ read:id=>{const r=current(),n=Number(id);if(LIFE_MODEL.read(r,n)){LIFE_AUDIO.read();documentIndex=n;hint='';persist();render(false);const el=$('document');el.tabIndex=-1;el.focus({preventScroll:true});}},
+ deduce:id=>{const r=current(),item=deductions(r)[Number(id)];if(!item||r.read.length<2||deduceLock)return;
+   if(item.correct){deduceLock=true;LIFE_AUDIO.solve();const el=document.querySelector('[data-act="deduce"][data-id="'+id+'"]');
+    if(el){el.classList.add('right');const st=document.createElement('span');st.className='stamp';st.textContent=T('材料支持','Supported');el.appendChild(st);}
+    setTimeout(function(){deduceLock=false;LIFE_MODEL.solve(r);hint='';persist();render(false);},560);}
+   else{LIFE_AUDIO.wrong();hint=T('这一步还超出了材料能说明的范围。再看一眼“交叉核对”，或者换一个理解。','That goes beyond what the records support. Revisit the cross-check or try another interpretation.');
+    render(false);const el=document.querySelector('[data-act="deduce"][data-id="'+id+'"]');if(el){el.classList.add('wrong');setTimeout(function(){el.classList.remove('wrong');},400);}}},
  choose:id=>{if(LIFE_MODEL.choose(current(),Number(id))){LIFE_AUDIO.choose(Number(id));persist();render();}},next:()=>{if(LIFE_MODEL.next(current())){LIFE_AUDIO.enter();documentIndex=null;persist();render();}},journal:()=>{screen='journal';render();},rest:()=>{screen='rest';restMode=null;render();},takeRest:()=>{if(LIFE_MODEL.rest(current())){LIFE_AUDIO.rest();persist();render(false);notify(T('这段休息已记入你这一年的生活。','This break is now part of your year.'));}},
  restGame:id=>{restMode=id;rest.ship=[25,75];rest.paused=false;rest.dials=[0,0,0];if(id==='memory'){const cards=[0,0,1,1,2,2,3,3];for(let i=cards.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[cards[i],cards[j]]=[cards[j],cards[i]];}memory={cards,open:[],matched:[]};}render();},
  dockMove:id=>{if(restMode!=='dock')return;const delta={up:[0,-5],left:[-5,0],down:[0,5],right:[5,0]}[id];if(!delta)return;rest.ship=rest.ship.map((v,i)=>Math.max(5,Math.min(95,v+delta[i])));render(false);},

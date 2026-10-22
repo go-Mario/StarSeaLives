@@ -147,7 +147,7 @@ function nameSprite(text,accent){
  x.textAlign='center';x.textBaseline='middle';
  x.fillStyle='#e6e9e5';x.fillText(text.slice(0,10),256,66);
  const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),depthWrite:false,fog:false}));
- sp.scale.set(6.4,1.6,1);sp.position.y=2.9;return sp;
+ const narrow=innerWidth<560;sp.scale.set(narrow?4.2:6.4,narrow?1.05:1.6,1);sp.position.y=2.9;return sp;
 }
 function makeAvatar(name,accent){
  const g=new THREE.Group();
@@ -497,11 +497,27 @@ $('nameInput').addEventListener('keydown',e=>{if(e.key==='Enter')$('joinBtn').cl
 try{const saved=localStorage.getItem('SS3D_NAME');if(saved)$('nameInput').value=saved;}catch(e){}
 $('joinBtn').addEventListener('click',()=>{try{localStorage.setItem('SS3D_NAME',self.name);}catch(e){}});
 
-addEventListener('resize',()=>{
- camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();
+/* 窄屏（竖屏手机）保持水平视野，否则画面会像被怼近；名字牌同步缩小 */
+const BASE_FOV=58;
+function fitView(){
+ const aspect=innerWidth/innerHeight;
+ camera.aspect=aspect;
+ camera.fov=aspect<1?Math.min(88,2*Math.atan(Math.tan(BASE_FOV*Math.PI/360)/Math.max(.42,aspect))*180/Math.PI):BASE_FOV;
+ camera.updateProjectionMatrix();
  renderer.setSize(innerWidth,innerHeight);
-});
+ const narrow=innerWidth<560;
+ if(self.avatar){
+  const sp=self.avatar.children.find(c=>c.isSprite);
+  if(sp)sp.scale.set(narrow?4.2:6.4,narrow?1.05:1.6,1);
+ }
+ remotes.forEach(r=>{
+  const sp=r.group.children.find(c=>c.isSprite);
+  if(sp)sp.scale.set(narrow?4.2:6.4,narrow?1.05:1.6,1);
+ });
+}
+addEventListener('resize',fitView);
 
 applyLang();
+fitView();
 setNet();
 frame();

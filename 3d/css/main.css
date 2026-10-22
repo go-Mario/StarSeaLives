@@ -66,7 +66,15 @@ kbd{display:inline-block;border:1px solid #50616a;border-bottom-width:2px;border
 .hidden{display:none!important}
 
 @media(max-width:760px){
- .topbar .brand{font-size:13px}
- .pill{font-size:11px;padding:4px 9px}
- .chat{width:min(250px,64vw)}
+ .topbar .brand{font-size:12px;letter-spacing:.02em;max-width:38vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ .pill{font-size:10.5px;padding:4px 8px}
+ .topbar{padding:calc(8px + var(--safe)) 10px 8px;gap:6px}
+ .topbar select{padding:3px 4px;font-size:11px;max-width:86px}
+ .chat{width:min(230px,58vw);bottom:auto;top:calc(56px + var(--safe));left:10px}
+ .chat-log{max-height:20vh}
+}
+@media(pointer:coarse){
+ /* 触屏：聊天记录放在顶部，避开左下摇杆与右下按钮 */
+ .chat{top:calc(56px + var(--safe));bottom:auto;left:10px}
+ .chat-log{max-height:18vh}
 }

@@ -71,6 +71,87 @@
 @media(max-width:650px){.archive-search{padding:16px}.archive-hits{grid-template-columns:1fr}.archive-entry{grid-template-columns:1fr}.archive-entry .button{width:100%}}
 @media(prefers-reduced-motion:reduce){.archive-search,.archive-hit{animation:none!important}}
 
+/* ===================== 进入页 ===================== */
+.cover-wrap{padding:0}
+.cover{position:relative;min-height:100svh;display:grid;place-items:center;overflow:hidden;
+  padding:calc(30px + var(--safe)) 24px 46px;
+  background:radial-gradient(125% 85% at 72% 8%,#1b3644 0%,#122430 42%,#0d1721 68%,#080f16 100%)}
+.cover-sky{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.cover-stars{position:absolute;inset:-12%;display:block;
+  background-image:
+    radial-gradient(1.3px 1.3px at 18% 24%,rgba(255,255,255,.85) 50%,transparent 51%),
+    radial-gradient(1.1px 1.1px at 63% 12%,rgba(255,255,255,.6) 50%,transparent 51%),
+    radial-gradient(1.5px 1.5px at 82% 38%,rgba(255,255,255,.75) 50%,transparent 51%),
+    radial-gradient(1px 1px at 41% 57%,rgba(255,255,255,.5) 50%,transparent 51%),
+    radial-gradient(1.2px 1.2px at 9% 71%,rgba(255,255,255,.55) 50%,transparent 51%),
+    radial-gradient(1px 1px at 74% 79%,rgba(255,255,255,.45) 50%,transparent 51%),
+    radial-gradient(1.6px 1.6px at 27% 88%,rgba(255,255,255,.6) 50%,transparent 51%),
+    radial-gradient(1px 1px at 93% 63%,rgba(255,255,255,.4) 50%,transparent 51%);
+  background-size:340px 340px,270px 270px,420px 420px,220px 220px,380px 380px,300px 300px,460px 460px,250px 250px;
+  animation:coverDrift 90s linear infinite}
+.cover-stars.far{inset:-20%;opacity:.45;background-size:620px 620px,520px 520px,700px 700px;animation-duration:150s;animation-direction:reverse}
+.cover-planet{position:absolute;right:-16%;bottom:-30%;width:min(78vw,760px);aspect-ratio:1;border-radius:50%;
+  background:radial-gradient(circle at 34% 28%,#4a7180 0%,#2c4a58 42%,#152833 72%,#0b141c 100%);
+  box-shadow:0 0 120px 30px rgba(96,150,166,.12);animation:coverFloat 18s ease-in-out infinite}
+.cover-rim{position:absolute;right:-16%;bottom:-30%;width:min(78vw,760px);aspect-ratio:1;border-radius:50%;
+  border:1px solid rgba(223,189,135,.28);box-shadow:inset 0 0 90px rgba(223,189,135,.12);pointer-events:none}
+.cover-inner{position:relative;z-index:1;width:100%;max-width:640px;text-align:center}
+.cover-kicker{font-size:11px;letter-spacing:.3em;color:var(--gold);text-transform:uppercase;margin:0 0 18px}
+.cover-title{font-family:Georgia,"Songti SC",SimSun,serif;font-weight:400;font-size:clamp(52px,11vw,104px);
+  line-height:1.06;letter-spacing:.12em;text-indent:.12em;margin:0 0 20px;color:var(--ink);
+  text-shadow:0 0 42px rgba(223,189,135,.16)}
+.cover-title::after{content:"";display:block;width:56px;height:1px;margin:26px auto 0;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.cover-sub{font-size:15px;line-height:2;color:#c2cdd1;margin:0 0 34px}
+.cover-menu{display:flex;flex-direction:column;gap:11px;width:min(320px,80vw);margin:0 auto}
+.cover-menu .button{padding:14px 22px;border-radius:6px;font-size:15px;letter-spacing:.04em}
+.cover-menu .button.alt{background:transparent;border:1px solid var(--line);color:var(--ink)}
+.cover-menu .button.alt:hover{border-color:var(--gold);color:var(--gold)}
+.cover-foot{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:30px;font-size:12px;color:var(--muted)}
+.cover-foot select{background:#182a34;border:1px solid #50616a;border-radius:5px;padding:5px 7px;font-size:12px;color:var(--ink)}
+.cover-inner>*{animation:coverIn .85s cubic-bezier(.2,.7,.3,1) both}
+.cover-inner>*:nth-child(2){animation-delay:.06s}
+.cover-inner>*:nth-child(3){animation-delay:.14s}
+.cover-inner>*:nth-child(4){animation-delay:.22s}
+.cover-inner>*:nth-child(5){animation-delay:.30s}
+@keyframes coverIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes coverDrift{from{transform:translate3d(0,0,0)}to{transform:translate3d(-3%,-2.2%,0)}}
+@keyframes coverFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+
+/* ===================== 目标条 ===================== */
+.strip{display:flex;align-items:center;gap:12px;margin:16px 0 0;padding:9px 14px;
+  border:1px solid var(--line);border-radius:999px;background:#0f1b24;font-size:11.5px;color:var(--muted)}
+.strip-act{color:var(--gold);letter-spacing:.08em;white-space:nowrap}
+.strip-dots{display:flex;gap:5px;flex:0 0 auto}
+.strip-dots i{width:6px;height:6px;border-radius:50%;background:#2b3d47;transition:background .3s}
+.strip-dots i.done{background:#5f8f7f}
+.strip-dots i.now{background:var(--gold);box-shadow:0 0 0 3px rgba(223,189,135,.16)}
+.strip-goal{margin-left:auto;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.strip-read{white-space:nowrap;color:#82969f}
+@media(max-width:650px){
+  .cover{padding:calc(22px + var(--safe)) 18px 34px}
+  .cover-title{letter-spacing:.08em;text-indent:.08em}
+  .cover-sub{font-size:14px;margin-bottom:26px}
+  .strip{flex-wrap:wrap;gap:7px 10px;padding:8px 12px;font-size:10.5px;border-radius:12px}
+  .strip-goal{margin-left:0;order:3;width:100%;white-space:normal}
+  .strip-read{order:2;margin-left:auto}
+}
+
+/* 程序化聚焦（跳转后把焦点交给标题）不应出现焦点框 */
+h1[tabindex="-1"]:focus,[tabindex="-1"]:focus{outline:none}
+
+/* ===================== 转场与反馈 ===================== */
+.wrap.enter{animation:screenIn .52s cubic-bezier(.2,.7,.3,1) both}
+@keyframes screenIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+button{transition:transform .12s ease,background-color .18s ease,border-color .18s ease,color .18s ease}
+button:active{transform:translateY(1px)}
+.role{transition:transform .2s ease,border-color .2s ease,background-color .2s ease}
+.role:hover{transform:translateY(-3px)}
+.hotspot{transition:transform .18s ease,border-color .18s ease}
+.hotspot:hover{transform:translateY(-2px)}
+.paper,.document{animation:paperIn .42s cubic-bezier(.2,.7,.3,1) both}
+@keyframes paperIn{from{opacity:0;transform:translateY(8px) scale(.995)}to{opacity:1;transform:none}}
+.side .card{animation:screenIn .4s both}
+
 </style>
 </head>
 <body>
@@ -279,7 +360,7 @@ const LIFE_AUDIO=(()=>{
  function stop(){if(!ctx)return;const old=ambient.splice(0);for(const osc of old){try{osc.stop();}catch(e){}}try{bus.gain.setTargetAtTime(.0001,ctx.currentTime,.08);}catch(e){}setTimeout(()=>{if(!enabled&&bus){try{bus.disconnect();}catch(e){}bus=null;}},550);}
  function toggle(){enabled=!enabled;try{localStorage.setItem(KEY,enabled?'on':'off');}catch(e){}if(enabled){if(!start())enabled=false;}else stop();return enabled;}
  document.addEventListener('visibilitychange',()=>{if(!ctx)return;try{if(document.hidden)ctx.suspend();else if(enabled)ctx.resume();}catch(e){}});
- return {toggle,get enabled(){return enabled;},tap(){tone(880,.055,.04);tone(1175,.08,.026,.04);},read(){tone(523,.12,.035);tone(784,.16,.025,.08);},solve(){tone(523,.24,.07);tone(659,.24,.05,.09);tone(784,.3,.05,.18);},choose(n){tone(n?392:587,.2,.055);tone(n?494:740,.26,.04,.07);},wrong(){tone(196,.22,.022,0,'triangle');},rest(){tone(440,.32,.035);tone(587,.42,.025,.12);}};
+ return {toggle,get enabled(){return enabled;},tap(){tone(880,.055,.04);tone(1175,.08,.026,.04);},read(){tone(523,.12,.035);tone(784,.16,.025,.08);},solve(){tone(523,.24,.07);tone(659,.24,.05,.09);tone(784,.3,.05,.18);},choose(n){tone(n?392:587,.2,.055);tone(n?494:740,.26,.04,.07);},wrong(){tone(196,.22,.022,0,'triangle');},rest(){tone(440,.32,.035);tone(587,.42,.025,.12);},enter(){tone(392,.6,.05);tone(523,.7,.04,.14);tone(659,.9,.03,.3);}};
 })();
 
 </script>
@@ -354,7 +435,7 @@ const LIFE_MODEL=(()=>{
 const LIFE=(()=>{
  const KEY='SS_ORDINARY_LIVES_v1',BACKUP=KEY+'.backup';
  const $=id=>document.getElementById(id),esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
- let state=LIFE_MODEL.fresh(),blocked=false,storageProblem='',screen='home',selected=null,documentIndex=null,tab='scene',caseIndex=null,hint='',restMode=null,memory=null,confirmAction=null,lastScreen=null;
+ let state=LIFE_MODEL.fresh(),blocked=false,storageProblem='',screen='title',selected=null,documentIndex=null,tab='scene',caseIndex=null,hint='',restMode=null,memory=null,confirmAction=null,lastScreen=null;
  try{
   const raw=localStorage.getItem(KEY),backup=localStorage.getItem(BACKUP);
   if(raw!==null||backup!==null){
@@ -420,16 +501,43 @@ const LIFE=(()=>{
  if(restMode==='dock')body='<p>'+T('把小船移到金色泊位。支持方向键与屏幕按钮；没有燃料惩罚。','Move the ship into the golden berth. Use arrow keys or the buttons; there is no fuel penalty.')+'</p><svg class="dock-map" viewBox="0 0 100 100" role="img" aria-label="'+T('对接练习，小船与目标泊位','Docking practice, ship and target berth')+'"><rect width="100" height="100" rx="4" fill="#0a1522"/><path d="M80 10v40H65V10z" fill="#3d5963"/><rect x="63" y="25" width="12" height="10" fill="none" stroke="#e8c88b"/><circle cx="15" cy="24" r=".4" fill="white"/><circle cx="42" cy="60" r=".7" fill="white"/><path d="M'+rest.ship[0]+' '+(rest.ship[1]-3)+'l4 6-4-2-4 2z" fill="#d3dfd7"/></svg><p role="status">'+(rest.ship[0]===70&&rest.ship[1]===30?T('对接完成。欢迎回家。','Docking complete. Welcome home.'):T('位置 ','Position ')+rest.ship.join(' / '))+'</p><div class="dock-controls">'+[['up','↑'],['left','←'],['down','↓'],['right','→']].map(([id,arrow])=>'<button class="button alt" data-act="dockMove" data-id="'+id+'" aria-label="'+T({up:'向上',left:'向左',down:'向下',right:'向右'}[id],id)+'">'+arrow+'</button>').join('')+'</div>';
  if(restMode==='tune')body='<p>'+T('窗边便签：24 / 68 / 41。没有倒计时。','The note reads: 24 / 68 / 41. There is no timer.')+'</p><div class="tuning">'+[24,68,41].map((v,i)=>'<label>'+T('旋钮 ','Dial ')+(i+1)+'<output id="dialOut'+i+'">'+rest.dials[i]+'</output><input type="range" min="0" max="100" value="'+rest.dials[i]+'" data-dial="'+i+'" aria-label="'+T('旋钮 ','Dial ')+(i+1)+'"></label>').join('')+'</div><p id="tuneStatus" role="status">'+(rest.dials.every((v,i)=>v===[24,68,41][i])?T('频道接通了。有人说：晚上好。','A connection. Someone says: good evening.'):'')+'</p>';
  return '<section class="rest-center"><h1>'+T('休息舱','Rest cabin')+'</h1>'+body+'<p>'+button(T('返回休息舱','Back to the cabin'),'rest','','button alt')+'</p></section>';}
- function render(focus=true){const prev=window.scrollY;const enter=screen!==lastScreen;lastScreen=screen;document.documentElement.lang=state.language==='zh'?'zh-CN':'en';document.title=T('星海公约 · 人间星海','Stellar Covenant · Ordinary Lives');let content=screen==='home'?home():screen==='select'?selection():screen==='settings'?settings():screen==='journal'?journal():screen==='cases'?cases():screen==='case'?casePage():screen==='rest'?rest():play();$('app').innerHTML='<div class="wrap'+(enter?' enter':'')+'">'+header()+(screen==='settings'?'':warning())+content+'</div>';if(focus){window.scrollTo(0,0);const h=$('app').querySelector('h1');if(h){h.tabIndex=-1;h.focus({preventScroll:true});}}else window.scrollTo(0,prev);}
+ function titleScreen(){
+  const r=current(),role=r?LIVES.roles[r.role]:null;
+  return '<section class="cover">'+(warning()||'')
+   +'<div class="cover-sky" aria-hidden="true"><i class="cover-stars"></i><i class="cover-stars far"></i><span class="cover-planet"></span><span class="cover-rim"></span></div>'
+   +'<div class="cover-inner">'
+   +'<p class="cover-kicker">'+T('2077 · 归港空间站','2077 · HOMEWARD STATION')+'</p>'
+   +'<h1 class="cover-title">'+T('人间星海','Ordinary Lives')+'</h1>'
+   +'<p class="cover-sub">'+T('一座空间站，四个人，五十年。<br>你只知道 ta 能知道的事。','One station. Four people. Fifty years.<br>You know only what they can know.')+'</p>'
+   +'<div class="cover-menu">'
+   +(role?button(T('继续 '+role.name+' 的人生','Continue as '+role.name),'resume','','button'):button(T('开始','Begin'),'begin','','button'))
+   +(role?button(T('换一个人','Choose another life'),'begin','','button alt'):'')
+   +button(T('设置与存档','Settings & saves'),'settings','','button alt')
+   +'</div>'
+   +'<div class="cover-foot">'
+   +button(T('音效：'+(LIFE_AUDIO.enabled?'开':'关'),'Sound: '+(LIFE_AUDIO.enabled?'on':'off')),'sound','','quiet')
+   +'<label><span class="sr-only">'+T('语言','Language')+'</span><select id="language" aria-label="'+T('语言','Language')+'"><option value="zh"'+(state.language==='zh'?' selected':'')+'>中文</option><option value="en"'+(state.language==='en'?' selected':'')+'>English</option></select></label>'
+   +'</div></div></section>';
+ }
+ function progressStrip(){
+  const r=current();if(!r||r.act>=6)return '';
+  const read=r.read.length;
+  const goal=read<2?T('读两份材料','Read two records'):(r.act===0&&(!r.investigationDone||!r.searchDone)?T('完成本幕调查','Finish the investigation'):T('做出判断','Make your call'));
+  return '<div class="strip"><span class="strip-act">'+T('第 ','Act ')+(r.act+1)+T('/6 幕','/6')+'</span>'
+   +'<span class="strip-dots">'+[0,1,2,3,4,5].map(i=>'<i class="'+(i<r.act?'done':i===r.act?'now':'')+'"></i>').join('')+'</span>'
+   +'<span class="strip-goal">'+goal+'</span>'
+   +'<span class="strip-read">'+T('材料 ','Records ')+read+'/2</span></div>';
+ }
+ function render(focus=true){const prev=window.scrollY;const enter=screen!==lastScreen;lastScreen=screen;document.documentElement.lang=state.language==='zh'?'zh-CN':'en';document.title=T('星海公约 · 人间星海','Stellar Covenant · Ordinary Lives');const isTitle=screen==='title';let content=isTitle?titleScreen():screen==='home'?home():screen==='select'?selection():screen==='settings'?settings():screen==='journal'?journal():screen==='cases'?cases():screen==='case'?casePage():screen==='rest'?rest():play();$('app').innerHTML=isTitle?'<div class="cover-wrap'+(enter?' enter':'')+'">'+content+'</div>':'<div class="wrap'+(enter?' enter':'')+'">'+header()+(screen==='settings'?'':warning())+(screen==='play'?progressStrip():'')+content+'</div>';if(focus){window.scrollTo(0,0);const h=$('app').querySelector('h1');if(h){h.tabIndex=-1;h.focus({preventScroll:true});}}else window.scrollTo(0,prev);}
  function ask(message,fn){confirmAction=fn;const modal=document.createElement('div');modal.className='modal-back';modal.id='confirmModal';modal.innerHTML='<section class="modal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle"><h2 id="confirmTitle">'+T('请确认','Please confirm')+'</h2><p>'+esc(message)+'</p><div class="actions">'+button(T('取消','Cancel'),'cancel','','button alt')+button(T('确认','Confirm'),'confirm')+'</div></section>';$('app').appendChild(modal);modal.querySelector('[data-act="cancel"]').focus();}
  function closeAsk(){const m=$('confirmModal');if(m)m.remove();confirmAction=null;}
  function resume(){if(!current()){screen='home';}else screen='play';documentIndex=null;hint='';restMode=null;render();}
  function start(id){if(!LIVES.roles[id])return;if(!state.runs[id])state.runs[id]=LIFE_MODEL.run(id);state.active=id;persist();resume();}
  function exportSave(){const data=JSON.stringify({format:'StellarLives',exportedAt:new Date().toISOString(),state},null,2),url=URL.createObjectURL(new Blob([data],{type:'application/json'})),a=document.createElement('a');a.href=url;a.download='Stellar-Covenant-Lives.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),30000);}
- const acts={home:()=>{screen='home';render();},settings:()=>{screen='settings';render();},sound:()=>{LIFE_AUDIO.toggle();render(false);},alignClock:()=>{const r=current();if(!r||r.role!=='lin'||r.act!==0||!r.read.includes(2))return;const v=Number($('clockShift')?.value);if(v!==84){LIFE_AUDIO.wrong();hint=T('时钟仍有偏差，继续微调；不会扣分。','The clocks are still apart. Keep adjusting; there is no penalty.');render(false);return;}r.clockAligned=true;r.investigationDone=true;LIFE_AUDIO.solve();persist();render(false);},searchRecord:()=>{const r=current(),query=$('archiveQuery')?.value;if(LIFE_MODEL.searchRecord(r,query)){hint='';LIFE_AUDIO.solve();persist();}else{hint=T('没有找到匹配记录。回看工牌、订单或路线上的编号和地点；可以反复试，不扣分。','No matching record. Recheck the code or place on the badge, order, or route. You can try again without penalty.');LIFE_AUDIO.wrong();}render(false);},dispatchMeal:id=>{const r=current();if(!r||r.role!=='su'||r.act!==0||!r.read.includes(2))return;if(id==='allergy'){r.investigationDone=true;hint='';LIFE_AUDIO.solve();persist();}else{hint=T('再看一眼饭盒上留下的提示：什么信息是安全出餐必需的？','Look again at the labels on the boxes: what information is essential for a safe meal?');LIFE_AUDIO.wrong();}render(false);},triage:id=>{const r=current();if(!r||r.role!=='jian'||r.act!==0||!r.read.includes(2))return;if(id==='care'){r.investigationDone=true;hint='';LIFE_AUDIO.solve();persist();}else{hint=T('她已经说清楚了眼下最急的事，也划定了哪些内容暂不公开。','She has stated what is urgent and what must remain private for now.');LIFE_AUDIO.wrong();}render(false);},routeStep:id=>{const r=current(),result=LIFE_MODEL.advanceRoute(r,Number(id));if(result.done){hint='';LIFE_AUDIO.solve();persist();}else if(!result.ok){hint=T('顺序不对，缓存没有丢；从第九泊位重新拼。','That order does not fit. The cache is safe; rebuild from Berth Nine.');LIFE_AUDIO.wrong();persist();}else{hint='';LIFE_AUDIO.read();persist();}render(false);},select:id=>{selected=id;screen='select';render();},start,restart:id=>ask(T('只重置这个人物的一生？其他人物不受影响。建议先导出备份。','Restart only this character’s life? Other lives are unaffected. Export a backup first.'),()=>{state.runs[id]=LIFE_MODEL.run(id);start(id);}),resume,
+ const acts={begin:()=>{screen='home';LIFE_AUDIO.enter();render();},home:()=>{screen='home';render();},settings:()=>{screen='settings';render();},sound:()=>{LIFE_AUDIO.toggle();render(false);},alignClock:()=>{const r=current();if(!r||r.role!=='lin'||r.act!==0||!r.read.includes(2))return;const v=Number($('clockShift')?.value);if(v!==84){LIFE_AUDIO.wrong();hint=T('时钟仍有偏差，继续微调；不会扣分。','The clocks are still apart. Keep adjusting; there is no penalty.');render(false);return;}r.clockAligned=true;r.investigationDone=true;LIFE_AUDIO.solve();persist();render(false);},searchRecord:()=>{const r=current(),query=$('archiveQuery')?.value;if(LIFE_MODEL.searchRecord(r,query)){hint='';LIFE_AUDIO.solve();persist();}else{hint=T('没有找到匹配记录。回看工牌、订单或路线上的编号和地点；可以反复试，不扣分。','No matching record. Recheck the code or place on the badge, order, or route. You can try again without penalty.');LIFE_AUDIO.wrong();}render(false);},dispatchMeal:id=>{const r=current();if(!r||r.role!=='su'||r.act!==0||!r.read.includes(2))return;if(id==='allergy'){r.investigationDone=true;hint='';LIFE_AUDIO.solve();persist();}else{hint=T('再看一眼饭盒上留下的提示：什么信息是安全出餐必需的？','Look again at the labels on the boxes: what information is essential for a safe meal?');LIFE_AUDIO.wrong();}render(false);},triage:id=>{const r=current();if(!r||r.role!=='jian'||r.act!==0||!r.read.includes(2))return;if(id==='care'){r.investigationDone=true;hint='';LIFE_AUDIO.solve();persist();}else{hint=T('她已经说清楚了眼下最急的事，也划定了哪些内容暂不公开。','She has stated what is urgent and what must remain private for now.');LIFE_AUDIO.wrong();}render(false);},routeStep:id=>{const r=current(),result=LIFE_MODEL.advanceRoute(r,Number(id));if(result.done){hint='';LIFE_AUDIO.solve();persist();}else if(!result.ok){hint=T('顺序不对，缓存没有丢；从第九泊位重新拼。','That order does not fit. The cache is safe; rebuild from Berth Nine.');LIFE_AUDIO.wrong();persist();}else{hint='';LIFE_AUDIO.read();persist();}render(false);},select:id=>{selected=id;screen='select';render();},start,restart:id=>ask(T('只重置这个人物的一生？其他人物不受影响。建议先导出备份。','Restart only this character’s life? Other lives are unaffected. Export a backup first.'),()=>{state.runs[id]=LIFE_MODEL.run(id);start(id);}),resume,
  read:id=>{const r=current(),n=Number(id);if(LIFE_MODEL.read(r,n)){LIFE_AUDIO.read();documentIndex=n;hint='';persist();render(false);const el=$('document');el.tabIndex=-1;el.focus();}},
  deduce:id=>{const r=current(),item=deductions(r)[Number(id)];if(!item||r.read.length<2)return;if(item.correct){LIFE_AUDIO.solve();LIFE_MODEL.solve(r);hint='';persist();render(false);}else{LIFE_AUDIO.wrong();hint=T('这一步还超出了材料能说明的范围。再看一眼“交叉核对”，或者换一个理解。','That goes beyond what the records support. Revisit the cross-check or try another interpretation.');render(false);}},
- choose:id=>{if(LIFE_MODEL.choose(current(),Number(id))){LIFE_AUDIO.choose(Number(id));persist();render();}},next:()=>{if(LIFE_MODEL.next(current())){LIFE_AUDIO.read();documentIndex=null;persist();render();}},journal:()=>{screen='journal';render();},rest:()=>{screen='rest';restMode=null;render();},takeRest:()=>{if(LIFE_MODEL.rest(current())){LIFE_AUDIO.rest();persist();render(false);notify(T('这段休息已记入你这一年的生活。','This break is now part of your year.'));}},
+ choose:id=>{if(LIFE_MODEL.choose(current(),Number(id))){LIFE_AUDIO.choose(Number(id));persist();render();}},next:()=>{if(LIFE_MODEL.next(current())){LIFE_AUDIO.enter();documentIndex=null;persist();render();}},journal:()=>{screen='journal';render();},rest:()=>{screen='rest';restMode=null;render();},takeRest:()=>{if(LIFE_MODEL.rest(current())){LIFE_AUDIO.rest();persist();render(false);notify(T('这段休息已记入你这一年的生活。','This break is now part of your year.'));}},
  restGame:id=>{restMode=id;rest.ship=[25,75];rest.paused=false;rest.dials=[0,0,0];if(id==='memory'){const cards=[0,0,1,1,2,2,3,3];for(let i=cards.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[cards[i],cards[j]]=[cards[j],cards[i]];}memory={cards,open:[],matched:[]};}render();},
  dockMove:id=>{if(restMode!=='dock')return;const delta={up:[0,-5],left:[-5,0],down:[0,5],right:[5,0]}[id];if(!delta)return;rest.ship=rest.ship.map((v,i)=>Math.max(5,Math.min(95,v+delta[i])));render(false);},
  flip:id=>{const i=Number(id);if(!memory||!Number.isInteger(i)||i<0||i>7||memory.matched.includes(i)||memory.open.includes(i))return;if(memory.open.length===2)memory.open=[];memory.open.push(i);if(memory.open.length===2&&memory.cards[memory.open[0]]===memory.cards[i]){memory.matched.push(...memory.open);memory.open=[];}render(false);},breath:()=>{rest.paused=!rest.paused;render(false);},

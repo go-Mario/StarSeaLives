@@ -4,6 +4,9 @@ const BASE=process.env.SS_URL||'http://127.0.0.1:8766/index.html',OUT=process.ar
  for(const [language,width,height] of [['zh',1365,900],['en',390,844]]){
   const ctx=await browser.newContext({viewport:{width,height}}),page=await ctx.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.goto(BASE);await page.selectOption('#language',language);assert.match(await page.locator('[data-act=\"sound\"]').textContent(),/Sound|音效/);await page.click('[data-act=\"sound\"]');assert.equal(await page.evaluate(()=>LIFE_AUDIO.enabled),true);await page.click('[data-act=\"sound\"]');
+  await page.screenshot({path:path.join(OUT,language+'-cover.png'),fullPage:true});
+  assert.equal(await page.locator('.cover-title').isVisible(),true,'entry cover is missing');
+  await page.click('[data-act="begin"]');
   await page.screenshot({path:path.join(OUT,language+'-home.png'),fullPage:true});
   for(const role of ['lin','su','xu','jian']){
    await page.click('[data-act="select"][data-id="'+role+'"]');await page.click('[data-act="start"]');
@@ -56,11 +59,11 @@ const BASE=process.env.SS_URL||'http://127.0.0.1:8766/index.html',OUT=process.ar
  }
  const ctx=await browser.newContext(),page=await ctx.newPage();await page.goto(BASE);
  await page.evaluate(()=>{localStorage.setItem('SS_ORDINARY_LIVES_v1','broken');localStorage.removeItem('SS_ORDINARY_LIVES_v1.backup');});await page.reload();
- assert.equal(await page.evaluate(()=>LIFE.blocked),true);await page.click('[data-act="select"][data-id="su"]');await page.click('[data-act="start"]');
+ assert.equal(await page.evaluate(()=>LIFE.blocked),true);await page.click('[data-act="begin"]');await page.click('[data-act="select"][data-id="su"]');await page.click('[data-act="start"]');
  assert.equal(await page.evaluate(()=>localStorage.getItem('SS_ORDINARY_LIVES_v1')),'broken');
  const network=[];page.on('request',r=>{if(/^https?:/.test(r.url()))network.push(r.url());});
  await page.goto(require('node:url').pathToFileURL(path.join(__dirname,'../../dist/index.html')).href);
- await page.click('[data-act="select"][data-id="lin"]');await page.click('[data-act="start"]');await page.click('.hotspot[data-id="0"]');
+ await page.click('[data-act="begin"]');await page.click('[data-act="select"][data-id="lin"]');await page.click('[data-act="start"]');await page.click('.hotspot[data-id="0"]');
  assert.deepEqual(network,[]);console.log('ok corrupt-save protection and offline file without network');await ctx.close();
  const recovery=await browser.newContext(),rp=await recovery.newPage();await rp.goto(BASE);
  await rp.evaluate(()=>{const s=LIFE_MODEL.fresh();s.active='lin';s.runs.lin=LIFE_MODEL.run('lin');s.runs.lin.read=[0];localStorage.setItem('SS_ORDINARY_LIVES_v1.backup',JSON.stringify(s));localStorage.setItem('SS_ORDINARY_LIVES_v1','broken');localStorage.setItem('SS_LIVES_v1','legacy-test');});

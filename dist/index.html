@@ -34,12 +34,12 @@
 .life-edition{display:block;width:max-content;max-width:100%;margin:12px auto 0;color:#554a37;text-decoration:none;font-size:12px;letter-spacing:.03em;padding:8px 14px;border:1px solid #ac9b7b;border-radius:4px;transition:background .2s,transform .2s}
 .life-edition:hover{background:#e5dcc9;transform:translateY(-1px)}
 @media(prefers-reduced-motion:reduce){.hero-art,.hotspot:not(.read){animation:none!important}.hero,.intro-grid,.layout,.ending,.journal,.settings,.rest-center,.scene{animation:none!important}.role,.life-edition,.hotspot{transition:none!important}}
-.clock-lab{margin:22px 0;padding:20px;border:1px solid #9e9a7b;background:linear-gradient(145deg,#e8e1d2,#d6d2c4);border-radius:7px;color:#263b43;box-shadow:0 10px 26px #06111a25;animation:livesArrive .35s ease-out both}
+.clock-lab{margin:22px 0;padding:20px;border:1px solid #9e9a7b;background:linear-gradient(145deg,#e8e1d2,#d6d2c4);border-radius:7px;color:#263b43;box-shadow:0 10px 26px #06111a25}
 .clock-lab h3{font-family:Georgia,"Songti SC",serif;font-size:21px;font-weight:500;margin-top:6px}.clock-lab p{font-size:13px!important;line-height:1.7!important;color:#445a60;margin:8px 0 16px!important}.clock-readings{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}.clock-readings span{display:block;padding:12px;border:1px solid #9ba8a1;border-radius:5px;background:#f5f1e7;font-size:11px;color:#5a6e70}.clock-readings b{display:block;font-family:ui-monospace,monospace;font-size:21px;color:#233b45}.clock-slider{display:block;font-size:12px;color:#3a5158;margin:16px 0}.clock-slider output{font-weight:700}.clock-slider input{display:block;width:100%;accent-color:#9a743c;margin-top:7px}.edition-link{text-decoration:none;font-size:12px;white-space:nowrap}
 @media(max-width:600px){.top-right{gap:4px}.edition-link{order:4;width:100%;text-align:center}.clock-lab{padding:15px}.clock-readings b{font-size:17px}}
 .clock-lab.clock-ok{font-size:14px;font-weight:600;background:#dce3d5;border-color:#78917f;color:#294b3d}
 
-.role-action{margin:22px 0;padding:22px;border:1px solid #9e9a7b;background:linear-gradient(145deg,#e8e1d2,#d6d2c4);border-radius:7px;color:#263b43;box-shadow:0 10px 26px #06111a25;animation:livesArrive .35s ease-out both}
+.role-action{margin:22px 0;padding:22px;border:1px solid #9e9a7b;background:linear-gradient(145deg,#e8e1d2,#d6d2c4);border-radius:7px;color:#263b43;box-shadow:0 10px 26px #06111a25}
 .role-action h3{font-family:Georgia,"Songti SC",serif;font-size:21px;font-weight:500;margin-top:6px}
 .role-action p{font-size:13px!important;line-height:1.75!important;color:#445a60;margin:8px 0 14px!important}
 .role-action .action-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:14px}
@@ -53,7 +53,7 @@
 @media(max-width:650px){.role-action{padding:16px}.role-action .action-options{grid-template-columns:1fr}.route-progress{gap:4px}.route-progress li{font-size:11px;padding:7px 3px}}
 
 /* Searchable station records turn clue-reading into a small, source-aware investigation. */
-.archive-search{margin:20px 0;padding:22px;border:1px solid #839398;border-radius:7px;background:linear-gradient(145deg,#e9e4d7,#d7dfd9);color:#263b43;box-shadow:0 12px 28px #06111a24;animation:livesArrive .35s ease-out both}
+.archive-search{margin:20px 0;padding:22px;border:1px solid #839398;border-radius:7px;background:linear-gradient(145deg,#e9e4d7,#d7dfd9);color:#263b43;box-shadow:0 12px 28px #06111a24}
 .archive-search h3{font-family:Georgia,"Songti SC",serif;font-size:22px;font-weight:500;margin-top:6px}
 .archive-search p{font-size:13px!important;line-height:1.75!important;color:#455b61;margin:8px 0 14px!important}
 .archive-form label{display:block;font-size:12px;font-weight:600;color:#344b52;margin-bottom:6px}
@@ -62,7 +62,7 @@
 .archive-entry .button{white-space:nowrap}
 .archive-search .archive-hint,.archive-search .archive-foot{font-size:11px!important;color:#627479;margin-bottom:0!important}
 .archive-hits{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:15px}
-.archive-hit{padding:14px;border:1px solid #a6b2ac;border-radius:5px;background:#f6f3e9;animation:livesArrive .4s ease-out both}
+.archive-hit{padding:14px;border:1px solid #a6b2ac;border-radius:5px;background:#f6f3e9}
 .archive-hit h4{margin:0 0 6px;font-size:13px;color:#2f474e}
 .archive-hit p{margin:0 0 10px!important;font-size:12px!important}
 .archive-hit small{display:block;padding-top:8px;border-top:1px solid #c2cbc1;color:#6c7774;font-size:10px;letter-spacing:.03em}
@@ -108,11 +108,14 @@
 .cover-menu .button.alt:hover{border-color:var(--gold);color:var(--gold)}
 .cover-foot{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:30px;font-size:12px;color:var(--muted)}
 .cover-foot select{background:#182a34;border:1px solid #50616a;border-radius:5px;padding:5px 7px;font-size:12px;color:var(--ink)}
-.cover-inner>*{animation:coverIn .85s cubic-bezier(.2,.7,.3,1) both}
-.cover-inner>*:nth-child(2){animation-delay:.06s}
-.cover-inner>*:nth-child(3){animation-delay:.14s}
-.cover-inner>*:nth-child(4){animation-delay:.22s}
-.cover-inner>*:nth-child(5){animation-delay:.30s}
+/* 入场动画只在真正换屏时播放一次。
+   render() 每次交互都会重建 #app，若不加 .enter 限定，动画会被反复重放，
+   导致整屏反复淡入淡出、标题来回位移（此前"点击频闪移位"的真正原因）。 */
+.cover-wrap.enter .cover-inner>*{animation:coverIn .85s cubic-bezier(.2,.7,.3,1) both}
+.cover-wrap.enter .cover-inner>*:nth-child(2){animation-delay:.06s}
+.cover-wrap.enter .cover-inner>*:nth-child(3){animation-delay:.14s}
+.cover-wrap.enter .cover-inner>*:nth-child(4){animation-delay:.22s}
+.cover-wrap.enter .cover-inner>*:nth-child(5){animation-delay:.30s}
 @keyframes coverIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 @keyframes coverDrift{from{transform:translate3d(0,0,0)}to{transform:translate3d(-3%,-2.2%,0)}}
 @keyframes coverFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
@@ -181,12 +184,13 @@ button:active{transform:translateY(1px)}
 
 /* ===================== 记录卡浮层 ===================== */
 .reader{position:fixed;inset:0;z-index:60;display:grid;place-items:center;padding:20px}
-.reader-back{position:absolute;inset:0;background:rgba(4,8,12,.72);backdrop-filter:blur(4px);animation:fadeIn .22s ease both}
+.reader-back{position:absolute;inset:0;background:rgba(4,8,12,.72);backdrop-filter:blur(4px)}
+.reader.fresh .reader-back{animation:fadeIn .22s ease both}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 .reader-card{position:relative;width:min(680px,94vw);max-height:82vh;overflow:auto;padding:34px 38px 28px;
   background:var(--paper);color:var(--dark);border-radius:6px;
-  box-shadow:0 40px 90px rgba(0,0,0,.55),0 0 0 1px rgba(120,100,70,.35);
-  animation:cardIn .34s cubic-bezier(.2,.7,.3,1) both}
+  box-shadow:0 40px 90px rgba(0,0,0,.55),0 0 0 1px rgba(120,100,70,.35)}
+.reader.fresh .reader-card{animation:cardIn .34s cubic-bezier(.2,.7,.3,1) both}
 @keyframes cardIn{from{opacity:0;transform:translateY(18px) scale(.98)}to{opacity:1;transform:none}}
 .reader-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;border-bottom:1px solid #c9bfa9;padding-bottom:10px}
 .reader-top .eyebrow{color:#6c7461}
@@ -569,7 +573,7 @@ const LIFE_MODEL=(()=>{
 const LIFE=(()=>{
  const KEY='SS_ORDINARY_LIVES_v1',BACKUP=KEY+'.backup';
  const $=id=>document.getElementById(id),esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
- let state=LIFE_MODEL.fresh(),blocked=false,deduceLock=false,storageProblem='',screen='title',selected=null,documentIndex=null,tab='scene',caseIndex=null,hint='',restMode=null,memory=null,confirmAction=null,lastScreen=null;
+ let state=LIFE_MODEL.fresh(),blocked=false,deduceLock=false,storageProblem='',screen='title',selected=null,documentIndex=null,tab='scene',caseIndex=null,hint='',restMode=null,memory=null,confirmAction=null,lastScreen=null,lastDocIndex=null,docFresh=false;
  try{
   const raw=localStorage.getItem(KEY),backup=localStorage.getItem(BACKUP);
   if(raw!==null||backup!==null){
@@ -696,7 +700,7 @@ function clockPuzzle(r){
  function readerCard(r,idx){
   const d=SCENES[r.role][r.act],title=E(idx===2?B('交叉核对','Cross-check'):d.docs[idx].name),text=idx===2?esc(lateClue(r)):E(d.docs[idx].text);
   const source=idx===2?B('两份记录放在一起','Two records side by side'):B('现场取得','Taken from the scene');
-  return '<div class="reader" id="document" role="dialog" aria-modal="true" aria-label="'+title+'">'
+  return '<div class="reader'+(docFresh?' fresh':'')+'" id="document" role="dialog" aria-modal="true" aria-label="'+title+'">'
    +'<div class="reader-back" data-act="closeDoc"></div>'
    +'<article class="reader-card paper"><div class="reader-top"><span class="eyebrow">'+E(source)+'</span><span class="reader-no">'+T('记录 ','Record ')+(idx===2?'03':'0'+(idx+1))+' / 03</span></div>'
    +'<h2>'+title+'</h2><p class="reader-text">'+text+'</p>'
@@ -760,7 +764,10 @@ function clockPuzzle(r){
   card.addEventListener('click',close);
   setTimeout(close,2100);
  }
- function render(focus=true){const prev=window.scrollY;const enter=screen!==lastScreen;lastScreen=screen;document.documentElement.lang=state.language==='zh'?'zh-CN':'en';document.title=T('星海公约 · 人间星海','Stellar Covenant · Ordinary Lives');const isTitle=screen==='title';let content=isTitle?titleScreen():screen==='home'?home():screen==='select'?selection():screen==='settings'?settings():screen==='journal'?journal():screen==='cases'?cases():screen==='case'?casePage():screen==='rest'?rest():play();$('app').innerHTML=isTitle?'<div class="cover-wrap'+(enter?' enter':'')+'">'+content+'</div>':'<div class="wrap'+(enter?' enter':'')+'">'+header()+(screen==='settings'?'':warning())+(screen==='play'?progressStrip():'')+content+'</div>';if(focus){window.scrollTo(0,0);const h=$('app').querySelector('h1');if(h){h.tabIndex=-1;h.focus({preventScroll:true});}}else window.scrollTo(0,prev);}
+ function render(focus=true){const prev=window.scrollY;const enter=screen!==lastScreen;lastScreen=screen;
+  // 记录卡只在"首次打开"时滑入；同一张卡内翻页(nextDoc)时不再重复位移，避免抖动
+  docFresh=(documentIndex!==lastDocIndex);lastDocIndex=documentIndex;
+  document.documentElement.lang=state.language==='zh'?'zh-CN':'en';document.title=T('星海公约 · 人间星海','Stellar Covenant · Ordinary Lives');const isTitle=screen==='title';let content=isTitle?titleScreen():screen==='home'?home():screen==='select'?selection():screen==='settings'?settings():screen==='journal'?journal():screen==='cases'?cases():screen==='case'?casePage():screen==='rest'?rest():play();$('app').innerHTML=isTitle?'<div class="cover-wrap'+(enter?' enter':'')+'">'+content+'</div>':'<div class="wrap'+(enter?' enter':'')+'">'+header()+(screen==='settings'?'':warning())+(screen==='play'?progressStrip():'')+content+'</div>';if(focus){window.scrollTo(0,0);const h=$('app').querySelector('h1');if(h){h.tabIndex=-1;h.focus({preventScroll:true});}}else window.scrollTo(0,prev);}
  function ask(message,fn){confirmAction=fn;const modal=document.createElement('div');modal.className='modal-back';modal.id='confirmModal';modal.innerHTML='<section class="modal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle"><h2 id="confirmTitle">'+T('请确认','Please confirm')+'</h2><p>'+esc(message)+'</p><div class="actions">'+button(T('取消','Cancel'),'cancel','','button alt')+button(T('确认','Confirm'),'confirm')+'</div></section>';$('app').appendChild(modal);modal.querySelector('[data-act="cancel"]').focus();}
  function closeAsk(){const m=$('confirmModal');if(m)m.remove();confirmAction=null;}
  function resume(){if(!current()){screen='home';}else{screen='play';LIFE_AUDIO.pad(current().act);}documentIndex=null;hint='';restMode=null;render();}

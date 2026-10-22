@@ -2,7 +2,7 @@
 const LIFE=(()=>{
  const KEY='SS_ORDINARY_LIVES_v1',BACKUP=KEY+'.backup';
  const $=id=>document.getElementById(id),esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
- let state=LIFE_MODEL.fresh(),blocked=false,deduceLock=false,storageProblem='',screen='title',selected=null,documentIndex=null,tab='scene',caseIndex=null,hint='',restMode=null,memory=null,confirmAction=null,lastScreen=null;
+ let state=LIFE_MODEL.fresh(),blocked=false,deduceLock=false,storageProblem='',screen='title',selected=null,documentIndex=null,tab='scene',caseIndex=null,hint='',restMode=null,memory=null,confirmAction=null,lastScreen=null,lastDocIndex=null,docFresh=false;
  try{
   const raw=localStorage.getItem(KEY),backup=localStorage.getItem(BACKUP);
   if(raw!==null||backup!==null){
@@ -129,7 +129,7 @@ function clockPuzzle(r){
  function readerCard(r,idx){
   const d=SCENES[r.role][r.act],title=E(idx===2?B('交叉核对','Cross-check'):d.docs[idx].name),text=idx===2?esc(lateClue(r)):E(d.docs[idx].text);
   const source=idx===2?B('两份记录放在一起','Two records side by side'):B('现场取得','Taken from the scene');
-  return '<div class="reader" id="document" role="dialog" aria-modal="true" aria-label="'+title+'">'
+  return '<div class="reader'+(docFresh?' fresh':'')+'" id="document" role="dialog" aria-modal="true" aria-label="'+title+'">'
    +'<div class="reader-back" data-act="closeDoc"></div>'
    +'<article class="reader-card paper"><div class="reader-top"><span class="eyebrow">'+E(source)+'</span><span class="reader-no">'+T('记录 ','Record ')+(idx===2?'03':'0'+(idx+1))+' / 03</span></div>'
    +'<h2>'+title+'</h2><p class="reader-text">'+text+'</p>'
@@ -193,7 +193,10 @@ function clockPuzzle(r){
   card.addEventListener('click',close);
   setTimeout(close,2100);
  }
- function render(focus=true){const prev=window.scrollY;const enter=screen!==lastScreen;lastScreen=screen;document.documentElement.lang=state.language==='zh'?'zh-CN':'en';document.title=T('星海公约 · 人间星海','Stellar Covenant · Ordinary Lives');const isTitle=screen==='title';let content=isTitle?titleScreen():screen==='home'?home():screen==='select'?selection():screen==='settings'?settings():screen==='journal'?journal():screen==='cases'?cases():screen==='case'?casePage():screen==='rest'?rest():play();$('app').innerHTML=isTitle?'<div class="cover-wrap'+(enter?' enter':'')+'">'+content+'</div>':'<div class="wrap'+(enter?' enter':'')+'">'+header()+(screen==='settings'?'':warning())+(screen==='play'?progressStrip():'')+content+'</div>';if(focus){window.scrollTo(0,0);const h=$('app').querySelector('h1');if(h){h.tabIndex=-1;h.focus({preventScroll:true});}}else window.scrollTo(0,prev);}
+ function render(focus=true){const prev=window.scrollY;const enter=screen!==lastScreen;lastScreen=screen;
+  // 记录卡只在"首次打开"时滑入；同一张卡内翻页(nextDoc)时不再重复位移，避免抖动
+  docFresh=(documentIndex!==lastDocIndex);lastDocIndex=documentIndex;
+  document.documentElement.lang=state.language==='zh'?'zh-CN':'en';document.title=T('星海公约 · 人间星海','Stellar Covenant · Ordinary Lives');const isTitle=screen==='title';let content=isTitle?titleScreen():screen==='home'?home():screen==='select'?selection():screen==='settings'?settings():screen==='journal'?journal():screen==='cases'?cases():screen==='case'?casePage():screen==='rest'?rest():play();$('app').innerHTML=isTitle?'<div class="cover-wrap'+(enter?' enter':'')+'">'+content+'</div>':'<div class="wrap'+(enter?' enter':'')+'">'+header()+(screen==='settings'?'':warning())+(screen==='play'?progressStrip():'')+content+'</div>';if(focus){window.scrollTo(0,0);const h=$('app').querySelector('h1');if(h){h.tabIndex=-1;h.focus({preventScroll:true});}}else window.scrollTo(0,prev);}
  function ask(message,fn){confirmAction=fn;const modal=document.createElement('div');modal.className='modal-back';modal.id='confirmModal';modal.innerHTML='<section class="modal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle"><h2 id="confirmTitle">'+T('请确认','Please confirm')+'</h2><p>'+esc(message)+'</p><div class="actions">'+button(T('取消','Cancel'),'cancel','','button alt')+button(T('确认','Confirm'),'confirm')+'</div></section>';$('app').appendChild(modal);modal.querySelector('[data-act="cancel"]').focus();}
  function closeAsk(){const m=$('confirmModal');if(m)m.remove();confirmAction=null;}
  function resume(){if(!current()){screen='home';}else{screen='play';LIFE_AUDIO.pad(current().act);}documentIndex=null;hint='';restMode=null;render();}

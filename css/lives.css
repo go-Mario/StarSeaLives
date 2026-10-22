@@ -8,7 +8,7 @@
 .dock-map{width:min(100%,360px);border:1px solid #52717b;border-radius:8px;margin:20px auto;display:block}.dock-controls{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}.rest-grid{grid-template-columns:repeat(2,1fr)}@media(max-width:650px){.rest-grid{grid-template-columns:1fr}}
 
 /* Scene rhythm: restrained motion that remains comfortable and optional. */
-@keyframes livesArrive{from{opacity:0;transform:translateY(10px) scale(.992)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes livesArrive{from{opacity:0}to{opacity:1}}
 @keyframes cluePulse{0%,100%{box-shadow:0 3px 15px #0005,0 0 0 0 #d7bf7940}50%{box-shadow:0 3px 17px #0008,0 0 0 7px #d7bf7900}}
 @keyframes starDrift{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
 .enter .hero,.enter .intro-grid,.enter .layout,.enter .ending,.enter .journal,.enter .settings,.enter .rest-center{animation:livesArrive .5s cubic-bezier(.2,.75,.25,1) both}
@@ -127,7 +127,7 @@
 h1[tabindex="-1"]:focus,[tabindex="-1"]:focus{outline:none}
 
 /* ===================== 转场与反馈 ===================== */
-.wrap.enter{animation:screenIn .52s cubic-bezier(.2,.7,.3,1) both}
+.wrap.enter{animation:screenFade .38s ease both}
 @keyframes screenIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 button{transition:transform .12s ease,background-color .18s ease,border-color .18s ease,color .18s ease}
 button:active{transform:translateY(1px)}
@@ -235,3 +235,18 @@ button:active{transform:translateY(1px)}
 
 /* 引导提示 */
 .gate-hint{color:#c8b48a;font-size:13px;border-left:2px solid rgba(223,189,135,.5);padding-left:12px;margin:10px 0 4px}
+
+/* ===================== 幕间转场卡 ===================== */
+.act-card{position:fixed;inset:0;z-index:70;display:grid;place-items:center;cursor:pointer;
+  background:rgba(6,10,15,.9);backdrop-filter:blur(6px);animation:fadeIn .3s ease both}
+.act-card.out{animation:fadeIn .3s ease reverse both;pointer-events:none}
+.act-card-inner{text-align:center;animation:coverIn .5s cubic-bezier(.2,.7,.3,1) both;padding:20px}
+.act-card-year{display:block;font-family:Georgia,"Songti SC",serif;font-size:clamp(56px,12vw,110px);line-height:1;
+  color:var(--gold);letter-spacing:.06em}
+.act-card-act{display:block;margin-top:14px;font-size:11px;letter-spacing:.34em;color:var(--muted)}
+.act-card-inner h2{margin:12px 0 0;font-size:clamp(22px,4.6vw,34px);letter-spacing:.06em}
+.act-card-tap{display:block;margin-top:26px;font-size:11px;letter-spacing:.2em;color:#6f8189;animation:pulseTap 2s ease-in-out infinite}
+@keyframes pulseTap{0%,100%{opacity:.45}50%{opacity:1}}
+
+/* 纯淡入转场：不位移任何元素，避免读屏/自动化误判与晕动 */
+@keyframes screenFade{from{opacity:0}to{opacity:1}}

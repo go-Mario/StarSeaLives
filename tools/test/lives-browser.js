@@ -26,7 +26,7 @@ const BASE=process.env.SS_URL||'http://127.0.0.1:8766/index.html',OUT=process.ar
      assert.equal(/[\u3400-\u9fff]/.test(text),false,'English UI contains Chinese');
     }
     assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,'page overflows');
-    await page.click('[data-act="next"]');
+    await page.click('[data-act="next"]');await page.waitForSelector('.act-card',{state:'detached',timeout:8000}).catch(()=>{});
    }
    assert.equal(await page.evaluate(id=>LIFE.state.runs[id].act,role),6);
    await page.screenshot({path:path.join(OUT,language+'-'+role+'-ending.png'),fullPage:true});

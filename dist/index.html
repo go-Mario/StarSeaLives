@@ -21,7 +21,7 @@
 .dock-map{width:min(100%,360px);border:1px solid #52717b;border-radius:8px;margin:20px auto;display:block}.dock-controls{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}.rest-grid{grid-template-columns:repeat(2,1fr)}@media(max-width:650px){.rest-grid{grid-template-columns:1fr}}
 
 /* Scene rhythm: restrained motion that remains comfortable and optional. */
-@keyframes livesArrive{from{opacity:0;transform:translateY(10px) scale(.992)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes livesArrive{from{opacity:0}to{opacity:1}}
 @keyframes cluePulse{0%,100%{box-shadow:0 3px 15px #0005,0 0 0 0 #d7bf7940}50%{box-shadow:0 3px 17px #0008,0 0 0 7px #d7bf7900}}
 @keyframes starDrift{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
 .enter .hero,.enter .intro-grid,.enter .layout,.enter .ending,.enter .journal,.enter .settings,.enter .rest-center{animation:livesArrive .5s cubic-bezier(.2,.75,.25,1) both}
@@ -140,7 +140,7 @@
 h1[tabindex="-1"]:focus,[tabindex="-1"]:focus{outline:none}
 
 /* ===================== 转场与反馈 ===================== */
-.wrap.enter{animation:screenIn .52s cubic-bezier(.2,.7,.3,1) both}
+.wrap.enter{animation:screenFade .38s ease both}
 @keyframes screenIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 button{transition:transform .12s ease,background-color .18s ease,border-color .18s ease,color .18s ease}
 button:active{transform:translateY(1px)}
@@ -248,6 +248,21 @@ button:active{transform:translateY(1px)}
 
 /* 引导提示 */
 .gate-hint{color:#c8b48a;font-size:13px;border-left:2px solid rgba(223,189,135,.5);padding-left:12px;margin:10px 0 4px}
+
+/* ===================== 幕间转场卡 ===================== */
+.act-card{position:fixed;inset:0;z-index:70;display:grid;place-items:center;cursor:pointer;
+  background:rgba(6,10,15,.9);backdrop-filter:blur(6px);animation:fadeIn .3s ease both}
+.act-card.out{animation:fadeIn .3s ease reverse both;pointer-events:none}
+.act-card-inner{text-align:center;animation:coverIn .5s cubic-bezier(.2,.7,.3,1) both;padding:20px}
+.act-card-year{display:block;font-family:Georgia,"Songti SC",serif;font-size:clamp(56px,12vw,110px);line-height:1;
+  color:var(--gold);letter-spacing:.06em}
+.act-card-act{display:block;margin-top:14px;font-size:11px;letter-spacing:.34em;color:var(--muted)}
+.act-card-inner h2{margin:12px 0 0;font-size:clamp(22px,4.6vw,34px);letter-spacing:.06em}
+.act-card-tap{display:block;margin-top:26px;font-size:11px;letter-spacing:.2em;color:#6f8189;animation:pulseTap 2s ease-in-out infinite}
+@keyframes pulseTap{0%,100%{opacity:.45}50%{opacity:1}}
+
+/* 纯淡入转场：不位移任何元素，避免读屏/自动化误判与晕动 */
+@keyframes screenFade{from{opacity:0}to{opacity:1}}
 
 </style>
 </head>
@@ -732,6 +747,19 @@ function clockPuzzle(r){
    +'<span class="strip-goal">'+goal+'</span>'
    +'<span class="strip-read">'+T('材料 ','Records ')+read+'/2</span></div>';
  }
+ /* 幕间转场卡：年份 + 幕题，短暂停留，点击可立即收起 */
+ function actCard(){
+  const r=current();if(!r||r.act>=6)return;
+  const a=LIVES.acts[r.act];
+  const card=document.createElement('div');
+  card.className='act-card';card.setAttribute('role','status');
+  card.innerHTML='<div class="act-card-inner"><span class="act-card-year">'+a.year+'</span><span class="act-card-act">'+T('第 ','Chapter ')+(r.act+1)+T(' 幕','')+'</span><h2>'+E(a.title)+'</h2><span class="act-card-tap">'+T('点击继续','Tap to continue')+'</span></div>';
+  const app=$('app');app.appendChild(card);
+  let done=false;
+  const close=()=>{if(done)return;done=true;card.classList.add('out');setTimeout(()=>card.remove(),420);};
+  card.addEventListener('click',close);
+  setTimeout(close,2100);
+ }
  function render(focus=true){const prev=window.scrollY;const enter=screen!==lastScreen;lastScreen=screen;document.documentElement.lang=state.language==='zh'?'zh-CN':'en';document.title=T('星海公约 · 人间星海','Stellar Covenant · Ordinary Lives');const isTitle=screen==='title';let content=isTitle?titleScreen():screen==='home'?home():screen==='select'?selection():screen==='settings'?settings():screen==='journal'?journal():screen==='cases'?cases():screen==='case'?casePage():screen==='rest'?rest():play();$('app').innerHTML=isTitle?'<div class="cover-wrap'+(enter?' enter':'')+'">'+content+'</div>':'<div class="wrap'+(enter?' enter':'')+'">'+header()+(screen==='settings'?'':warning())+(screen==='play'?progressStrip():'')+content+'</div>';if(focus){window.scrollTo(0,0);const h=$('app').querySelector('h1');if(h){h.tabIndex=-1;h.focus({preventScroll:true});}}else window.scrollTo(0,prev);}
  function ask(message,fn){confirmAction=fn;const modal=document.createElement('div');modal.className='modal-back';modal.id='confirmModal';modal.innerHTML='<section class="modal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle"><h2 id="confirmTitle">'+T('请确认','Please confirm')+'</h2><p>'+esc(message)+'</p><div class="actions">'+button(T('取消','Cancel'),'cancel','','button alt')+button(T('确认','Confirm'),'confirm')+'</div></section>';$('app').appendChild(modal);modal.querySelector('[data-act="cancel"]').focus();}
  function closeAsk(){const m=$('confirmModal');if(m)m.remove();confirmAction=null;}
@@ -747,7 +775,7 @@ function clockPuzzle(r){
     setTimeout(function(){deduceLock=false;LIFE_MODEL.solve(r);hint='';persist();render(false);},560);}
    else{LIFE_AUDIO.wrong();hint=T('这一步还超出了材料能说明的范围。再看一眼“交叉核对”，或者换一个理解。','That goes beyond what the records support. Revisit the cross-check or try another interpretation.');
     render(false);const el=document.querySelector('[data-act="deduce"][data-id="'+id+'"]');if(el){el.classList.add('wrong');setTimeout(function(){el.classList.remove('wrong');},400);}}},
- choose:id=>{if(LIFE_MODEL.choose(current(),Number(id))){LIFE_AUDIO.choose(Number(id));persist();render();}},next:()=>{if(LIFE_MODEL.next(current())){LIFE_AUDIO.enter();documentIndex=null;persist();render();}},journal:()=>{screen='journal';render();},rest:()=>{screen='rest';restMode=null;render();},takeRest:()=>{if(LIFE_MODEL.rest(current())){LIFE_AUDIO.rest();persist();render(false);notify(T('这段休息已记入你这一年的生活。','This break is now part of your year.'));}},
+ choose:id=>{if(LIFE_MODEL.choose(current(),Number(id))){LIFE_AUDIO.choose(Number(id));persist();render();}},next:()=>{if(LIFE_MODEL.next(current())){LIFE_AUDIO.enter();LIFE_AUDIO.pad(current().act);documentIndex=null;persist();render();actCard();}},journal:()=>{screen='journal';render();},rest:()=>{screen='rest';restMode=null;render();},takeRest:()=>{if(LIFE_MODEL.rest(current())){LIFE_AUDIO.rest();persist();render(false);notify(T('这段休息已记入你这一年的生活。','This break is now part of your year.'));}},
  restGame:id=>{restMode=id;rest.ship=[25,75];rest.paused=false;rest.dials=[0,0,0];if(id==='memory'){const cards=[0,0,1,1,2,2,3,3];for(let i=cards.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[cards[i],cards[j]]=[cards[j],cards[i]];}memory={cards,open:[],matched:[]};}render();},
  dockMove:id=>{if(restMode!=='dock')return;const delta={up:[0,-5],left:[-5,0],down:[0,5],right:[5,0]}[id];if(!delta)return;rest.ship=rest.ship.map((v,i)=>Math.max(5,Math.min(95,v+delta[i])));render(false);},
  flip:id=>{const i=Number(id);if(!memory||!Number.isInteger(i)||i<0||i>7||memory.matched.includes(i)||memory.open.includes(i))return;if(memory.open.length===2)memory.open=[];memory.open.push(i);if(memory.open.length===2&&memory.cards[memory.open[0]]===memory.cards[i]){memory.matched.push(...memory.open);memory.open=[];}render(false);},breath:()=>{rest.paused=!rest.paused;render(false);},

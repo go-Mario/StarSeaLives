@@ -180,6 +180,19 @@ function clockPuzzle(r){
    +'<span class="strip-goal">'+goal+'</span>'
    +'<span class="strip-read">'+T('材料 ','Records ')+read+'/2</span></div>';
  }
+ /* 幕间转场卡：年份 + 幕题，短暂停留，点击可立即收起 */
+ function actCard(){
+  const r=current();if(!r||r.act>=6)return;
+  const a=LIVES.acts[r.act];
+  const card=document.createElement('div');
+  card.className='act-card';card.setAttribute('role','status');
+  card.innerHTML='<div class="act-card-inner"><span class="act-card-year">'+a.year+'</span><span class="act-card-act">'+T('第 ','Chapter ')+(r.act+1)+T(' 幕','')+'</span><h2>'+E(a.title)+'</h2><span class="act-card-tap">'+T('点击继续','Tap to continue')+'</span></div>';
+  const app=$('app');app.appendChild(card);
+  let done=false;
+  const close=()=>{if(done)return;done=true;card.classList.add('out');setTimeout(()=>card.remove(),420);};
+  card.addEventListener('click',close);
+  setTimeout(close,2100);
+ }
  function render(focus=true){const prev=window.scrollY;const enter=screen!==lastScreen;lastScreen=screen;document.documentElement.lang=state.language==='zh'?'zh-CN':'en';document.title=T('星海公约 · 人间星海','Stellar Covenant · Ordinary Lives');const isTitle=screen==='title';let content=isTitle?titleScreen():screen==='home'?home():screen==='select'?selection():screen==='settings'?settings():screen==='journal'?journal():screen==='cases'?cases():screen==='case'?casePage():screen==='rest'?rest():play();$('app').innerHTML=isTitle?'<div class="cover-wrap'+(enter?' enter':'')+'">'+content+'</div>':'<div class="wrap'+(enter?' enter':'')+'">'+header()+(screen==='settings'?'':warning())+(screen==='play'?progressStrip():'')+content+'</div>';if(focus){window.scrollTo(0,0);const h=$('app').querySelector('h1');if(h){h.tabIndex=-1;h.focus({preventScroll:true});}}else window.scrollTo(0,prev);}
  function ask(message,fn){confirmAction=fn;const modal=document.createElement('div');modal.className='modal-back';modal.id='confirmModal';modal.innerHTML='<section class="modal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle"><h2 id="confirmTitle">'+T('请确认','Please confirm')+'</h2><p>'+esc(message)+'</p><div class="actions">'+button(T('取消','Cancel'),'cancel','','button alt')+button(T('确认','Confirm'),'confirm')+'</div></section>';$('app').appendChild(modal);modal.querySelector('[data-act="cancel"]').focus();}
  function closeAsk(){const m=$('confirmModal');if(m)m.remove();confirmAction=null;}
@@ -195,7 +208,7 @@ function clockPuzzle(r){
     setTimeout(function(){deduceLock=false;LIFE_MODEL.solve(r);hint='';persist();render(false);},560);}
    else{LIFE_AUDIO.wrong();hint=T('这一步还超出了材料能说明的范围。再看一眼“交叉核对”，或者换一个理解。','That goes beyond what the records support. Revisit the cross-check or try another interpretation.');
     render(false);const el=document.querySelector('[data-act="deduce"][data-id="'+id+'"]');if(el){el.classList.add('wrong');setTimeout(function(){el.classList.remove('wrong');},400);}}},
- choose:id=>{if(LIFE_MODEL.choose(current(),Number(id))){LIFE_AUDIO.choose(Number(id));persist();render();}},next:()=>{if(LIFE_MODEL.next(current())){LIFE_AUDIO.enter();documentIndex=null;persist();render();}},journal:()=>{screen='journal';render();},rest:()=>{screen='rest';restMode=null;render();},takeRest:()=>{if(LIFE_MODEL.rest(current())){LIFE_AUDIO.rest();persist();render(false);notify(T('这段休息已记入你这一年的生活。','This break is now part of your year.'));}},
+ choose:id=>{if(LIFE_MODEL.choose(current(),Number(id))){LIFE_AUDIO.choose(Number(id));persist();render();}},next:()=>{if(LIFE_MODEL.next(current())){LIFE_AUDIO.enter();LIFE_AUDIO.pad(current().act);documentIndex=null;persist();render();actCard();}},journal:()=>{screen='journal';render();},rest:()=>{screen='rest';restMode=null;render();},takeRest:()=>{if(LIFE_MODEL.rest(current())){LIFE_AUDIO.rest();persist();render(false);notify(T('这段休息已记入你这一年的生活。','This break is now part of your year.'));}},
  restGame:id=>{restMode=id;rest.ship=[25,75];rest.paused=false;rest.dials=[0,0,0];if(id==='memory'){const cards=[0,0,1,1,2,2,3,3];for(let i=cards.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[cards[i],cards[j]]=[cards[j],cards[i]];}memory={cards,open:[],matched:[]};}render();},
  dockMove:id=>{if(restMode!=='dock')return;const delta={up:[0,-5],left:[-5,0],down:[0,5],right:[5,0]}[id];if(!delta)return;rest.ship=rest.ship.map((v,i)=>Math.max(5,Math.min(95,v+delta[i])));render(false);},
  flip:id=>{const i=Number(id);if(!memory||!Number.isInteger(i)||i<0||i>7||memory.matched.includes(i)||memory.open.includes(i))return;if(memory.open.length===2)memory.open=[];memory.open.push(i);if(memory.open.length===2&&memory.cards[memory.open[0]]===memory.cards[i]){memory.matched.push(...memory.open);memory.open=[];}render(false);},breath:()=>{rest.paused=!rest.paused;render(false);},

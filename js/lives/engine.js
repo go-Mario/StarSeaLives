@@ -29,10 +29,80 @@ const LIFE=(()=>{
  function orbital(){let stars='';for(let i=0;i<65;i++)stars+='<circle cx="'+((i*149)%650)+'" cy="'+((i*97)%440)+'" r="'+(i%4===0?1.4:.7)+'" fill="#c0cbd0" opacity="'+(.15+(i%5)*.14)+'"/>';return '<svg class="orbital" viewBox="0 0 650 470" role="img" aria-label="'+T('归港空间站与远处的地球','Homeward Station above a distant Earth')+'"><defs><radialGradient id="planet"><stop stop-color="#87b6bc"/><stop offset=".6" stop-color="#355d72"/><stop offset="1" stop-color="#11202e"/></radialGradient></defs>'+stars+'<circle cx="410" cy="245" r="159" fill="url(#planet)"/><path d="M290 170q130-75 253 75m-260-5q170-60 264 54" fill="none" stroke="#b6d3c5" opacity=".19" stroke-width="13"/><g transform="translate(295 250) rotate(-25)"><ellipse rx="245" ry="77" fill="none" stroke="#7c969b" stroke-width="3"/><ellipse rx="226" ry="59" fill="none" stroke="#3d5b68" stroke-width="13"/><path d="M-245 0H245M0-77V77" stroke="#9baba9" stroke-width="5"/><rect x="-73" y="-20" width="146" height="40" rx="8" fill="#a7ada1"/><rect x="-57" y="-10" width="114" height="20" fill="#263e4c"/><g stroke="#cfb783" stroke-width="5"><path d="M-44-8v16m22-16v16m22-16v16m22-16v16m22-16v16"/></g></g><path d="M54 400h80m-40-9v18" stroke="#bcad8c"/><text x="145" y="404" fill="#b9c3c5" font-size="10" letter-spacing="3">'+T('归港站 / 2077','HOMEWARD / 2077')+'</text></svg>';}
  function home(){return '<section class="hero"><div><h1>'+T('宇宙很大。<br>先过好<br>这一生。','A vast universe.<br>A life of<br>your own.')+'</h1><p class="lead">'+E(LIVES.premise)+'</p></div><div class="hero-art">'+orbital()+'<div class="hero-caption">'+T('归港站 / 有人正等着下班','Homeward Station / Someone is waiting for a shift to end')+'</div></div></section><section><div class="section-title"><h2>'+T('从谁的人生开始？','Whose life will you live?')+'</h2><p>'+T('每个人都是主角。每次只知道 ta 能知道的事。','Each person is a protagonist. You know only what they can know.')+'</p></div><div class="roles">'+Object.entries(LIVES.roles).map(([id,r])=>'<button class="role" data-act="select" data-id="'+id+'"><div class="job">'+E(r.job)+'</div>'+portrait(id)+'<h2>'+E(r.name)+'</h2><p class="tag">'+E(r.tag)+'</p><span class="enter">'+(state.runs[id]?T('继续 / 回看这段人生','Continue / revisit this life'):T('走进 ta 的故事','Step into this life'))+' →</span></button>').join('')+'</div><p class="footer">'+T('四位主角，六个相互牵连的事件，五十年的生活。游玩时长随阅读与探索而异。角色存档分别保留，重玩另一人会开启另一种可能。','Four protagonists. Six connected events. Fifty years of life. Take your time reading and exploring. Each character has a separate save; another life explores another possibility.')+'</p></section>';}
  function selection(){const r=LIVES.roles[selected],saved=state.runs[selected];return '<div class="intro-grid">'+portrait(selected)+'<div class="intro-copy"><div class="eyebrow">'+E(r.job)+' · '+T('起点年龄 ','Age at the beginning: ')+(2077-r.born)+'</div><h1>'+E(r.name)+'</h1><p>'+E(r.bio)+'</p><p class="inset">'+E(r.want)+'</p><p class="muted compact">'+T('选择后，整条故事都从这个人的视角展开。其他人的生活会通过你能接触到的记录、来信和相遇进入故事。','Once chosen, the story stays with this person. Other lives enter through records, messages and encounters available to you.')+'</p><div class="actions">'+button(saved?T('继续这段人生','Continue this life'):T('从 2077 年开始','Begin in 2077'),'start',selected)+(saved?button(T('重新开始','Start again'),'restart',selected,'button alt'):'')+button(T('返回','Back'),'home','','quiet')+'</div></div></div>';}
- function sceneArt(r){
+ /* 四间房：每个人物在自己的空间里醒来。back 画在桌面之后（墙面/高处的家当），
+   front 画在桌面之后（桌面上的东西）。共用元素：舷窗与地球、光柱、桌面、地面。 */
+const ROOMS={
+ // 林渡 · 维修间：工具柜、管阀、圆形检修舱门、拆开的继电器
+ lin:{back:'<g><rect x="900" y="50" width="280" height="200" rx="6" fill="#16242e" stroke="#2c4351" stroke-width="5"/>'
+  +'<rect x="916" y="80" width="248" height="34" rx="3" fill="#1e3038"/><rect x="916" y="126" width="248" height="34" rx="3" fill="#1e3038"/><rect x="916" y="172" width="248" height="34" rx="3" fill="#1e3038"/>'
+  +'<circle cx="1040" cy="97" r="7" fill="#dfbd87" opacity=".85"/><circle cx="1040" cy="143" r="7" fill="#7f9aa4" opacity=".5"/><circle cx="1040" cy="189" r="7" fill="#7f9aa4" opacity=".5"/></g>'
+  +'<g fill="none" stroke="#3d5a68" stroke-width="9" opacity=".8"><path d="M904 300v196"/><path d="M938 268v228"/><path d="M972 322v174"/></g>'
+  +'<g fill="#5d7f8c"><rect x="896" y="300" width="17" height="24" rx="3"/><rect x="930" y="268" width="17" height="24" rx="3"/><rect x="964" y="322" width="17" height="24" rx="3"/></g>'
+  +'<g><circle cx="1124" cy="432" r="74" fill="#101d26" stroke="#48646f" stroke-width="12"/><circle cx="1124" cy="432" r="46" fill="none" stroke="#2f4a56" stroke-width="6"/><circle cx="1124" cy="432" r="11" fill="#dfbd87" opacity=".7"/><path d="M1098 432h52M1124 406v52" stroke="#48646f" stroke-width="5"/></g>',
+  front:'<g><rect x="240" y="402" width="236" height="68" rx="5" fill="#26343d" stroke="#41585f" stroke-width="4"/>'
+  +'<rect x="258" y="416" width="92" height="40" rx="3" fill="#152229"/><circle cx="288" cy="436" r="9" fill="#3f6b74"/><path d="M318 424h60M318 436h46M318 448h52" stroke="#4d8ea0" stroke-width="5" opacity=".7"/>'
+  +'<path d="M356 402v-32h20v32" fill="none" stroke="#7f9aa4" stroke-width="5"/></g>'
+  +'<g><rect x="520" y="434" width="124" height="36" rx="4" fill="#8a4a3a" stroke="#5d3128" stroke-width="4"/><path d="M540 434v-24h28v24" fill="none" stroke="#8a4a3a" stroke-width="6"/><rect x="546" y="398" width="46" height="14" rx="3" fill="#a05a48"/></g>'
+  +'<g><path d="M712 470v-56" stroke="#7f9aa4" stroke-width="6"/><path d="M686 414h52l-7 36h-38z" fill="#3d5963"/></g>'
+  +'<g><rect x="216" y="430" width="46" height="40" rx="7" fill="#c9b48c"/><path d="M262 444h16a12 12 0 0 1 0 24h-16" fill="none" stroke="#c9b48c" stroke-width="7"/></g>'},
+ // 苏弥 · 食堂：出餐窗与蒸汽、吊灯、墙上菜单板、柜台上叠起的饭盒
+ su:{back:'<g><rect x="898" y="54" width="284" height="150" rx="6" fill="#1d2a2c" stroke="#3b5450" stroke-width="5"/>'
+  +'<rect x="914" y="70" width="252" height="118" rx="3" fill="#26383a"/>'
+  +'<path d="M950 150c-8-14 8-22 0-36s10-20 2-32M1010 150c-8-14 8-22 0-36s10-20 2-32M1070 150c-8-14 8-22 0-36s10-20 2-32" stroke="#c9d6cf" stroke-width="4" opacity=".28" fill="none"/></g>'
+  +'<g fill="none" stroke="#48605a" stroke-width="4"><rect x="898" y="240" width="284" height="90" rx="4"/><path d="M898 285h284"/></g>'
+  +'<g fill="#cbb48c" opacity=".85"><rect x="920" y="256" width="120" height="10" rx="2"/><rect x="920" y="300" width="180" height="10" rx="2"/><rect x="1040" y="256" width="90" height="10" rx="2"/></g>'
+  +'<g><rect x="930" y="380" width="220" height="124" rx="6" fill="#22322f" stroke="#3d5a52" stroke-width="5"/><circle cx="1040" cy="442" r="26" fill="none" stroke="#5f8a7c" stroke-width="5"/><path d="M1040 428v28l18 10" stroke="#5f8a7c" stroke-width="5" fill="none"/></g>'
+  +'<g><path d="M980 54v-18" stroke="#48605a" stroke-width="4"/><path d="M1100 54v-18" stroke="#48605a" stroke-width="4"/>'
+  +'<path d="M962 36h36l-8 20h-20z" fill="#c9a45e" opacity=".8"/><path d="M1082 36h36l-8 20h-20z" fill="#c9a45e" opacity=".8"/></g>',
+  front:'<g><rect x="300" y="398" width="240" height="72" rx="5" fill="#2b3a38" stroke="#48605a" stroke-width="4"/>'
+  +'<g fill="#d9cfae"><rect x="318" y="376" width="66" height="24" rx="3"/><rect x="392" y="370" width="66" height="30" rx="3"/><rect x="466" y="382" width="66" height="18" rx="3"/></g>'
+  +'<path d="M340 370c-6-12 6-18 0-30M420 364c-6-12 6-18 0-30M494 376c-6-12 6-18 0-30" stroke="#e2e8dd" stroke-width="4" opacity=".3" fill="none"/></g>'
+  +'<g><rect x="600" y="428" width="96" height="42" rx="6" fill="#3a4a45" stroke="#54706a" stroke-width="4"/><path d="M600 440h96" stroke="#6d8a80" stroke-width="4"/></g>'
+  +'<g><rect x="200" y="434" width="52" height="36" rx="6" fill="#b8542f"/><path d="M214 434v-16h24v16" fill="none" stroke="#b8542f" stroke-width="6"/></g>'
+  +'<g><rect x="740" y="392" width="130" height="78" rx="4" fill="#20291f" stroke="#3d5340" stroke-width="4" transform="rotate(-3 805 431)"/>'
+  +'<path d="M756 412h96M756 428h74M756 444h88" stroke="#7f9a72" stroke-width="5" opacity=".6" transform="rotate(-3 805 431)"/></g>'},
+ // 许照 · 泊位：货架与货箱、拉线钉板、分拣台上的包裹与手持扫描仪
+ xu:{back:'<g><rect x="898" y="52" width="284" height="188" rx="4" fill="#1a2530" stroke="#334a5c" stroke-width="5"/>'
+  +'<path d="M898 126h284M898 200h284M1040 52v188" stroke="#334a5c" stroke-width="5"/>'
+  +'<g fill="#4a6a4e"><rect x="912" y="70" width="112" height="46" rx="3"/><rect x="1054" y="70" width="114" height="46" rx="3"/></g>'
+  +'<g fill="#7a5c46"><rect x="912" y="142" width="112" height="46" rx="3"/></g><g fill="#5d6f5a"><rect x="1054" y="142" width="114" height="46" rx="3"/></g>'
+  +'<g stroke="#8a9aa4" stroke-width="3" opacity=".7" fill="none"><path d="M912 70h112M1054 70h114M912 142h112M1054 142h114"/></g></g>'
+  +'<g><rect x="898" y="276" width="284" height="160" rx="4" fill="#16202b" stroke="#3a4f60" stroke-width="5"/>'
+  +'<g stroke="#d7a45e" stroke-width="2" opacity=".8" fill="none"><path d="M920 300l150 40M920 300l40 100M1070 340l-90 60"/></g>'
+  +'<g fill="#dfbd87"><circle cx="920" cy="300" r="6"/><circle cx="1070" cy="340" r="6"/><circle cx="960" cy="400" r="6"/></g>'
+  +'<g fill="#c9d2d6" opacity=".55"><rect x="1030" y="290" width="60" height="14" rx="2"/><rect x="1030" y="384" width="60" height="14" rx="2"/></g></g>'
+  +'<g><rect x="898" y="470" width="284" height="34" rx="3" fill="#22323f" stroke="#3a4f60" stroke-width="4"/></g>',
+  front:'<g><rect x="250" y="396" width="250" height="74" rx="5" fill="#25333f" stroke="#3f5768" stroke-width="4"/>'
+  +'<g fill="#7a5c46"><rect x="270" y="356" width="86" height="42" rx="3"/><rect x="364" y="366" width="66" height="32" rx="3"/></g>'
+  +'<g fill="#4a6a4e"><rect x="440" y="370" width="46" height="28" rx="3"/></g>'
+  +'<g stroke="#5d7f8c" stroke-width="4" fill="none"><path d="M270 356v42M364 366v32"/></g></g>'
+  +'<g><rect x="560" y="424" width="72" height="46" rx="6" fill="#2f4451" stroke="#4f6f7c" stroke-width="4"/><rect x="576" y="436" width="40" height="22" rx="2" fill="#7fd0b0" opacity=".8"/></g>'
+  +'<g><path d="M700 470v-58" stroke="#7f9aa4" stroke-width="7"/><path d="M672 412h56l-8 30h-40z" fill="#3d5963"/><path d="M664 442h72v26h-72z" fill="#2c4450"/></g>'
+  +'<g><rect x="180" y="432" width="48" height="38" rx="7" fill="#c9b48c"/><path d="M228 446h16a12 12 0 0 1 0 24h-16" fill="none" stroke="#c9b48c" stroke-width="7"/></g>'},
+ // 简 · 法律援助办公室：卷宗架、公告板、桌上叠起的案卷、钢笔与印章
+ jian:{back:'<g><rect x="898" y="50" width="284" height="196" rx="4" fill="#1e232c" stroke="#3a4250" stroke-width="5"/>'
+  +'<path d="M898 116h284M898 182h284M1040 50v196" stroke="#3a4250" stroke-width="4"/>'
+  +'<g fill="#6d5a46"><rect x="912" y="64" width="112" height="44" rx="2"/><rect x="1054" y="128" width="114" height="44" rx="2"/></g>'
+  +'<g fill="#8a6a4e"><rect x="1054" y="64" width="114" height="44" rx="2"/><rect x="912" y="128" width="112" height="44" rx="2"/></g>'
+  +'<g stroke="#c9b48c" stroke-width="3" opacity=".7" fill="none"><path d="M912 86h112M1054 86h114M912 150h112M1054 150h114"/></g></g>'
+  +'<g><rect x="898" y="282" width="284" height="152" rx="4" fill="#20262f" stroke="#3f4756" stroke-width="5"/>'
+  +'<g stroke="#c9b48c" stroke-width="3" opacity=".5" fill="none"><path d="M898 358h284M1040 282v152"/></g>'
+  +'<g fill="#cfd6da" opacity=".5"><rect x="918" y="300" width="100" height="12" rx="2"/><rect x="918" y="376" width="140" height="12" rx="2"/><rect x="1060" y="300" width="80" height="12" rx="2"/></g></g>'
+  +'<g><rect x="898" y="468" width="284" height="36" rx="3" fill="#262c36" stroke="#3f4756" stroke-width="4"/></g>',
+  front:'<g><rect x="290" y="380" width="230" height="90" rx="4" fill="#e6ddc8" transform="rotate(-2 405 425)"/>'
+  +'<path d="M308 402h190M308 420h150M308 438h176" stroke="#9aa08c" stroke-width="5" transform="rotate(-2 405 425)"/>'
+  +'<g fill="#e6ddc8"><rect x="330" y="350" width="150" height="30" rx="3" transform="rotate(3 405 365)"/></g>'
+  +'<path d="M330 350h150M330 364h110" stroke="#9aa08c" stroke-width="5" transform="rotate(3 405 365)"/></g>'
+  +'<g><rect x="580" y="418" width="86" height="52" rx="5" fill="#2b3340" stroke="#46505f" stroke-width="4"/><rect x="594" y="432" width="58" height="24" rx="2" fill="#dfbd87" opacity=".55"/></g>'
+  +'<g><path d="M700 470v-62" stroke="#8a94a0" stroke-width="6"/><path d="M694 408h12l-6 16z" fill="#dfbd87"/></g>'
+  +'<g><rect x="190" y="436" width="46" height="34" rx="6" fill="#c9b48c"/><path d="M236 448h14a11 11 0 0 1 0 22h-14" fill="none" stroke="#c9b48c" stroke-width="6"/></g>'}};
+function sceneArt(r){
  const d=SCENES[r.role][r.act],act=LIVES.acts[r.act];
  const labels=[d.docs[0].name,d.docs[1].name,B('交叉核对','Cross-check')];
  const tint=['#3a5c6b','#2f5560','#3d5a4e','#39405a','#31485c','#5a5340'][r.act];
+ // 星星固定生成：位置与亮度每次渲染完全一致，避免亮度反复抖动
+ const stars=[[72,84,1.6,.62],[168,52,1.1,.45],[286,120,1.9,.7],[404,66,1.2,.5],[520,38,1.5,.6],[640,96,1.1,.4],[742,58,1.7,.66],[860,110,1.2,.44],[968,70,1.5,.58],[1084,132,1.1,.42],[1132,54,1.8,.68],[120,168,1.2,.48],[330,190,1.0,.4],[900,196,1.3,.5],[1046,176,1.1,.44]]
+  .map(([x,y,rr,o])=>'<circle cx="'+x+'" cy="'+y+'" r="'+rr+'" opacity="'+o+'"/>').join('');
  return '<div class="scene">'
   +'<svg viewBox="0 0 1200 720" preserveAspectRatio="xMidYMid slice" aria-hidden="true">'
   +'<defs>'
@@ -44,9 +114,7 @@ const LIFE=(()=>{
   +'<linearGradient id="floor" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#0f1a23"/><stop offset="1" stop-color="#070d13"/></linearGradient>'
   +'</defs>'
   +'<rect width="1200" height="720" fill="url(#sky)"/>'
-  +'<g fill="#e8f0f2">'+[ [72,84,1.6],[168,52,1.1],[286,120,1.9],[404,66,1.2],[520,38,1.5],[640,96,1.1],[742,58,1.7],[860,110,1.2],[968,70,1.5],[1084,132,1.1],[1132,54,1.8],[120,168,1.2],[330,190,1.0],[900,196,1.3],[1046,176,1.1] ]
-    .map(([x,y,rr])=>'<circle cx="'+x+'" cy="'+y+'" r="'+rr+'" opacity="'+(0.35+Math.random()*0.5).toFixed(2)+'"/>').join('')+'</g>'
-  +'<g><rect x="150" y="70" width="620" height="420" rx="52" fill="url(#glass)"/>'
+  +'<g fill="#e8f0f2">'+stars+'</g>'  +'<g><rect x="150" y="70" width="620" height="420" rx="52" fill="url(#glass)"/>'
   +'<circle cx="470" cy="300" r="150" fill="url(#earthg)"/>'
   +'<path d="M330 250c40-22 78-8 96 14s-6 52-38 62-70-6-84-28 4-38 26-48z" fill="#4e7a63" opacity=".55"/>'
   +'<path d="M512 348c30-12 58 2 66 22s-14 44-40 46-52-14-54-32 18-26 28-36z" fill="#456e5c" opacity=".45"/>'
@@ -57,27 +125,11 @@ const LIFE=(()=>{
   +'</g>'
   +'<path d="M170 490 L840 190 L1200 150 L1200 720 L170 720 Z" fill="url(#beam)"/>'
   +'<rect x="880" y="0" width="320" height="720" fill="#0e1a24"/>'
-  +'<rect x="940" y="330" width="200" height="390" rx="10" fill="#132430" stroke="#2c4351" stroke-width="6"/>'
-  +'<circle cx="932" cy="520" r="9" fill="#dfbd87" opacity=".85"/>'
-  +'<rect x="940" y="60" width="200" height="26" rx="4" fill="#1a2c38"/>'
-  +'<rect x="940" y="96" width="200" height="26" rx="4" fill="#16262f"/>'
+  +ROOMS[r.role].back
   +'<path d="M60 470h1080v34H60z" fill="url(#desk)"/>'
   +'<path d="M60 504h1080v216H60z" fill="#0c151d"/>'
   +'<rect x="60" y="470" width="1080" height="34" fill="none" stroke="#6b5a42" stroke-width="2" opacity=".6"/>'
-  +'<g><rect x="300" y="196" width="330" height="212" rx="14" fill="#0b131a" stroke="#5b7280" stroke-width="10"/>'
-  +'<rect x="318" y="214" width="294" height="176" rx="8" fill="#0e2a38"/>'
-  +'<path d="M330 350h270M330 320h210M330 290h250M330 260h180" stroke="#4d8ea0" stroke-width="7" opacity=".55"/>'
-  +'<circle cx="600" cy="248" r="6" fill="#dfbd87"/>'
-  +'<rect x="440" y="408" width="50" height="40" fill="#243440"/><rect x="380" y="446" width="170" height="14" rx="4" fill="#243440"/></g>'
-  +'<g><rect x="330" y="478" width="270" height="20" rx="6" fill="#2c3d47"/><path d="M340 488h250" stroke="#4a6a76" stroke-width="3"/></g>'
-  +'<g><rect x="660" y="474" width="150" height="110" rx="4" fill="#e6ddc8" transform="rotate(-4 735 529)"/><path d="M680 500h110M680 520h96M680 540h120" stroke="#9aa08c" stroke-width="5" transform="rotate(-4 735 529)"/></g>'
-  +'<g><rect x="216" y="424" width="52" height="60" rx="8" fill="#c9b48c"/><path d="M268 440h18a14 14 0 0 1 0 28h-18" fill="none" stroke="#c9b48c" stroke-width="8"/><path d="M228 410c6-10-4-16 2-26M248 410c6-10-4-16 2-26" stroke="#cbbda3" stroke-width="4" opacity=".5" fill="none"/></g>'
-  +'<g><rect x="880" y="230" width="300" height="12" rx="4" fill="#33454f"/>'
-  +'<rect x="906" y="176" width="26" height="54" fill="#7a5c46"/><rect x="938" y="168" width="30" height="62" fill="#5d6f5a"/><rect x="974" y="184" width="22" height="46" fill="#6d5a70"/>'
-  +'<rect x="1024" y="150" width="66" height="80" rx="6" fill="#2b4450" stroke="#4f6f7c" stroke-width="4"/><circle cx="1057" cy="186" r="20" fill="none" stroke="#8fb0ba" stroke-width="4"/><path d="M1057 166v22l14 10" stroke="#8fb0ba" stroke-width="5" fill="none"/>'
-  +'<path d="M1130 230c-18-14-18-44 0-58 18 14 18 44 0 58z" fill="#4c766a"/></g>'
-  +'<g><path d="M138 470c-14-40-6-80 10-104 6 26 4 66-10 104z" fill="#4c766a"/><path d="M148 470c16-30 44-44 72-40-16 22-40 34-72 40z" fill="#5b8a76"/><path d="M120 470c-20-16-30-42-26-66 20 12 34 34 26 66z" fill="#3f6a5c"/>'
-  +'<path d="M108 470h72l-8 40h-56z" fill="#7a5c46"/></g>'
+  +ROOMS[r.role].front
   +'<rect y="504" width="1200" height="216" fill="url(#floor)"/>'
   +'<path d="M170 720 L840 504 L1200 504 L1200 720 Z" fill="#ffe9bf" opacity=".05"/>'
   +'<path d="M0 560h1200M0 620h1200" stroke="#1b2b35" stroke-width="3" opacity=".7"/>'

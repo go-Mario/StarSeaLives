@@ -152,7 +152,9 @@ function sceneArt(r){
   +'<div class="scene-caption">'+E(act.place)+'<br>'+E(act.weather)+'</div>'
   +'<div class="scene-tint" style="--tint:'+tint+'"></div>'
   +'<div class="scene-grain" aria-hidden="true"></div>'
-  +labels.map((label,i)=>'<button class="hotspot '+(r.read.includes(i)?'read':'')+'" style="left:'+([20,66,52][i])+'%;top:'+([74,60,34][i])+'%" data-act="read" data-id="'+i+'"><i>'+(r.read.includes(i)?'✓':'0'+(i+1))+'</i>'+E(label)+'</button>').join('')
+  /* 三个标记统一落在桌面近沿：记录是档案，不是房间里的物件。
+     六幕的地球右缘最宽 52.7%、下缘最低 64.2%，所以这些位置都避开了舷窗。 */
+  +labels.map((label,i)=>'<button class="hotspot '+(r.read.includes(i)?'read':'')+'" style="left:'+([22,52,82][i])+'%;top:'+([70,74,68][i])+'%" data-act="read" data-id="'+i+'"><i>'+(r.read.includes(i)?'✓':'0'+(i+1))+'</i>'+E(label)+'</button>').join('')
   +'</div>';
  }
 function clockPuzzle(r){

@@ -177,8 +177,13 @@ button:active{transform:translateY(1px)}
 .scene .hotspot:focus-visible{outline:3px solid #ffc56c;outline-offset:3px}
 @media(max-width:650px){
  .scene svg{aspect-ratio:1200/820}
- .scene .hotspot{font-size:11px;padding:7px 11px 7px 8px;max-width:60%}
- .scene .hotspot i{width:22px;height:22px;font-size:10px}
+ /* 窄屏放不下三个带标签的 pill：场景里只留编号，名称由紧邻其下的线索托盘承担。
+    文字仍在 DOM 里（读屏可读），只是视觉上不占位。 */
+ .scene .hotspot{font-size:0;padding:8px;min-height:42px;min-width:42px;max-width:none;gap:0;border-radius:999px;justify-content:center}
+ .scene .hotspot i{width:24px;height:24px;font-size:11px}
+ .scene .hotspot[data-id="0"]{left:18%!important;top:68%!important}
+ .scene .hotspot[data-id="1"]{left:50%!important;top:68%!important}
+ .scene .hotspot[data-id="2"]{left:82%!important;top:68%!important}
  .scene-caption{font-size:10px;left:12px;bottom:10px}
 }
 
@@ -764,7 +769,9 @@ function sceneArt(r){
   +'<div class="scene-caption">'+E(act.place)+'<br>'+E(act.weather)+'</div>'
   +'<div class="scene-tint" style="--tint:'+tint+'"></div>'
   +'<div class="scene-grain" aria-hidden="true"></div>'
-  +labels.map((label,i)=>'<button class="hotspot '+(r.read.includes(i)?'read':'')+'" style="left:'+([20,66,52][i])+'%;top:'+([74,60,34][i])+'%" data-act="read" data-id="'+i+'"><i>'+(r.read.includes(i)?'✓':'0'+(i+1))+'</i>'+E(label)+'</button>').join('')
+  /* 三个标记统一落在桌面近沿：记录是档案，不是房间里的物件。
+     六幕的地球右缘最宽 52.7%、下缘最低 64.2%，所以这些位置都避开了舷窗。 */
+  +labels.map((label,i)=>'<button class="hotspot '+(r.read.includes(i)?'read':'')+'" style="left:'+([22,52,82][i])+'%;top:'+([70,74,68][i])+'%" data-act="read" data-id="'+i+'"><i>'+(r.read.includes(i)?'✓':'0'+(i+1))+'</i>'+E(label)+'</button>').join('')
   +'</div>';
  }
 function clockPuzzle(r){

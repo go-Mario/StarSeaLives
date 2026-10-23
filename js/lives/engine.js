@@ -192,14 +192,24 @@ function clockPuzzle(r){
    +'<div class="tray-cards">'+names.map((n,i)=>'<button class="tray-card '+(r.read.includes(i)?'got':'')+'" data-act="read" data-id="'+i+'"><i>'+(r.read.includes(i)?'✓':'0'+(i+1))+'</i><span>'+E(n)+'</span></button>').join('')+'</div>'
    +'</div>';
  }
- function readerCard(r,idx){
+ /* 记录卡上的档案地点：每个人经手的记录，落款在不同舱段 */
+const ROOM_PLACE={lin:B('第三环 · 检修通道','Ring Three · Maintenance access'),su:B('第三环 · 食堂','Ring Three · Canteen'),xu:B('第九泊位 · 分拣台','Berth Nine · Sorting bench'),jian:B('第三环 · 法援办公室','Ring Three · Legal aid office')};
+function readerCard(r,idx){
   const d=SCENES[r.role][r.act],title=E(idx===2?B('交叉核对','Cross-check'):d.docs[idx].name),text=idx===2?esc(lateClue(r)):E(d.docs[idx].text);
   const source=idx===2?B('两份记录放在一起','Two records side by side'):B('现场取得','Taken from the scene');
+  // 档案要素：编号由年份 + 人物序号 + 记录序号生成，稳定可复现
+  const roleIdx=['lin','su','xu','jian'].indexOf(r.role);
+  const ref='HW-'+LIVES.acts[r.act].year+'-'+String(roleIdx*3+idx+1).padStart(3,'0');
   return '<div class="reader'+(docFresh?' fresh':'')+'" id="document" role="dialog" aria-modal="true" aria-label="'+title+'">'
    +'<div class="reader-back" data-act="closeDoc"></div>'
-   +'<article class="reader-card paper"><div class="reader-top"><span class="eyebrow">'+E(source)+'</span><span class="reader-no">'+T('记录 ','Record ')+(idx===2?'03':'0'+(idx+1))+' / 03</span></div>'
+   +'<article class="reader-card paper">'
+   +'<header class="doc-head">'
+   +'<svg class="doc-seal" viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="20" fill="none" stroke="#8a7a56" stroke-width="1.6"/><circle cx="22" cy="22" r="15.5" fill="none" stroke="#8a7a56" stroke-width=".9" opacity=".7"/><path d="M22 9l2.6 6.2 6.6.5-5.1 4.2 1.6 6.4L22 23l-5.7 3.3 1.6-6.4-5.1-4.2 6.6-.5z" fill="#9a7b3e" opacity=".85"/><circle cx="22" cy="22" r="2.4" fill="#6f5c34"/></svg>'
+   +'<span class="doc-station"><b>'+T('归港站 · 生活记录','HOMEWARD STATION · LIFE RECORD')+'</b><i>'+T('本记录只描述当事人能够接触到的部分','This record covers only what the person could reach')+'</i></span>'
+   +'<span class="reader-no">'+(idx===2?'03':'0'+(idx+1))+' / 03</span></header>'
+   +'<div class="doc-meta"><span>'+T('编号 ','Ref. ')+ref+'</span><i></i><span>'+E(ROOM_PLACE[r.role])+'</span></div>'
    +'<h2>'+title+'</h2><p class="reader-text">'+text+'</p>'
-   +'<div class="reader-foot"><button class="button ghost" data-act="nextDoc">'+T('下一份','Next record')+'</button><button class="button alt" data-act="closeDoc">'+T('收好这份记录','Put this record away')+'</button></div></article></div>';
+   +'<div class="reader-foot"><span class="doc-src">'+E(source)+'</span><span class="doc-actions"><button class="button ghost" data-act="nextDoc">'+T('下一份','Next record')+'</button><button class="button alt" data-act="closeDoc">'+T('收好这份记录','Put this record away')+'</button></span></div></article></div>';
  }
  function play(){const r=current();if(r.act>=6)return ending();const a=LIVES.acts[r.act],d=SCENES[r.role][r.act],role=LIVES.roles[r.role],canDeduce=r.read.length>=2&&(r.act!==0||(r.investigationDone&&r.searchDone));let body='';
  if(r.history.length>r.act){const c=r.history[r.act].choice===0?d.a:d.b;body='<section class="paper"><div class="eyebrow">'+T('这一年的选择','The choice you made')+'</div><h2>'+E(c.title)+'</h2><p>'+E(c.result)+'</p>'+(r.act===4?'<p class="ripple">'+E(SETTLEMENTS[LIFE_MODEL.world(r).settlement])+'</p>':'')+'<p class="ripple">'+E(a.reveal)+'</p>'+button(r.act===5?T('走向余生','The years that followed'):T('继续生活 · ','Life goes on · ')+LIVES.acts[r.act+1].year,'next')+'</section>';}

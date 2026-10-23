@@ -233,6 +233,9 @@ button:active{transform:translateY(1px)}
 
 /* ===================== 推断反馈 ===================== */
 .choice.right{border-color:#7fae8b;background:#16261f}
+/* 推断正确时，让其余选项退后，被盖章的那一张成为唯一的焦点 */
+.conclusions.stamped .choice:not(.right){opacity:.4;transition:opacity .35s ease}
+.conclusions.stamped .choice:not(.right):hover{opacity:.75}
 .stamp{position:absolute;right:14px;top:50%;transform:translateY(-50%) rotate(-9deg);
   font-size:12px;letter-spacing:.22em;color:#9fd0ae;border:2px solid #7fae8b;border-radius:4px;
   padding:5px 10px;background:rgba(10,20,15,.55);animation:stampIn .34s cubic-bezier(.2,.7,.3,1) both;pointer-events:none}

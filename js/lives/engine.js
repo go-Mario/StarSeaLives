@@ -259,8 +259,9 @@ function clockPuzzle(r){
  read:id=>{const r=current(),n=Number(id);if(LIFE_MODEL.read(r,n)){LIFE_AUDIO.read();documentIndex=n;hint='';persist();render(false);const el=$('document');el.tabIndex=-1;el.focus({preventScroll:true});}},
  deduce:id=>{const r=current(),item=deductions(r)[Number(id)];if(!item||r.read.length<2||deduceLock)return;
    if(item.correct){deduceLock=true;LIFE_AUDIO.solve();const el=document.querySelector('[data-act="deduce"][data-id="'+id+'"]');
-    if(el){el.classList.add('right');const st=document.createElement('span');st.className='stamp';st.textContent=T('材料支持','Supported');el.appendChild(st);}
-    setTimeout(function(){deduceLock=false;LIFE_MODEL.solve(r);hint='';persist();render(false);},560);}
+    if(el){el.classList.add('right');const box=el.closest('.conclusions');if(box)box.classList.add('stamped');const st=document.createElement('span');st.className='stamp';st.textContent=T('材料支持','Supported');el.appendChild(st);}
+    // 留足时间让玩家读到"材料支持"的盖章：这是每一幕的"啊，对了"时刻
+    setTimeout(function(){deduceLock=false;LIFE_MODEL.solve(r);hint='';persist();render(false);},1150);}
    else{LIFE_AUDIO.wrong();hint=T('这一步还超出了材料能说明的范围。再看一眼“交叉核对”，或者换一个理解。','That goes beyond what the records support. Revisit the cross-check or try another interpretation.');
     render(false);const el=document.querySelector('[data-act="deduce"][data-id="'+id+'"]');if(el){el.classList.add('wrong');setTimeout(function(){el.classList.remove('wrong');},400);}}},
  choose:id=>{if(LIFE_MODEL.choose(current(),Number(id))){LIFE_AUDIO.choose(Number(id));persist();render();}},next:()=>{if(LIFE_MODEL.next(current())){LIFE_AUDIO.enter();LIFE_AUDIO.pad(current().act);documentIndex=null;persist();render();actCard();}},journal:()=>{screen='journal';render();},rest:()=>{screen='rest';restMode=null;render();},takeRest:()=>{if(LIFE_MODEL.rest(current())){LIFE_AUDIO.rest();persist();render(false);notify(T('这段休息已记入你这一年的生活。','This break is now part of your year.'));}},

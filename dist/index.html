@@ -670,34 +670,48 @@ const ROOMS={
   +'<g><rect x="580" y="418" width="86" height="52" rx="5" fill="#2b3340" stroke="#46505f" stroke-width="4"/><rect x="594" y="432" width="58" height="24" rx="2" fill="#dfbd87" opacity=".55"/></g>'
   +'<g><path d="M700 470v-62" stroke="#8a94a0" stroke-width="6"/><path d="M694 408h12l-6 16z" fill="#dfbd87"/></g>'
   +'<g><rect x="190" y="436" width="46" height="34" rx="6" fill="#c9b48c"/><path d="M236 448h14a11 11 0 0 1 0 22h-14" fill="none" stroke="#c9b48c" stroke-width="6"/></g>'}};
+/* 窗外五十年：同一扇窗，地球慢慢改变相位、受光、大小与距离。
+   lit=受光中心(.0左→1右)  land=陆地不透明度  r=地球半径  dx/dy=窗内偏移
+   extra=这一幕地球上多出来的东西（污染斑块 / 夜面灯火） */
+const ACT_VIEW=[
+ {sky:['#0a121b','#12222f','#0a141d'],e:['#3d6a7d','#15303f','#0a1a26'],lit:.30,r:150,dx:0,dy:0,land:.40,beam:'#ffe9bf',beamOp:.30,shaft:'M170 490 L840 190 L1200 150 L1200 720 L170 720 Z',tint:'#2a4655',mote:'#ffe9bf',extra:''},
+ {sky:['#0b141d','#182833','#0b1620'],e:['#54879a','#1d3c4c','#0c2130'],lit:.55,r:144,dx:16,dy:-10,land:.44,beam:'#e2ecf4',beamOp:.24,shaft:'M170 500 L820 205 L1200 175 L1200 720 L170 720 Z',tint:'#33505c',mote:'#e2ecf4',extra:''},
+ {sky:['#0c1512','#1a2620','#0b1512'],e:['#5c8a72','#1e3630','#0b1e1c'],lit:.44,r:150,dx:-14,dy:8,land:.34,beam:'#d8e6c8',beamOp:.20,shaft:'M170 505 L840 200 L1200 160 L1200 720 L170 720 Z',tint:'#3f5a48',mote:'#d8e6c8',extra:'<path d="M392 236c34-14 66 0 78 20s-12 42-40 46-50-12-52-30 6-26 14-36z" fill="#7a6242" opacity=".55"/>'},
+ {sky:['#090f18','#141e2c','#080d14'],e:['#466f86','#152a3a','#09161f'],lit:.24,r:140,dx:22,dy:12,land:.30,beam:'#cfd9e8',beamOp:.16,shaft:'M170 512 L850 210 L1200 185 L1200 720 L170 720 Z',tint:'#3a4260',mote:'#cfd9e8',extra:''},
+ {sky:['#140f0c','#2a1c12','#120c08'],e:['#c9925e','#5a3a24','#1c1209'],lit:.62,r:168,dx:-6,dy:-6,land:.38,beam:'#ffd9a0',beamOp:.44,shaft:'M170 470 L830 175 L1200 130 L1200 720 L170 720 Z',tint:'#6b4a2e',mote:'#ffd9a0',extra:'<g fill="#ffe6b0">'+[[248,262,3.2],[268,238,2.4],[300,286,2.8],[336,252,2.2],[318,320,3],[268,300,2.4],[352,292,2.6],[286,346,2.2],[232,296,2.4],[368,246,2.2]].map(([x,y,rr])=>'<circle cx="'+x+'" cy="'+y+'" r="'+rr+'" opacity=".8"/>').join('')+'</g>'},
+ {sky:['#070b11','#0f1620','#06090e'],e:['#7e93a0','#2b3a44','#101a20'],lit:.5,r:112,dx:0,dy:0,land:.16,beam:'#c6d2dc',beamOp:.10,shaft:'M170 520 L860 215 L1200 195 L1200 720 L170 720 Z',tint:'#4a5560',mote:'#c6d2dc',extra:''}];
 function sceneArt(r){
  const d=SCENES[r.role][r.act],act=LIVES.acts[r.act];
  const labels=[d.docs[0].name,d.docs[1].name,B('交叉核对','Cross-check')];
- const tint=['#3a5c6b','#2f5560','#3d5a4e','#39405a','#31485c','#5a5340'][r.act];
+ const V=ACT_VIEW[r.act];
+ const tint=V.tint;
  // 星星固定生成：位置与亮度每次渲染完全一致，避免亮度反复抖动
  const stars=[[72,84,1.6,.62],[168,52,1.1,.45],[286,120,1.9,.7],[404,66,1.2,.5],[520,38,1.5,.6],[640,96,1.1,.4],[742,58,1.7,.66],[860,110,1.2,.44],[968,70,1.5,.58],[1084,132,1.1,.42],[1132,54,1.8,.68],[120,168,1.2,.48],[330,190,1.0,.4],[900,196,1.3,.5],[1046,176,1.1,.44]]
   .map(([x,y,rr,o])=>'<circle cx="'+x+'" cy="'+y+'" r="'+rr+'" opacity="'+o+'"/>').join('');
  return '<div class="scene">'
   +'<svg viewBox="0 0 1200 720" preserveAspectRatio="xMidYMid slice" aria-hidden="true">'
   +'<defs>'
-  +'<linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#0a121b"/><stop offset=".55" stop-color="#101d29"/><stop offset="1" stop-color="#0b141d"/></linearGradient>'
+  +'<linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="'+V.sky[0]+'"/><stop offset=".55" stop-color="'+V.sky[1]+'"/><stop offset="1" stop-color="'+V.sky[2]+'"/></linearGradient>'
   +'<linearGradient id="glass" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#0c1a24"/><stop offset=".6" stop-color="#15303e"/><stop offset="1" stop-color="#1d4256"/></linearGradient>'
-  +'<radialGradient id="earthg" cx=".38" cy=".34"><stop stop-color="#5c93a3"/><stop offset=".55" stop-color="#2c5566"/><stop offset="1" stop-color="#12293a"/></radialGradient>'
-  +'<linearGradient id="beam" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#ffe9bf" stop-opacity=".30"/><stop offset="1" stop-color="#ffe9bf" stop-opacity="0"/></linearGradient>'
+  +'<radialGradient id="earthg" cx="'+V.lit+'" cy=".34"><stop stop-color="'+V.e[0]+'"/><stop offset=".55" stop-color="'+V.e[1]+'"/><stop offset="1" stop-color="'+V.e[2]+'"/></radialGradient>'
+  +'<linearGradient id="beam" x1="0" y1="0" x2="0" y2="1"><stop stop-color="'+V.beam+'" stop-opacity="'+V.beamOp+'"/><stop offset="1" stop-color="'+V.beam+'" stop-opacity="0"/></linearGradient>'
   +'<linearGradient id="desk" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#4a3f30"/><stop offset="1" stop-color="#241d15"/></linearGradient>'
   +'<linearGradient id="floor" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#0f1a23"/><stop offset="1" stop-color="#070d13"/></linearGradient>'
   +'</defs>'
   +'<rect width="1200" height="720" fill="url(#sky)"/>'
-  +'<g fill="#e8f0f2">'+stars+'</g>'  +'<g><rect x="150" y="70" width="620" height="420" rx="52" fill="url(#glass)"/>'
-  +'<circle cx="470" cy="300" r="150" fill="url(#earthg)"/>'
+  +'<g fill="#e8f0f2">'+stars+'</g>'
+  +'<g><rect x="150" y="70" width="620" height="420" rx="52" fill="url(#glass)"/>'
+  +'<circle cx="'+(470+V.dx)+'" cy="'+(300+V.dy)+'" r="'+V.r+'" fill="url(#earthg)"/>'
+  +'<g transform="translate('+V.dx+','+V.dy+')" opacity="'+V.land+'">'
   +'<path d="M330 250c40-22 78-8 96 14s-6 52-38 62-70-6-84-28 4-38 26-48z" fill="#4e7a63" opacity=".55"/>'
-  +'<path d="M512 348c30-12 58 2 66 22s-14 44-40 46-52-14-54-32 18-26 28-36z" fill="#456e5c" opacity=".45"/>'
-  +'<ellipse cx="470" cy="300" rx="150" ry="26" fill="#0a121b" opacity=".25"/>'
+  +'<path d="M512 348c30-12 58 2 66 22s-14 44-40 46-52-14-54-32 18-26 28-36z" fill="#456e5c" opacity=".45"/></g>'
+  +V.extra
+  +'<ellipse cx="'+(470+V.dx)+'" cy="'+(300+V.dy)+'" rx="'+V.r+'" ry="26" fill="#0a121b" opacity=".25"/>'
   +'<rect x="150" y="70" width="620" height="420" rx="52" fill="none" stroke="#5d7a86" stroke-width="16"/>'
   +'<path d="M150 250h620M150 310h620M300 70v420M620 70v420" stroke="#22333d" stroke-width="7" opacity=".8"/>'
-  +'<circle cx="228" cy="148" r="5" fill="#dfbd87" opacity=".8"/>'
-  +'</g>'
-  +'<path d="M170 490 L840 190 L1200 150 L1200 720 L170 720 Z" fill="url(#beam)"/>'
+  +'<circle cx="228" cy="148" r="5" fill="#dfbd87" opacity=".8"/></g>'
+  +'<path d="'+V.shaft+'" fill="url(#beam)"/>' // 光柱角度与强度随幕变化
+  +'<g fill="'+V.mote+'">'+[[520,300,2.4,.10],[640,255,1.8,.13],[760,330,2.9,.08],[880,230,2,.11],[980,380,2.5,.09],[430,420,1.7,.12],[700,430,2.2,.08],[1050,300,1.9,.10]].map(([x,y,rr,o])=>'<circle cx="'+x+'" cy="'+y+'" r="'+rr+'" opacity="'+o+'"/>').join('')+'</g>' // 浮尘固定位置，不随时间抖动
   +'<rect x="880" y="0" width="320" height="720" fill="#0e1a24"/>'
   +ROOMS[r.role].back
   +'<path d="M60 470h1080v34H60z" fill="url(#desk)"/>'

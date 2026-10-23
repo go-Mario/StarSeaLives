@@ -16,6 +16,16 @@ const LIFE_AUDIO=(()=>{
   if(!enabled||!start())return;
   const t=ctx.currentTime+delay,osc=ctx.createOscillator(),gain=ctx.createGain();osc.type=type;osc.frequency.setValueAtTime(frequency,t);gain.gain.setValueAtTime(.0001,t);gain.gain.exponentialRampToValueAtTime(volume,t+.018);gain.gain.exponentialRampToValueAtTime(.0001,t+duration);osc.connect(gain);gain.connect(bus);osc.start(t);osc.stop(t+duration+.025);
  }
+ /* 噪声质感：纸张的摩擦、盖章的闷响，都靠它。纯音堆不出"手里有纸"的感觉。 */
+ let noiseBuf=null;
+ function noise(duration=.12,volume=.05,delay=0,type='bandpass',freq=1800,q=.8){
+  if(!enabled||!start())return;
+  if(!noiseBuf){const len=Math.floor(ctx.sampleRate*.6);noiseBuf=ctx.createBuffer(1,len,ctx.sampleRate);const data=noiseBuf.getChannelData(0);for(let i=0;i<len;i++)data[i]=Math.random()*2-1;}
+  const t=ctx.currentTime+delay,src=ctx.createBufferSource(),gain=ctx.createGain(),filter=ctx.createBiquadFilter();
+  src.buffer=noiseBuf;src.loop=true;filter.type=type;filter.frequency.value=freq;filter.Q.value=q;
+  gain.gain.setValueAtTime(.0001,t);gain.gain.exponentialRampToValueAtTime(volume,t+.01);gain.gain.exponentialRampToValueAtTime(.0001,t+duration);
+  src.connect(filter);filter.connect(gain);gain.connect(bus);src.start(t);src.stop(t+duration+.04);
+ }
  /* 每一幕的环境乐：三个音的和弦垫，慢速滤波起伏，外加很稀疏的钟声。
      全部实时合成，音量压得很低，只为让房间“有空气”。 */
  const ACT_CHORDS=[[110,164.8,220],[98,146.8,196],[123.5,185,246.9],[110,164.8,277.2],[87.3,130.8,174.6],[82.4,123.5,207.7]];
@@ -41,5 +51,20 @@ const LIFE_AUDIO=(()=>{
  function stop(){if(!ctx)return;stopPad();const old=ambient.splice(0);for(const osc of old){try{osc.stop();}catch(e){}}try{bus.gain.setTargetAtTime(.0001,ctx.currentTime,.08);}catch(e){}setTimeout(()=>{if(!enabled&&bus){try{bus.disconnect();}catch(e){}bus=null;}},550);}
  function toggle(){enabled=!enabled;try{localStorage.setItem(KEY,enabled?'on':'off');}catch(e){}if(enabled){if(!start())enabled=false;}else{stop();stopPad();}return enabled;}
  document.addEventListener('visibilitychange',()=>{if(!ctx)return;try{if(document.hidden)ctx.suspend();else if(enabled)ctx.resume();}catch(e){}});
- return {toggle,pad,get enabled(){return enabled;},tap(){tone(880,.055,.04);tone(1175,.08,.026,.04);},read(){tone(523,.12,.035);tone(784,.16,.025,.08);},solve(){tone(523,.24,.07);tone(659,.24,.05,.09);tone(784,.3,.05,.18);},choose(n){tone(n?392:587,.2,.055);tone(n?494:740,.26,.04,.07);},wrong(){tone(196,.22,.022,0,'triangle');},rest(){tone(440,.32,.035);tone(587,.42,.025,.12);},enter(){tone(392,.6,.05);tone(523,.7,.04,.14);tone(659,.9,.03,.3);}};
+ return {toggle,pad,get enabled(){return enabled;},
+  /* 通用点击：短促的机械"嗒"，像按下一样东西 */
+  tap(){noise(.028,.05,0,'highpass',2200);tone(1180,.04,.028);},
+  /* 翻开一份记录：纸张滑动 + 很轻的一声 */
+  read(){noise(.2,.03,0,'bandpass',1500,.6);tone(523,.12,.03);tone(784,.16,.02,.07);},
+  /* 翻到下一份：纸页摩擦 */
+  page(){noise(.15,.035,0,'bandpass',1750,.55);},
+  /* 把记录收好：纸被折起放低 */
+  close(){noise(.24,.028,0,'lowpass',850,.7);tone(300,.12,.018,.02);},
+  /* 盖章：先有闷响，再有一声落定 */
+  stamp(){noise(.08,.085,0,'lowpass',380);tone(96,.18,.05);},
+  solve(){tone(523,.24,.06);tone(659,.24,.045,.09);tone(784,.3,.04,.18);},
+  choose(n){tone(n?392:587,.2,.055);tone(n?494:740,.26,.04,.07);},
+  wrong(){tone(196,.22,.022,0,'triangle');noise(.09,.02,0,'lowpass',500);},
+  rest(){noise(.3,.025,0,'lowpass',700,.6);tone(440,.32,.032);tone(587,.42,.022,.12);},
+  enter(){tone(392,.6,.045);tone(523,.7,.035,.14);tone(659,.9,.025,.3);}};
 })();

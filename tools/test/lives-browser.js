@@ -44,6 +44,8 @@ const BASE=process.env.SS_URL||'http://127.0.0.1:8766/index.html',OUT=process.ar
     assert.ok((await page.locator('.evidence-chip p').textContent()).length>4,'evidence chip has no clue text');
     await page.click('[data-act="deduce"][data-id="'+((correct+1)%3)+'"]');
     assert.equal(await page.locator('.hint').isVisible(),true);
+    // A wrong reading must explain WHY it fails - that is what makes it test the brain.
+    assert.ok((await page.locator('.hint').textContent()).length>16,'wrong reading gave no substantive reasoning');
     await page.click('[data-act="deduce"][data-id="'+correct+'"]');
     if(act===0){await page.click('[data-act="rest"]');await page.click('[data-act="takeRest"]');await page.click('[data-act="resume"]');}
     await page.click('[data-act="choose"][data-id="'+(act%2)+'"]');

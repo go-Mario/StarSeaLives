@@ -201,3 +201,56 @@ const STATION_MOMENTS=[
  B('林遥把哥哥的工具箱留在门后。她说，不把旧钥匙磨亮，就好像他还会回来取。','Lin Yao kept her brother\'s toolbox behind the door. She said not polishing the old key was a way of pretending he would come back for it.'),
  B('今天没有需要赶上的班次。苏弥搬了把椅子到窗边，看了一会儿那些根本不为谁亮的人工灯。','No shift to hurry to today. Su Mi moved a chair to the window and watched, for a while, the artificial lights that shone for no one in particular.')
 ];
+/* 推断：每一幕三个"理解"，每个都带一句"为什么"。选错不惩罚，但会告诉你它错在哪——
+   这才考验脑子：玩家必须拿每条理解和记录对照，而不是挑一句顺眼的。
+   why 是教学，也是"人生启发"：为什么系统式的推理会伤人。 */
+const DEDUCTIONS=[
+ {options:[ // 第一幕 · 门禁与食堂的两只钟
+  {text:B('记录被错接了；应先找到活人，而不是接受系统结论。','The records have been misaligned. Find the person before accepting the system’s conclusion.'),correct:true,
+   why:B('门禁 03:18:44 比食堂终端 03:17:20 快 84 秒。对齐之后，"事故后进入"一点也不晚。系统注销只是取消了身份，从来不是死亡证明。','The door clock (03:18:44) runs 84 seconds ahead of the canteen terminal (03:17:20). Aligned, the "post-accident entry" is not late at all. Deactivation cancels a status; it has never been proof of death.')},
+  {text:B('早餐订单证明他从未离开食堂。','The breakfast order proves he never left the canteen.'),
+   why:B('订单只说明他没有取消订餐，说明不了他离开没离开。把"没取消"当成"没离开"，正是系统会犯的错。','The order only shows he never cancelled it, not whether he left. Treating "not cancelled" as "not gone" is exactly the error the system makes.')},
+  {text:B('时间不同，所有记录都没有价值。','Different timestamps make every record worthless.'),
+   why:B('时间口径不同恰恰是线索：两只钟的差是 84 秒。找到这个差，记录就能互相印证，而不是一起作废。','The differing clocks are the clue, not a flaw: the gap is 84 seconds. Find the gap and the records corroborate each other instead of cancelling out.')}
+ ]},
+ {options:[ // 第二幕 · 空名单与 47 份消耗
+  {text:B('人确实在船上；空名单掩盖了未经说明的转运。','People are aboard. The empty manifest conceals an unexplained transfer.'),correct:true,
+   why:B('载荷报告的水和氧气对应 47 人。取消的是"乘客身份"，不是乘客本身。空名单是一次操作的结果，不是无人的证据。','The load report’s water and oxygen correspond to forty-seven people. What was cancelled was passenger status, not the passengers. The empty manifest is the result of an action, not evidence of absence.')},
+  {text:B('空名单足以证明没有乘客。','An empty manifest proves there are no passengers.'),
+   why:B('名单是被清空的，不是天生空的。消耗量对得上 47 人，人就该在——先信活着的人，再问名单去了哪里。','A list was emptied; it was not born empty. Consumption matches forty-seven people, so the people are there. Believe the living first, then ask where the list went.')},
+  {text:B('耗氧量能证明每一个乘客的身份。','Oxygen use identifies every passenger.'),
+   why:B('耗氧量能说明"有多少人"，不能逐一说明"是谁"。把总数当身份证，既会冤枉人，也会漏掉人。','Oxygen use tells you how many, not who. Mistaking a headcount for an identity both accuses and loses people.')}
+ ]},
+ {options:[ // 第三幕 · 第三环的水
+  {text:B('先停用问题管线并检测，不能拿别处的报告解释这里。','Isolate and test the affected supply. A result from elsewhere does not answer this problem.'),correct:true,
+   why:B('第三环的滤芯被改成了"可延期更换"，污染来自一次次以成本为由的延期。公共报告只检了管理区——别处合格，解释不了第三环的水。','Ring Three’s filters were reclassified as "deferrable"; the contamination follows repeated cost-saving delays. The public report tested only the administrative district. A clean result elsewhere does not explain Ring Three’s water.')},
+  {text:B('只要公开报告合格，就不存在污染。','A clean public report rules out contamination.'),
+   why:B('报告只覆盖它检测的地方。管理区合格，不等于你喝到的水也合格——别让一张纸替你尝水。','A report only covers where it looked. The administrative district being clean does not mean the water you drank was clean. Do not let a paper taste your water for you.')},
+  {text:B('食堂接触过水，所以一定是食堂投毒。','The canteen handled the water, so it must have poisoned it.'),
+   why:B('接触过水不等于投毒。真正该问的是滤芯为什么被一次次延期——那是制度省下的钱，不是某个人的恶意。','Handling water is not poisoning it. The real question is why the filters were deferred again and again. It was money the system saved, not one person’s malice.')}
+ ]},
+ {options:[ // 第四幕 · 熟悉的声音
+  {text:B('先用独立渠道核实，不能凭声音交出名单。','Verify through an independent channel before releasing the names.'),correct:true,
+   why:B('每一句呼吸都和 2077 年的一段医疗访谈对得上——旧录音被用来生成新话语。熟悉的声音是记忆，不是可核验的身份。先独立核实，再交名单。','Every breath matches a medical interview recorded in 2077; old recordings were used to produce new speech. A familiar voice is memory, not a verified identity. Verify through an independent channel before releasing any list.')},
+  {text:B('知道私人回忆，就一定是本人。','Knowing a private memory proves it is the person.'),
+   why:B('私人回忆可以被窃取、被拼接。越是只有你们俩知道的细节，越可能来自被偷走的旧录音。','A private memory can be stolen and stitched. The more intimate the detail, the more likely it came from a stolen old recording.')},
+  {text:B('声音被合成，所以原来的失踪也全是假的。','A synthetic voice means the original disappearances were invented.'),
+   why:B('一段被合成的声音是新的谎言，不代表旧的消失没有发生。别用一个骗局，去否定所有真实的不幸。','A synthetic voice is a new lie; it does not mean the original disappearances were false. Do not let one fraud erase every real loss.')}
+ ]},
+ {options:[ // 第五幕 · 撤离与未登记者
+  {text:B('交叉核对真实居住者，再决定撤离是否完成。','Cross-check the people who actually live here before declaring evacuation complete.'),correct:true,
+   why:B('食堂账本、包裹签收、维修工单、诊疗单都指向同一批居民。单一名册的缺失，抹不掉一个住在这里的人。先核对真实住户，再宣布撤离完成。','Meal ledgers, parcel receipts, work orders and medical slips all point to the same residents. A gap in one register cannot erase a person who lives here. Cross-check the real residents before declaring the evacuation complete.')},
+  {text:B('没有登记，就无需计入撤离。','Unregistered people need not be evacuated.'),
+   why:B('登记是系统的账，不是人的存在。没被登记的人往往最依赖撤离——把他们漏掉，才是真正的事故。','A register is the system’s ledger, not a person’s existence. The unregistered are often the ones who most need evacuating. Leaving them behind is the real accident.')},
+  {text:B('一个旧地址足以证明所有人现在仍住在这里。','One old address proves everyone still lives here.'),
+   why:B('旧地址能证明有人住过，不能证明现在仍住着。要交叉多个来源，才能既不漏掉人，也不错报人。','An old address proves someone lived there, not that they still do. Cross-check several sources so you neither miss a person nor report a ghost.')}
+ ]},
+ {options:[ // 第六幕 · 留下什么
+  {text:B('讲清自己亲历的部分，尊重别人没有同意公开的生活。','Tell what you witnessed. Respect the parts of other lives they did not agree to publish.'),correct:true,
+   why:B('可以留下公共的事实，也可以遮去别人不愿公开的部分。留下记录和交出一切，不是同一件事——你亲历的是你的，别人的隐私是别人的。','Public facts can be preserved while private details stay withheld. Leaving a record is not the same as surrendering everything. What you witnessed is yours; another’s private life is theirs.')},
+  {text:B('为了完整，可以公开所有人的私人经历。','Completeness justifies publishing everyone’s private life.'),
+   why:B('"完整"常常成为侵犯的借口。没经同意的公开，是把别人的伤当成你的展品。','"Completeness" is often an excuse for violation. Publishing without consent turns another’s wound into your exhibit.')},
+  {text:B('记忆不完美，所以任何记录都不值得留下。','Imperfect memory makes every record worthless.'),
+   why:B('不完美的记录仍然好过没有记录。后人需要一个起点，哪怕这个起点带着缺口和不确定。','An imperfect record still beats no record. Those who come after need a place to start, even if that start carries gaps and doubts.')}
+ ]}
+];

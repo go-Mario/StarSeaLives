@@ -577,20 +577,72 @@ const STATION_MOMENTS=[
  B('林遥把哥哥的工具箱留在门后。她说，不把旧钥匙磨亮，就好像他还会回来取。','Lin Yao kept her brother\'s toolbox behind the door. She said not polishing the old key was a way of pretending he would come back for it.'),
  B('今天没有需要赶上的班次。苏弥搬了把椅子到窗边，看了一会儿那些根本不为谁亮的人工灯。','No shift to hurry to today. Su Mi moved a chair to the window and watched, for a while, the artificial lights that shone for no one in particular.')
 ];
+/* 推断：每一幕三个"理解"，每个都带一句"为什么"。选错不惩罚，但会告诉你它错在哪——
+   这才考验脑子：玩家必须拿每条理解和记录对照，而不是挑一句顺眼的。
+   why 是教学，也是"人生启发"：为什么系统式的推理会伤人。 */
+const DEDUCTIONS=[
+ {options:[ // 第一幕 · 门禁与食堂的两只钟
+  {text:B('记录被错接了；应先找到活人，而不是接受系统结论。','The records have been misaligned. Find the person before accepting the system’s conclusion.'),correct:true,
+   why:B('门禁 03:18:44 比食堂终端 03:17:20 快 84 秒。对齐之后，"事故后进入"一点也不晚。系统注销只是取消了身份，从来不是死亡证明。','The door clock (03:18:44) runs 84 seconds ahead of the canteen terminal (03:17:20). Aligned, the "post-accident entry" is not late at all. Deactivation cancels a status; it has never been proof of death.')},
+  {text:B('早餐订单证明他从未离开食堂。','The breakfast order proves he never left the canteen.'),
+   why:B('订单只说明他没有取消订餐，说明不了他离开没离开。把"没取消"当成"没离开"，正是系统会犯的错。','The order only shows he never cancelled it, not whether he left. Treating "not cancelled" as "not gone" is exactly the error the system makes.')},
+  {text:B('时间不同，所有记录都没有价值。','Different timestamps make every record worthless.'),
+   why:B('时间口径不同恰恰是线索：两只钟的差是 84 秒。找到这个差，记录就能互相印证，而不是一起作废。','The differing clocks are the clue, not a flaw: the gap is 84 seconds. Find the gap and the records corroborate each other instead of cancelling out.')}
+ ]},
+ {options:[ // 第二幕 · 空名单与 47 份消耗
+  {text:B('人确实在船上；空名单掩盖了未经说明的转运。','People are aboard. The empty manifest conceals an unexplained transfer.'),correct:true,
+   why:B('载荷报告的水和氧气对应 47 人。取消的是"乘客身份"，不是乘客本身。空名单是一次操作的结果，不是无人的证据。','The load report’s water and oxygen correspond to forty-seven people. What was cancelled was passenger status, not the passengers. The empty manifest is the result of an action, not evidence of absence.')},
+  {text:B('空名单足以证明没有乘客。','An empty manifest proves there are no passengers.'),
+   why:B('名单是被清空的，不是天生空的。消耗量对得上 47 人，人就该在——先信活着的人，再问名单去了哪里。','A list was emptied; it was not born empty. Consumption matches forty-seven people, so the people are there. Believe the living first, then ask where the list went.')},
+  {text:B('耗氧量能证明每一个乘客的身份。','Oxygen use identifies every passenger.'),
+   why:B('耗氧量能说明"有多少人"，不能逐一说明"是谁"。把总数当身份证，既会冤枉人，也会漏掉人。','Oxygen use tells you how many, not who. Mistaking a headcount for an identity both accuses and loses people.')}
+ ]},
+ {options:[ // 第三幕 · 第三环的水
+  {text:B('先停用问题管线并检测，不能拿别处的报告解释这里。','Isolate and test the affected supply. A result from elsewhere does not answer this problem.'),correct:true,
+   why:B('第三环的滤芯被改成了"可延期更换"，污染来自一次次以成本为由的延期。公共报告只检了管理区——别处合格，解释不了第三环的水。','Ring Three’s filters were reclassified as "deferrable"; the contamination follows repeated cost-saving delays. The public report tested only the administrative district. A clean result elsewhere does not explain Ring Three’s water.')},
+  {text:B('只要公开报告合格，就不存在污染。','A clean public report rules out contamination.'),
+   why:B('报告只覆盖它检测的地方。管理区合格，不等于你喝到的水也合格——别让一张纸替你尝水。','A report only covers where it looked. The administrative district being clean does not mean the water you drank was clean. Do not let a paper taste your water for you.')},
+  {text:B('食堂接触过水，所以一定是食堂投毒。','The canteen handled the water, so it must have poisoned it.'),
+   why:B('接触过水不等于投毒。真正该问的是滤芯为什么被一次次延期——那是制度省下的钱，不是某个人的恶意。','Handling water is not poisoning it. The real question is why the filters were deferred again and again. It was money the system saved, not one person’s malice.')}
+ ]},
+ {options:[ // 第四幕 · 熟悉的声音
+  {text:B('先用独立渠道核实，不能凭声音交出名单。','Verify through an independent channel before releasing the names.'),correct:true,
+   why:B('每一句呼吸都和 2077 年的一段医疗访谈对得上——旧录音被用来生成新话语。熟悉的声音是记忆，不是可核验的身份。先独立核实，再交名单。','Every breath matches a medical interview recorded in 2077; old recordings were used to produce new speech. A familiar voice is memory, not a verified identity. Verify through an independent channel before releasing any list.')},
+  {text:B('知道私人回忆，就一定是本人。','Knowing a private memory proves it is the person.'),
+   why:B('私人回忆可以被窃取、被拼接。越是只有你们俩知道的细节，越可能来自被偷走的旧录音。','A private memory can be stolen and stitched. The more intimate the detail, the more likely it came from a stolen old recording.')},
+  {text:B('声音被合成，所以原来的失踪也全是假的。','A synthetic voice means the original disappearances were invented.'),
+   why:B('一段被合成的声音是新的谎言，不代表旧的消失没有发生。别用一个骗局，去否定所有真实的不幸。','A synthetic voice is a new lie; it does not mean the original disappearances were false. Do not let one fraud erase every real loss.')}
+ ]},
+ {options:[ // 第五幕 · 撤离与未登记者
+  {text:B('交叉核对真实居住者，再决定撤离是否完成。','Cross-check the people who actually live here before declaring evacuation complete.'),correct:true,
+   why:B('食堂账本、包裹签收、维修工单、诊疗单都指向同一批居民。单一名册的缺失，抹不掉一个住在这里的人。先核对真实住户，再宣布撤离完成。','Meal ledgers, parcel receipts, work orders and medical slips all point to the same residents. A gap in one register cannot erase a person who lives here. Cross-check the real residents before declaring the evacuation complete.')},
+  {text:B('没有登记，就无需计入撤离。','Unregistered people need not be evacuated.'),
+   why:B('登记是系统的账，不是人的存在。没被登记的人往往最依赖撤离——把他们漏掉，才是真正的事故。','A register is the system’s ledger, not a person’s existence. The unregistered are often the ones who most need evacuating. Leaving them behind is the real accident.')},
+  {text:B('一个旧地址足以证明所有人现在仍住在这里。','One old address proves everyone still lives here.'),
+   why:B('旧地址能证明有人住过，不能证明现在仍住着。要交叉多个来源，才能既不漏掉人，也不错报人。','An old address proves someone lived there, not that they still do. Cross-check several sources so you neither miss a person nor report a ghost.')}
+ ]},
+ {options:[ // 第六幕 · 留下什么
+  {text:B('讲清自己亲历的部分，尊重别人没有同意公开的生活。','Tell what you witnessed. Respect the parts of other lives they did not agree to publish.'),correct:true,
+   why:B('可以留下公共的事实，也可以遮去别人不愿公开的部分。留下记录和交出一切，不是同一件事——你亲历的是你的，别人的隐私是别人的。','Public facts can be preserved while private details stay withheld. Leaving a record is not the same as surrendering everything. What you witnessed is yours; another’s private life is theirs.')},
+  {text:B('为了完整，可以公开所有人的私人经历。','Completeness justifies publishing everyone’s private life.'),
+   why:B('"完整"常常成为侵犯的借口。没经同意的公开，是把别人的伤当成你的展品。','"Completeness" is often an excuse for violation. Publishing without consent turns another’s wound into your exhibit.')},
+  {text:B('记忆不完美，所以任何记录都不值得留下。','Imperfect memory makes every record worthless.'),
+   why:B('不完美的记录仍然好过没有记录。后人需要一个起点，哪怕这个起点带着缺口和不确定。','An imperfect record still beats no record. Those who come after need a place to start, even if that start carries gaps and doubts.')}
+ ]}
+];
 
 </script>
 <script>
 /* Source: js/lives/audio.js */
 'use strict';
 const LIFE_AUDIO=(()=>{
- const KEY='SS_LIVES_SOUND';let enabled=false,ctx=null,bus=null,master=null,wet=null,ambient=[],motifTimer=null;
+ const KEY='SS_LIVES_SOUND';let enabled=false,ctx=null,bus=null,master=null,wet=null;
  try{enabled=localStorage.getItem(KEY)!=='off';}catch(e){enabled=true;}
- /* 一段合成的厅堂混响（指数衰减噪声脉冲）。空间感是"沉浸"的一半——
-    没有它，所有声音都贴在屏幕上，像电子表。 */
+ /* 合成厅堂混响：只给"事件"一点空间感，绝不拿去烘连续的嗡鸣（那只会变成烦人的低频噪音）。 */
  let irBuf=null;
  function reverb(){
-  if(!irBuf){const len=Math.floor(ctx.sampleRate*2.4);irBuf=ctx.createBuffer(2,len,ctx.sampleRate);
-   for(let c=0;c<2;c++){const d=irBuf.getChannelData(c);for(let i=0;i<len;i++){d[i]=(Math.random()*2-1)*Math.pow(1-i/len,2.6);}}}
+  if(!irBuf){const len=Math.floor(ctx.sampleRate*1.9);irBuf=ctx.createBuffer(2,len,ctx.sampleRate);
+   for(let c=0;c<2;c++){const d=irBuf.getChannelData(c);for(let i=0;i<len;i++){d[i]=(Math.random()*2-1)*Math.pow(1-i/len,2.8);}}}
   const cv=ctx.createConvolver();cv.buffer=irBuf;return cv;
  }
  function start(){
@@ -601,88 +653,66 @@ const LIFE_AUDIO=(()=>{
    if(!bus){
     bus=ctx.createGain();bus.gain.value=.22;
     master=ctx.createGain();master.gain.value=1;master.connect(ctx.destination);
-    bus.connect(master);                                   // 干声
-    wet=ctx.createGain();wet.gain.value=.5;                // 湿声（混响送回）
-    const cv=reverb();bus.connect(cv);cv.connect(wet);wet.connect(master);
+    bus.connect(master);
+    wet=ctx.createGain();wet.gain.value=.4;const cv=reverb();bus.connect(cv);cv.connect(wet);wet.connect(master);
    }else bus.gain.setTargetAtTime(.22,ctx.currentTime,.12);
-   if(!ambient.length){
-    // 低频嗡鸣（舱体共振）
-    for(const [hz,volume] of [[55,.016],[82.4,.008]]){const osc=ctx.createOscillator(),gain=ctx.createGain(),filter=ctx.createBiquadFilter();osc.type='sine';osc.frequency.value=hz;filter.type='lowpass';filter.frequency.value=170;gain.gain.value=volume;osc.connect(filter);filter.connect(gain);gain.connect(bus);osc.start();ambient.push(osc);}
-    // 一层极轻的"空气"：滤波噪声，像通风与远处设备的白噪，让房间不停下来
-    const air=ctx.createBufferSource(),ag=ctx.createGain(),af=ctx.createBiquadFilter();air.loop=true;
-    const alen=Math.floor(ctx.sampleRate*3),ab=ctx.createBuffer(1,alen,ctx.sampleRate),ad=ab.getChannelData(0);
-    for(let i=0;i<alen;i++)ad[i]=Math.random()*2-1;air.buffer=ab;
-    af.type='bandpass';af.frequency.value=520;af.Q.value=.5;ag.gain.value=.012;
-    air.connect(af);af.connect(ag);ag.connect(bus);air.start();ambient.push(air);
-   }
-   if(!motifTimer)motifTimer=setTimeout(motif,9000);
    return true;
   }catch(e){enabled=false;try{localStorage.setItem(KEY,'off');}catch(_){}return false;}
  }
- function tone(frequency,duration=.14,volume=.08,delay=0,type='sine',send=.5){
+ function tone(frequency,duration=.14,volume=.08,delay=0,type='sine',send=.4){
   if(!enabled||!start())return;
-  const t=ctx.currentTime+delay,osc=ctx.createOscillator(),gain=ctx.createGain();osc.type=type;osc.frequency.setValueAtTime(frequency,t);gain.gain.setValueAtTime(.0001,t);gain.gain.exponentialRampToValueAtTime(volume,t+.018);gain.gain.exponentialRampToValueAtTime(.0001,t+duration);osc.connect(gain);gain.connect(bus);
+  const t=ctx.currentTime+delay,osc=ctx.createOscillator(),gain=ctx.createGain();osc.type=type;osc.frequency.setValueAtTime(frequency,t);gain.gain.setValueAtTime(.0001,t);gain.gain.exponentialRampToValueAtTime(volume,t+.02);gain.gain.exponentialRampToValueAtTime(.0001,t+duration);osc.connect(gain);gain.connect(bus);
   if(send>0&&wet){const s=ctx.createGain();s.gain.value=send;gain.connect(s);s.connect(wet);}
-  osc.start(t);osc.stop(t+duration+.025);
+  osc.start(t);osc.stop(t+duration+.03);
  }
- /* 噪声质感：纸张的摩擦、盖章的闷响，都靠它。 */
  let noiseBuf=null;
- function noise(duration=.12,volume=.05,delay=0,type='bandpass',freq=1800,q=.8,send=.25){
+ function noise(duration=.12,volume=.05,delay=0,type='bandpass',freq=1800,q=.8,send=.2){
   if(!enabled||!start())return;
   if(!noiseBuf){const len=Math.floor(ctx.sampleRate*.6);noiseBuf=ctx.createBuffer(1,len,ctx.sampleRate);const data=noiseBuf.getChannelData(0);for(let i=0;i<len;i++)data[i]=Math.random()*2-1;}
   const t=ctx.currentTime+delay,src=ctx.createBufferSource(),gain=ctx.createGain(),filter=ctx.createBiquadFilter();
   src.buffer=noiseBuf;src.loop=true;filter.type=type;filter.frequency.value=freq;filter.Q.value=q;
-  gain.gain.setValueAtTime(.0001,t);gain.gain.exponentialRampToValueAtTime(volume,t+.01);gain.gain.exponentialRampToValueAtTime(.0001,t+duration);
+  gain.gain.setValueAtTime(.0001,t);gain.gain.exponentialRampToValueAtTime(volume,t+.012);gain.gain.exponentialRampToValueAtTime(.0001,t+duration);
   src.connect(filter);filter.connect(gain);gain.connect(bus);
   if(send>0&&wet){const s=ctx.createGain();s.gain.value=send;gain.connect(s);s.connect(wet);}
   src.start(t);src.stop(t+duration+.04);
  }
- /* 每一幕的环境乐：三个音的和弦垫，慢速滤波起伏，外加很稀疏的钟声。 */
+ /* 环境音：不是持续的嗡鸣，而是一小段缓慢的"涨落"——淡入、停留、淡出，然后是真的安静。
+    每幕换一个和弦。偶尔有一声很远的铃。氛围该是"有时浮现"，不是"一直在耳边嗡嗡"。 */
  const ACT_CHORDS=[[110,164.8,220],[98,146.8,196],[123.5,185,246.9],[110,164.8,277.2],[87.3,130.8,174.6],[82.4,123.5,207.7]];
- /* 一段忧郁的五声动机，偶尔在空气里浮现——给世界一个"声音"，而不只是底噪 */
- const MOTIF=[[0,392],[3,440],[5,523.25],[3,440],[0,392],[-2,349.23]];
- let padNodes=null;
+ let padChord=null,padTimer=null,padNodes=null;
+ function swell(chord){
+  const t=ctx.currentTime,g=ctx.createGain();
+  g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(.04,t+4.5);g.gain.linearRampToValueAtTime(.04,t+8);g.gain.linearRampToValueAtTime(.0001,t+13);
+  const oscs=chord.map(hz=>{const o=ctx.createOscillator(),og=ctx.createGain();o.type='sine';o.frequency.value=hz;o.detune.value=(Math.random()-.5)*6;og.gain.value=1/chord.length;o.connect(og);og.connect(g);o.start(t);o.stop(t+13.2);return o;});
+  g.connect(bus);if(wet){const s=ctx.createGain();s.gain.value=.8;g.connect(s);s.connect(wet);}
+  padNodes={oscs:oscs,g:g};setTimeout(()=>{if(padNodes&&padNodes.g===g)padNodes=null;},13400);
+ }
  function pad(index){
   if(!enabled||!start())return;
-  stopPad();
-  const chord=ACT_CHORDS[(index||0)%ACT_CHORDS.length];
-  const t=ctx.currentTime,g=ctx.createGain(),lp=ctx.createBiquadFilter();
-  lp.type='lowpass';lp.frequency.setValueAtTime(420,t);lp.frequency.linearRampToValueAtTime(760,t+9);lp.frequency.linearRampToValueAtTime(430,t+18);
-  const lfo=ctx.createOscillator(),lg=ctx.createGain();lfo.frequency.value=.07;lg.gain.value=140;lfo.connect(lg);lg.connect(lp.frequency);
-  g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(.05,t+3.5);
-  const oscs=chord.map(hz=>{const o=ctx.createOscillator(),og=ctx.createGain();o.type='sine';o.frequency.value=hz;o.detune.value=(Math.random()-.5)*7;og.gain.value=1/chord.length;o.connect(og);og.connect(lp);o.start(t);return o;});
-  lp.connect(g);g.connect(bus);lfo.start(t);
-  padNodes={oscs:oscs.concat([lfo]),g:g};
-  const ring=()=>{if(!enabled||!padNodes)return;tone(chord[2]*2,.9,.016,0,'sine',1);setTimeout(ring,16000+Math.random()*12000);};
-  setTimeout(ring,6000);
+  stopPad();padChord=ACT_CHORDS[(index||0)%ACT_CHORDS.length];
+  const loop=()=>{if(!enabled||!padChord)return;swell(padChord);if(Math.random()<.45)tone(padChord[2]*2,1.2,.013,7,'sine',1);padTimer=setTimeout(loop,20000+Math.random()*16000);};
+  padTimer=setTimeout(loop,2600);
  }
- function motif(){
-  if(!enabled||!start()){motifTimer=null;return;}
-  const base=110;let when=0;
-  for(const [step,hz] of MOTIF){tone(hz,.9,.028,when,'sine',1);tone(hz*2,.5,.01,when,'sine',1);when+=.62;}
-  motifTimer=setTimeout(motif,34000+Math.random()*26000);
- }
- function stopPad(){if(!padNodes)return;const t=ctx.currentTime,p=padNodes;padNodes=null;
-  try{p.g.gain.cancelScheduledValues(t);p.g.gain.setValueAtTime(p.g.gain.value,t);p.g.gain.linearRampToValueAtTime(.0001,t+1.6);}catch(e){}
-  setTimeout(()=>{p.oscs.forEach(o=>{try{o.stop();}catch(e){}});try{p.g.disconnect();}catch(e){}},1900);}
- function stop(){if(!ctx)return;stopPad();if(motifTimer){clearTimeout(motifTimer);motifTimer=null;}const old=ambient.splice(0);for(const osc of old){try{osc.stop();}catch(e){}}try{bus.gain.setTargetAtTime(.0001,ctx.currentTime,.08);}catch(e){}setTimeout(()=>{if(!enabled&&bus){try{bus.disconnect();}catch(e){}bus=null;}},550);}
+ function stopPad(){if(padTimer){clearTimeout(padTimer);padTimer=null;}padChord=null;
+  if(padNodes){const t=ctx.currentTime,p=padNodes;padNodes=null;
+   try{p.g.gain.cancelScheduledValues(t);p.g.gain.setValueAtTime(p.g.gain.value,t);p.g.gain.linearRampToValueAtTime(.0001,t+1.2);}catch(e){}
+   setTimeout(()=>{p.oscs.forEach(o=>{try{o.stop();}catch(e){}});try{p.g.disconnect();}catch(e){}},1400);}}
+ function stop(){if(!ctx)return;stopPad();try{bus.gain.setTargetAtTime(.0001,ctx.currentTime,.08);}catch(e){}setTimeout(()=>{if(!enabled&&bus){try{bus.disconnect();}catch(e){}bus=null;}},550);}
  function toggle(){enabled=!enabled;try{localStorage.setItem(KEY,enabled?'on':'off');}catch(e){}if(enabled){if(!start())enabled=false;}else{stop();stopPad();}return enabled;}
  document.addEventListener('visibilitychange',()=>{if(!ctx)return;try{if(document.hidden)ctx.suspend();else if(enabled)ctx.resume();}catch(e){}});
  return {toggle,pad,get enabled(){return enabled;},
-  /* 通用点击：短促的机械"嗒" */
   tap(){noise(.028,.05,0,'highpass',2200,0,0);tone(1180,.04,.026,0,'sine',0);},
-  /* 翻开一份记录：纸张滑动 */
-  read(){noise(.2,.03,0,'bandpass',1500,.6);tone(523,.12,.028,0,'sine',.4);tone(784,.16,.018,.07,'sine',.6);},
+  read(){noise(.2,.03,0,'bandpass',1500,.6);tone(523,.12,.028,0,'sine',.3);tone(784,.16,.016,.07,'sine',.5);},
   page(){noise(.15,.035,0,'bandpass',1750,.55);},
-  close(){noise(.24,.028,0,'lowpass',850,.7);tone(300,.12,.016,.02,'sine',.3);},
-  stamp(){noise(.08,.085,0,'lowpass',380,1,.4);tone(96,.18,.05,0,'sine',.3);},
-  solve(){tone(523,.24,.06,0,'sine',.5);tone(659,.24,.045,.09,'sine',.6);tone(784,.3,.04,.18,'sine',.8);},
-  /* 顿悟：把线索连起来那一刻——比普通"解决"更亮、更延绵，像一束光落下 */
-  insight(){tone(587.33,.5,.06,0,'sine',1);tone(880,.55,.045,.1,'sine',1);tone(1174.66,.7,.032,.22,'sine',1);noise(.5,.02,.02,'highpass',3000,.5,.8);},
-  choose(n){tone(n?392:587,.2,.05,0,'sine',.5);tone(n?494:740,.26,.035,.07,'sine',.6);},
-  wrong(){tone(196,.22,.02,0,'triangle',.2);noise(.09,.02,0,'lowpass',500);},
-  rest(){noise(.3,.025,0,'lowpass',700,.6);tone(440,.32,.03,0,'sine',.6);tone(587,.42,.02,.12,'sine',.8);},
-  enter(){tone(392,.6,.04,0,'sine',.7);tone(523,.7,.03,.14,'sine',.7);tone(659,.9,.022,.3,'sine',.9);}};
+  close(){noise(.24,.028,0,'lowpass',850,.7);tone(300,.12,.016,.02,'sine',.25);},
+  stamp(){noise(.08,.085,0,'lowpass',380,1,.4);tone(96,.18,.05,0,'sine',.25);},
+  solve(){tone(523,.24,.06,0,'sine',.4);tone(659,.24,.045,.09,'sine',.5);tone(784,.3,.04,.18,'sine',.7);},
+  /* 顿悟：把线索连起来那一刻——亮、延绵，像一束光落下 */
+  insight(){tone(587.33,.5,.06,0,'sine',.9);tone(880,.55,.045,.1,'sine',1);tone(1174.66,.7,.03,.22,'sine',1);noise(.5,.018,.02,'highpass',3000,.5,.7);},
+  choose(n){tone(n?392:587,.2,.05,0,'sine',.4);tone(n?494:740,.26,.035,.07,'sine',.5);},
+  wrong(){tone(196,.22,.02,0,'triangle',.15);noise(.09,.02,0,'lowpass',500);},
+  rest(){noise(.3,.025,0,'lowpass',700,.6);tone(440,.32,.03,0,'sine',.5);tone(587,.42,.02,.12,'sine',.7);},
+  enter(){tone(392,.6,.04,0,'sine',.6);tone(523,.7,.03,.14,'sine',.6);tone(659,.9,.022,.3,'sine',.8);}};
 })();
 
 </script>
@@ -973,10 +1003,10 @@ function readerCard(r,idx){
  function play(){const r=current();if(r.act>=6)return ending();const a=LIVES.acts[r.act],d=SCENES[r.role][r.act],role=LIVES.roles[r.role],canDeduce=r.read.length>=2&&(r.act!==0||(r.investigationDone&&r.searchDone));let body='';
  if(r.history.length>r.act){const c=r.history[r.act].choice===0?d.a:d.b;body='<section class="paper"><div class="eyebrow">'+T('这一年的选择','The choice you made')+'</div><h2>'+E(c.title)+'</h2><p>'+E(c.result)+'</p>'+(r.act===4?'<p class="ripple">'+E(SETTLEMENTS[LIFE_MODEL.world(r).settlement])+'</p>':'')+'<p class="ripple">'+E(a.reveal)+'</p>'+button(r.act===5?T('走向余生','The years that followed'):T('继续生活 · ','Life goes on · ')+LIVES.acts[r.act+1].year,'next')+'</section>';}
  else if(r.solved){body='<section class="paper"><div class="eyebrow">'+T('真相之后，生活还在继续','Life continues after the discovery')+'</div><h2>'+E(a.question)+'</h2><p>'+E(a.reveal)+'</p><p class="muted">'+T('你能决定的是自己下一步怎样做。两条路都留下一些东西，也失去一些东西。','You can decide what you do next. Each path preserves something and gives something up.')+'</p>'+[d.a,d.b].map((c,i)=>'<button class="choice" data-act="choose" data-id="'+i+'"><b>'+E(c.title)+'</b><span>'+E(c.detail)+'</span></button>').join('')+'</section>';}
- else{body='<section class="paper" id="scene-body"><div class="eyebrow">'+T('你的现场','Your part of the scene')+'</div><p>'+E(d.opening)+'</p>'+(r.act?'<p class="ripple">'+esc(ripple(r))+'</p>':'')+(documentIndex===null?'<p class="muted">'+T('点击场景里的标记，查看你能接触到的材料。','Explore the marked places to examine records available to you.')+'</p>':'<p class="doc-open">'+T('正在阅读：','Now reading: ')+E(documentIndex===2?B('交叉核对','Cross-check'):d.docs[documentIndex].name)+'</p>')+openingAction(r)+'<hr><h2>'+E(a.question)+'</h2>'+(canDeduce?'<div class="deduce-link"><p class="deduce-prompt">'+T('把两份记录连起来：它们共同说明了什么？','Connect the two records: what do they show together?')+'</p><div class="evidence-chip"><span class="evidence-tag">'+T('记录显示','The records show')+'</span><p>'+E(a.clue)+'</p></div><div class="conclusions">'+deductions(r).map((x,i)=>'<button class="choice" data-act="deduce" data-id="'+i+'"><i>'+T('理解 ','Reading ')+(i+1)+'</i>'+E(x.text)+'</button>').join('')+'</div></div>':'<p class="gate-hint">'+gateHint(r)+'</p>')+(hint&&!(r.act===0&&r.investigationDone&&!r.searchDone)?'<p role="status" class="hint">'+esc(hint)+'</p>':'')+'</section>';}
+ else{body='<section class="paper" id="scene-body"><div class="eyebrow">'+T('你的现场','Your part of the scene')+'</div><p>'+E(d.opening)+'</p>'+(r.act?'<p class="ripple">'+esc(ripple(r))+'</p>':'')+(documentIndex===null?'<p class="muted">'+T('点击场景里的标记，查看你能接触到的材料。','Explore the marked places to examine records available to you.')+'</p>':'<p class="doc-open">'+T('正在阅读：','Now reading: ')+E(documentIndex===2?B('交叉核对','Cross-check'):d.docs[documentIndex].name)+'</p>')+openingAction(r)+'<hr><h2>'+E(a.question)+'</h2>'+(canDeduce?'<div class="deduce-link"><p class="deduce-prompt">'+T('三条理解，逐条和记录对照。选错也会告诉你它错在哪。','Three readings. Test each against the records. A wrong pick will tell you why it fails.')+'</p><div class="evidence-chip"><span class="evidence-tag">'+T('记录显示','The records show')+'</span><p>'+E(a.clue)+'</p></div><div class="conclusions">'+deductions(r).map((x,i)=>'<button class="choice" data-act="deduce" data-id="'+i+'"><i>'+T('理解 ','Reading ')+(i+1)+'</i>'+E(x.text)+'</button>').join('')+'</div></div>':'<p class="gate-hint">'+gateHint(r)+'</p>')+(hint&&!(r.act===0&&r.investigationDone&&!r.searchDone)?'<p role="status" class="hint">'+esc(hint)+'</p>':'')+'</section>';}
  const reader=documentIndex===null?'':readerCard(r,documentIndex);
   return '<div class="chapter-head"><div><div class="eyebrow">'+a.year+' · '+T('第 ','Chapter ')+(r.act+1)+T(' 幕','')+'</div><h1>'+E(a.title)+'</h1></div><div class="age">'+E(role.name)+' · '+(a.year-role.born)+' '+T('岁','years old')+'</div></div><div class="layout"><main>'+(!r.solved&&r.history.length===r.act?sceneArt(r)+clueTray(r):'')+body+'</main>'+aside(r)+'</div>'+reader;}
- function deductions(r){const a=LIVES.acts[r.act],items=[{text:a.answer,correct:true},...a.wrong.map(text=>({text,correct:false}))];for(let i=0;i<(r.act+Object.keys(LIVES.roles).indexOf(r.role))%3;i++)items.push(items.shift());return items;}
+ function deductions(r){const items=DEDUCTIONS[r.act].options.map(o=>({text:o.text,why:o.why,correct:!!o.correct}));for(let i=0;i<(r.act+Object.keys(LIVES.roles).indexOf(r.role))%3;i++)items.push(items.shift());return items;}
  function journal(){const r=current();return '<section class="journal"><div class="eyebrow">'+E(LIVES.roles[r.role].name)+'</div><h1>'+T('我走过的年岁','The years I have lived')+'</h1><p class="muted">'+T('这里只记下你亲历的事，不展示其他人的秘密或尚未发生的结局。','Only what you have lived through appears here—not others’ secrets or futures you have not reached.')+'</p>'+(!r.history.length?'<p>'+T('第一篇还没有写完。','The first entry is still being written.')+'</p>':'')+r.history.map((h,i)=>{const a=LIVES.acts[i],c=h.choice===0?SCENES[r.role][i].a:SCENES[r.role][i].b;return '<article class="timeline-entry"><small>'+a.year+'</small><h2>'+E(a.title)+'</h2><p>'+E(c.result)+'</p>'+(h.searched?'<p class="archive-note">'+T('站内检索：','Archive search: ')+E(LIVES.searches[r.role].system)+' · '+E(LIVES.searches[r.role].hits[0].title)+'</p>':'')+(h.rested?'<p>'+T('那一年，你也为自己留过一段休息。','That year, you made some time to rest, too.')+'</p>':'')+'</article>';}).join('')+button(T('回到我的人生','Return to my life'),'resume')+'</section>';}
  function ending(){const r=current(),role=LIVES.roles[r.role],o=LIFE_MODEL.outcome(r),titles={witness:B('让名字留下的人','The one who kept the names'),keeper:B('给人留灯的人','The one who left a light on'),bridge:B('在两岸之间的人','The one between the shores')},texts={witness:B('你一次次让私下发生的事进入公共记录。后来的人不必再从一片空白开始。但有些晚饭、班次和相聚，没有等到你。','Again and again, you brought private events into the public record. Those who followed did not begin with blank pages. Some dinners, departures and reunions did not wait for you.'),keeper:B('你把很多时间留给眼前的人。有人记得一碗饭、一趟陪伴，或者一扇开过的门。公共档案仍有缺口，你没有办法独自填平。','You gave much of your time to the person in front of you. Someone remembers a meal, a journey or a door that opened. The public archive still has gaps you could not fill alone.'),bridge:B('你没有始终站在同一边。有时保存记录，有时照顾生活。后来的人从你的矛盾里，读到了一个真实的人。','You did not always stand on the same side. Sometimes you preserved the record; sometimes you tended a life. Those who came later found a real person in your contradictions.')},last={lin:B('2137 年，林渡去世。家人把那把旧钥匙留了下来，没有把它磨亮。','Lin Du died in 2137. The family kept the old key without polishing it.'),su:B('2135 年，苏弥去世。店里仍留着一张不需要预约的桌子。','Su Mi died in 2135. The canteen still keeps one table that needs no reservation.'),xu:B('2140 年，许照去世。旧路线图被阿棠的家人装进相框，折痕没有压平。','Xu Zhao died in 2140. A Tang’s family framed the route map, creases intact.'),jian:B('2138 年，简去世。那支钢笔又换了一个笔尖，仍有人用它记下当事人真正想说的话。','Jian died in 2138. The pen received another nib. Someone still uses it to record what clients actually want to say.')};return '<section class="ending">'+portrait(r.role,true)+'<div class="eyebrow">'+T('一生的尾声','A life, in closing')+' · '+E(role.name)+'</div><h1>'+E(titles[o.kind])+'</h1><blockquote>'+E(role.want)+'</blockquote><p>'+E(texts[o.kind])+'</p><p>'+T('你为自己留下了 '+o.breaks+' 段休息。它们没有改变新闻标题，却改变了这些日子怎样被记住。','You made room for '+o.breaks+' breaks. They did not change the headlines. They changed how those days were remembered.')+'</p><p>'+E(last[r.role])+'</p><div class="paper"><div class="eyebrow">'+T('世界留下的痕迹','What remains in the world')+'</div><p>'+E(SETTLEMENTS[LIFE_MODEL.world(r).settlement])+'</p>'+r.history.slice(0,5).map((h,i)=>'<p>'+E(RIPPLE[LIVES.acts[i].flag][h.choice])+'</p>').join('')+'</div><p class="muted">'+T('这不是一个总分。你的六次选择、私人生活和留下的公共痕迹，共同构成这条人生。','This is not a final score. Your six choices, private life and public traces make up this life.')+'</p><div class="actions">'+button(T('翻看一生的手记','Read the life journal'),'journal')+button(T('另一个人的一生','Another person’s life'),'home','','button alt')+button(T('休息舱','Rest cabin'),'rest','','button alt')+(r.role==='jian'?button(T('六份卷宗','Six case files'),'cases','','button alt'):'')+'</div></section>';}
  function settings(){return '<section class="settings"><h1>'+T('设置与存档','Settings & saves')+'</h1>'+warning()+'<p>'+T('所有当前玩法均有完整中文与英文。语言切换不会改变人物、线索或选择。','All current playable content is available in Chinese and English. Switching language does not change characters, clues or choices.')+'</p><h2>'+T('把人生带走','Take your lives with you')+'</h2><p>'+T('进度保存在本浏览器。不同设备、浏览器和本地文件不会自动同步。导出文件包含四位人物已有的进度。','Progress is stored in this browser. Devices, browsers and local files do not sync automatically. An export contains saved progress for all four characters.')+'</p><div class="actions">'+button(T('导出备份','Export backup'),'export')+button(T('导入备份','Import backup'),'import','','button alt')+'</div><h2>'+T('重新开始','Start over')+'</h2><p>'+T('新版人生使用独立存档，不覆盖旧版庭审进度。可以在人物选择页单独重玩一位角色。下面的按钮会清空本版四位人物的进度；旧版庭审存档不受影响。','This edition uses a separate save and preserves previous tribunal progress. Restart one character from their selection page. The button below resets all four lives in this edition. The previous tribunal edition’s saves are unaffected.')+'</p>'+button(T('清空本版进度','Reset this edition'),'reset','','button danger')+'<h2>'+T('关于这个世界','About this world')+'</h2><p>'+T('这是原创虚构故事。法律卷宗为旧版六案的叙事改编，不是法律意见。当前为 2D 单机版，没有账号、广告、付费体力或多人联机。','This is original fiction. The legal files adapt the previous six cases and are not legal advice. This is a 2D single-player edition, without accounts, ads, paid energy or multiplayer.')+'</p>'+button(T('返回','Back'),'resume','','button alt')+'</section>';}
@@ -1079,7 +1109,7 @@ function readerCard(r,idx){
     if(el){el.classList.add('right');const box=el.closest('.conclusions');if(box)box.classList.add('stamped');const st=document.createElement('span');st.className='stamp';st.textContent=T('材料支持','Supported');el.appendChild(st);}
     // 留足时间让玩家读到"材料支持"的盖章：这是每一幕的"啊，对了"时刻
     setTimeout(function(){deduceLock=false;LIFE_MODEL.solve(r);hint='';persist();render(false);},1150);}
-   else{LIFE_AUDIO.wrong();hint=T('这一步还超出了材料能说明的范围。再看一眼“交叉核对”，或者换一个理解。','That goes beyond what the records support. Revisit the cross-check or try another interpretation.');
+   else{LIFE_AUDIO.wrong();hint=t(item.why)||T('这一步还超出了材料能说明的范围。再看一眼“交叉核对”，或者换一个理解。','That goes beyond what the records support. Revisit the cross-check or try another interpretation.');
     render(false);const el=document.querySelector('[data-act="deduce"][data-id="'+id+'"]');if(el){el.classList.add('wrong');setTimeout(function(){el.classList.remove('wrong');},400);}}},
  choose:id=>{if(LIFE_MODEL.choose(current(),Number(id))){LIFE_AUDIO.choose(Number(id));persist();render();}},next:()=>{if(LIFE_MODEL.next(current())){LIFE_AUDIO.enter();LIFE_AUDIO.pad(current().act);documentIndex=null;persist();render();actCard();}},journal:()=>{screen='journal';render();},rest:()=>{screen='rest';restMode=null;render();},takeRest:()=>{if(LIFE_MODEL.rest(current())){LIFE_AUDIO.rest();persist();render(false);notify(T('这段休息已记入你这一年的生活。','This break is now part of your year.'));}},
  restGame:id=>{restMode=id;rest.ship=[25,75];rest.paused=false;rest.dials=[0,0,0];if(id==='memory'){const cards=[0,0,1,1,2,2,3,3];for(let i=cards.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[cards[i],cards[j]]=[cards[j],cards[i]];}memory={cards,open:[],matched:[]};}render();},

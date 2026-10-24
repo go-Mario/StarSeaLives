@@ -270,6 +270,7 @@ button:active{transform:translateY(1px)}
   color:var(--gold);letter-spacing:.06em}
 .act-card-act{display:block;margin-top:14px;font-size:11px;letter-spacing:.34em;color:var(--muted)}
 .act-card-inner h2{margin:12px 0 0;font-size:clamp(22px,4.6vw,34px);letter-spacing:.06em}
+.act-card-place{display:block;margin-top:12px;font-size:12px;letter-spacing:.18em;color:#93a6ad}
 .act-card-tap{display:block;margin-top:26px;font-size:11px;letter-spacing:.2em;color:#6f8189;animation:pulseTap 2s ease-in-out infinite}
 @keyframes pulseTap{0%,100%{opacity:.45}50%{opacity:1}}
 

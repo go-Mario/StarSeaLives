@@ -1,8 +1,8 @@
 {
   "name": "the-silent-atlas",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "A 2D interstellar mystery about evidence, memory, and the people absent from the map.",
-  "scripts": {"test": "node --test tests/model.test.cjs", "test:browser": "node tests/browser.cjs", "build": "python3 tools/build.py", "check:build": "python3 tools/build.py --check", "start": "python3 -m http.server 8766 --bind 127.0.0.1"},
+  "scripts": {"test": "node --test tests/model.test.cjs", "test:browser": "node tests/browser.cjs", "test:upgrade": "node tests/upgrade.cjs", "build": "python3 tools/build.py", "check:build": "python3 tools/build.py --check", "start": "python3 -m http.server 8766 --bind 127.0.0.1"},
   "devDependencies": {"playwright": "1.62.1"}
 }

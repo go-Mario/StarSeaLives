@@ -29,9 +29,9 @@ const ATLAS_SCENE = (()=>{
  if(s.room==='observatory'){ctx.strokeStyle='#809ba355';ctx.lineWidth=1;ctx.beginPath();ctx.ellipse(570,140,210,95,-.15,0,Math.PI*2);ctx.stroke();for(let i=0;i<8;i++)line(140+i*100,290,140+i*100,300,'#9bab9577');text('LIGHT DELAY / 07:00',410,200,12,'#9cbeb1')}
  if(s.room==='core'){for(let x of [270,820]){rect(x,310,18,200,'#1c3943');rect(x+5,315,8,185,s.ending?'#83ae8a':'#426675');glow(x+8,410,75,'#a1ce9420')}line(290,500,540,430,'#629a8766',4);line(820,500,580,430,'#629a8766',4)}
  for(const [id,label,x,y] of r.exits){const locked=!!ATLAS_MODEL.gate(s,id);rect(x-22,y-34,44,62,'#142932');rect(x-21,y-33,3,59,locked?'#b29466':'#7daea6');rect(x+18,y-33,3,59,locked?'#b29466':'#7daea6');line(x-20,y+28,x+20,y+28,'#527b7d',2);text(x<200?'‹':'›',x,y+5,25,locked?'#ab946c':'#93c9b7','center');text(label,x,y+50,10,'#a5b6b3','center')}
- const objects=[...r.objects].sort((a,b)=>a[3]-b[3]);let drawn=false;for(const o of objects){if(!drawn&&o[3]>s.y){astronaut(s.x,s.y,t);drawn=true}object(o,s,t)}if(!drawn)astronaut(s.x,s.y,t);
+ const objects=[...ATLAS_MODEL.objects(s)].sort((a,b)=>a[3]-b[3]);let drawn=false;for(const o of objects){if(!drawn&&o[3]>s.y){astronaut(s.x,s.y,t);drawn=true}object(o,s,t)}if(!drawn)astronaut(s.x,s.y,t);
  if(s.echo){rect(75,278,850,285,'#437b8e16');for(let y=280;y<560;y+=6)line(75,y,925,y,'#93d4db08');text('ECHO CACHE / 历史不等于现场',132,550,10,'#88d3cf')}
- if(s.ending){for(let i=0;i<6;i++)astronaut(300+i*55,480+Math.sin(i)*10,t+i,false);text(s.ending==='shelter'?'临时安全 / 第七杯茶':'救援对接完成 / 六人登船',500,310,14,'#b1cfb1','center')}
+ if(s.ending&&s.room==='core'){if(s.ending==='shelter')for(let i=0;i<6;i++)astronaut(300+i*55,480+Math.sin(i)*10,t+i,false);text(s.ending==='shelter'?'临时安全 / 第七杯茶':'救援对接完成 / 六人登船',500,310,14,'#b1cfb1','center')}
  // Foreground piping and soft light pool unify the objects with the room.
  glow(500,420,350,s.echo?'#70d1d515':'#afc2a10e');line(40,610,960,610,'#0b1723',12);line(40,605,960,605,'#40535f',2);for(let i=0;i<13;i++)rect(65+i*70,607,9,8,'#4f5f64');
  if(s.target){ctx.strokeStyle='#b4d5b577';ctx.beginPath();ctx.ellipse(s.target.x,s.target.y,9,4,0,0,Math.PI*2);ctx.stroke()}ctx.restore();
@@ -39,7 +39,7 @@ const ATLAS_SCENE = (()=>{
  function draw(ts){frame++;const dt=Math.min((ts-prior)/1000,.04);prior=ts;const s=getState?.();if(tick&&s&&!document.hidden)tick(dt);const t=s?.settings.motion&&!matchMedia('(prefers-reduced-motion: reduce)').matches?ts/1000:0;ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);sky(t);if(isPlaying?.())room(s,t);else title(t);const g=ctx.createRadialGradient(width*.5,height*.45,height*.2,width*.5,height*.5,width*.8);g.addColorStop(0,'transparent');g.addColorStop(1,'#030914aa');rect(0,0,width,height,g);requestAnimationFrame(draw)}
  function resize(){width=canvas.clientWidth;height=canvas.clientHeight;canvas.width=Math.round(width*devicePixelRatio);canvas.height=Math.round(height*devicePixelRatio)}
  function point(e){const r=canvas.getBoundingClientRect();return {x:(e.clientX-r.left-ox)/scale,y:(e.clientY-r.top-oy)/scale}}
- function hit(p,s){return [...ATLAS_CONTENT.rooms[s.room].objects.filter(o=>o[5]!=='echo'||s.echo),...ATLAS_CONTENT.rooms[s.room].exits.map(o=>[o[0],o[1],o[2],o[3],'exit'])].find(o=>Math.abs(p.x-o[2])<43&&p.y>o[3]-85&&p.y<o[3]+30)}
+ function hit(p,s){return [...ATLAS_MODEL.objects(s),...ATLAS_CONTENT.rooms[s.room].exits.map(o=>[o[0],o[1],o[2],o[3],'exit'])].find(o=>Math.abs(p.x-o[2])<43&&p.y>o[3]-85&&p.y<o[3]+30)}
  function init(state,update,active){getState=state;tick=update;isPlaying=active;resize();new ResizeObserver(resize).observe(canvas);requestAnimationFrame(draw)}
  return {init,point,hit};
 })();

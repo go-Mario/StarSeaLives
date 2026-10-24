@@ -289,6 +289,30 @@ button:active{transform:translateY(1px)}
 /* 纯淡入转场：不位移任何元素，避免读屏/自动化误判与晕动 */
 @keyframes screenFade{from{opacity:0}to{opacity:1}}
 
+/* ===================== 今日 · 归港（每日一角 + 碎片盒） ===================== */
+.daily-card{position:relative;margin:22px 0 8px;padding:20px 22px;border-radius:12px;
+  background:linear-gradient(180deg,#1a2a33,#132029);border:1px solid rgba(223,189,135,.22);
+  box-shadow:0 10px 40px rgba(0,0,0,.28)}
+.daily-card::before{content:"";position:absolute;inset:0;border-radius:12px;pointer-events:none;
+  background:radial-gradient(120% 60% at 85% -10%,rgba(223,189,135,.10),transparent 55%)}
+.daily-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:12px}
+.daily-count{font-size:11px;letter-spacing:.14em;color:var(--muted)}
+.daily-moment{margin:0 0 16px;font-size:16px;line-height:1.95;color:var(--ink)}
+.daily-actions{display:flex;flex-wrap:wrap;gap:10px}
+@media(max-width:650px){.daily-moment{font-size:15px}}
+.frag-box{position:fixed;inset:0;z-index:75;display:grid;place-items:center;padding:20px}
+.frag-back{position:absolute;inset:0;background:rgba(5,9,14,.82);backdrop-filter:blur(6px);animation:fadeIn .25s ease both}
+.frag-panel{position:relative;z-index:1;width:min(760px,100%);max-height:86vh;overflow:auto;padding:24px 26px;animation:coverIn .34s cubic-bezier(.2,.7,.3,1) both}
+.frag-head h2{margin:6px 0 6px}
+.frag-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0 8px}
+.frag{border:1px solid var(--line);border-radius:8px;padding:14px 15px;background:#0f1e28;min-height:64px}
+.frag.got{border-color:rgba(223,189,135,.4);background:#13242c}
+.frag.got p{margin:0;font-size:13px;line-height:1.8;color:var(--ink)}
+.frag-locked{margin:0;font-size:13px;color:#5d6f78;letter-spacing:.1em}
+.frag-foot{margin-top:8px;text-align:right}
+.frag-box.out{animation:fadeIn .25s ease reverse both;pointer-events:none}
+@media(max-width:650px){.frag-grid{grid-template-columns:1fr}}
+
 /* ===================== 环境氛围层 =====================
    这一层放在 #app 之外：render() 每次交互都会重建 #app，
    放在里面的动画会被反复重播（此前"点击频闪"的根源）。

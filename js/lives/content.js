@@ -173,3 +173,31 @@ const SETTLEMENTS={
  provisional:B('最后的请求让遗漏者拿到了临时席位，但早年的记录仍有缺口。新站答应逐人复核，没有立即建立统一认定。人先上了船，关于他们位置的争论还没有结束。','The final application secures provisional places for omitted residents, but gaps remain in earlier records. The new station promises individual reviews rather than a common recognition rule. People board; the dispute over their place is not over.'),
  households:B('你照顾的人平安离开，靠亲属、朋友和个人安排在新站落脚。旧登记规则没有因此改变。后来人仍需要有人替他们带路、作证，或者留一张床。','The people you accompanied leave safely and settle through family, friends and individual arrangements. The old registration rule survives. Those who follow still need someone to guide them, vouch for them or offer a bed.')
 };
+/* 今日 · 归港：每天一角的小事。取自这座站五十年的缝隙——不宏大，都是人。
+   这是"愿意每天上线"的钩子，也是"人生启发"的载体：每一条都小而真。 */
+const STATION_MOMENTS=[
+ B('第三环的裁缝铺挂出一块牌子："改衣，不改人。"','The tailor on Ring Three hung a small sign: "We alter clothes, not people."'),
+ B('乔安的早餐还停在订单里。苏弥没有删掉它，只是把它移到了"每日"的最上面——像给一个还没到的人留座。','Jo An\'s breakfast still sat in the order book. Su Mi didn\'t delete it. She moved it to the top of the "daily" list, like keeping a seat for someone not yet arrived.'),
+ B('许照记住了每一艘船的吃水线。他说，船会撒谎，水不会。','Xu Zhao memorized every ship\'s waterline. He said a ship can lie; the water cannot.'),
+ B('人工黎明还有十七分钟。简坐在窗前，把这十七分钟当成一天里唯一属于自己的东西。','Seventeen minutes until artificial dawn. Jian sat by the window, treating those seventeen minutes as the only thing that day that belonged to her.'),
+ B('孙奶奶把发芽的土豆种在旧袜子里，挂在走廊。有人说没用。她说："看看活物，人心里就有点底。"','Granny Sun sprouted potatoes in old socks and hung them in the corridor. People said it was pointless. She said, "Seeing something alive steadies a heart."'),
+ B('系统把三百七十二个人记成一个编号。陈岚在编号旁边，写下了其中三个人的名字。','The system recorded three hundred and seventy-two people as a single number. Beside the number, Chen Lan wrote the names of three of them.'),
+ B('林渡从不向家人解释为什么又晚归。他只是每天下班，把工具箱放在门口，轻轻带上门。','Lin Du never explained to his family why he was late again. He just came home each shift, set his toolbox down by the door, and closed it softly behind him.'),
+ B('阿棠把旧路线图装进相框，折痕没有压平。她说，压平了，就像他没走过。','A Tang framed the old route map without pressing out the creases. She said pressing them flat would be like he had never walked it.'),
+ B('食堂留着一张不需要预约的桌子。谁都可以坐，谁都不必解释。','The canteen kept one table that needed no reservation. Anyone could sit; no one had to explain.'),
+ B('苏弥记得每个人不吃什么。她说，记住一个人躲开什么，比记住他爱吃什么更难，也更真。','Su Mi remembered what everyone left on the plate. She said remembering what a person avoids is harder than what they love, and truer.'),
+ B('人工重力将在六小时后关闭。孩子们最先发现：飘起来的时候，笑声比哭省力。','Artificial gravity would shut down in six hours. The children noticed first: when you float, laughter costs less than crying.'),
+ B('简替一个不肯开口的人记下他的话。那人后来告诉她：你不是替我赢，你是让我被听见。','Jian wrote down the words of a man who would not speak. Later he told her: you didn\'t win for me. You let me be heard.'),
+ B('撤离大厅的广播每天都在报同一个名字，等一个不会应声的人。','The evacuation hall announced the same name every day, waiting for someone who would not answer.'),
+ B('许照在泊位尽头养了一棵不会开花的植物。他说，不开花也活着，活着就对了。','Xu Zhao kept a plant that would never flower at the end of the berth. He said it stays alive without blooming, and staying alive is enough.'),
+ B('记录显示水质正常。可母亲薛还是不喝自来水，她只信自己烧开的那一壶。','The record said the water was fine. Mother Xue still didn\'t drink from the tap. She trusted only the pot she boiled herself.'),
+ B('那颗偏离的星还在原处。林渡每次经过都看一眼，像看一个搬了家却没打招呼的老朋友。','The drifted star was still there. Lin Du glanced at it each time he passed, like an old friend who moved away without saying goodbye.'),
+ B('小雅把药按星期分好，装进七个信封。她说，这样一周就有了形状。','Xiao Ya sorted the medicine by week into seven envelopes. She said this way, a week had a shape.'),
+ B('有人问林渡，修这些东西有什么意义。他说："坏了有人修，人晚上才敢睡。"','Someone asked Lin Du what the point of fixing all this was. He said, "When broken things get mended, people dare to sleep at night."'),
+ B('赵嵩的泊位号被回收，分给了一艘新船。旧编号贴在工具柜上，没人舍得撕。','Zhao Song\'s berth number was reclaimed and given to a new ship. The old number stayed stuck to the toolbox; no one had the heart to peel it off.'),
+ B('苏弥在关店前多摆一副碗筷。不是为了谁，是为了让这个屋子看起来还在等人。','Before closing, Su Mi set out one extra bowl and chopsticks. Not for anyone, just so the room still looked like it was waiting.'),
+ B('陈岚把共同的证据变成安置规则那天，手是抖的。她说，把一件事做对，比把一件事做成更累。','The day Chen Lan turned shared evidence into a resettlement rule, her hands shook. She said doing a thing right is heavier than getting it done.'),
+ B('归港站的夜班里，最难的从来不是修船，是记住每一个人现在轮到谁去吃饭。','On Homeward\'s night shift, the hardest part was never repairing the ships. It was remembering whose turn it was, that hour, to eat.'),
+ B('林遥把哥哥的工具箱留在门后。她说，不把旧钥匙磨亮，就好像他还会回来取。','Lin Yao kept her brother\'s toolbox behind the door. She said not polishing the old key was a way of pretending he would come back for it.'),
+ B('今天没有需要赶上的班次。苏弥搬了把椅子到窗边，看了一会儿那些根本不为谁亮的人工灯。','No shift to hurry to today. Su Mi moved a chair to the window and watched, for a while, the artificial lights that shone for no one in particular.')
+];

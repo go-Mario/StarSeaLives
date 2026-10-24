@@ -12,6 +12,19 @@ const BASE=process.env.SS_URL||'http://127.0.0.1:8766/index.html',OUT=process.ar
   assert.equal(replay,false,'cover entrance animation replays on re-render (flicker)');
   await page.click('[data-act="begin"]');
   await page.screenshot({path:path.join(OUT,language+'-home.png'),fullPage:true});
+  // Today at Homeward: the daily moment card, gathering it into the fragment box.
+  assert.equal(await page.locator('.daily-card').isVisible(),true,'daily moment card missing on home');
+  assert.ok((await page.locator('.daily-moment').textContent()).length>8,'daily moment is empty');
+  const before=await page.evaluate(()=>{try{return JSON.parse(localStorage.getItem('SS_LIVES_MOMENTS')).collected.length;}catch(e){return 0;}});
+  await page.click('[data-act="gather"]');
+  const after=await page.evaluate(()=>{try{return JSON.parse(localStorage.getItem('SS_LIVES_MOMENTS')).collected.length;}catch(e){return 0;}});
+  assert.equal(after,before+1,'gathering the daily moment did not record it');
+  assert.equal(/已收进|In your fragment box/.test(await page.locator('.daily-actions [data-act="gather"]').textContent()),true,'gathered state not reflected on the button');
+  await page.click('[data-act="fragments"]');
+  assert.equal(await page.locator('#fragBox').isVisible(),true,'fragment box did not open');
+  assert.ok(await page.locator('.frag.got').count()>=1,'no gathered fragment shown in the box');
+  assert.ok(await page.locator('.frag-locked').count()>=1,'uncollected fragments should read as not-yet-gathered');
+  await page.click('.frag-foot [data-act="closeFrag"]');
   for(const role of ['lin','su','xu','jian']){
    await page.click('[data-act="select"][data-id="'+role+'"]');await page.click('[data-act="start"]');
    for(let act=0;act<6;act++){

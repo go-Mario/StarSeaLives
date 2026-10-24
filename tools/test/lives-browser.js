@@ -67,6 +67,14 @@ const BASE=process.env.SS_URL||'http://127.0.0.1:8766/index.html',OUT=process.ar
   await page.click('[data-act="rest"]');await page.click('[data-act="restGame"][data-id="memory"]');
   for(let round=0;round<8;round++){const known={};for(let i=0;i<8;i++){if(await page.locator('[data-act="flip"][data-id="'+i+'"]').getAttribute('class').then(x=>x.includes('matched')))continue;await page.click('[data-act="flip"][data-id="'+i+'"]');const val=await page.locator('[data-act="flip"][data-id="'+i+'"]').textContent();if(known[val]!==undefined){await page.click('[data-act="flip"][data-id="'+known[val]+'"]');await page.click('[data-act="flip"][data-id="'+i+'"]');}else known[val]=i;}}
   assert.equal(await page.locator('.memory .matched').count(),8);
+  // Restarting one character resets only that life; the others stay finished.
+  await page.click('[data-act="home"]');await page.click('[data-act="select"][data-id="lin"]');
+  assert.equal(await page.locator('[data-act="restart"]').isVisible(),true,'restart button missing for a saved life');
+  await page.click('[data-act="restart"]');
+  assert.equal(await page.locator('#confirmModal').isVisible(),true,'restart did not ask to confirm');
+  await page.click('#confirmModal [data-act="confirm"]');
+  assert.equal(await page.evaluate(()=>LIFE.state.runs.lin.act),0,'restart did not reset the chosen life');
+  assert.equal(await page.evaluate(()=>LIFE.state.runs.su.act),6,'restart disturbed another life');
   assert.deepEqual(errors,[]);console.log('ok '+language+': four lives, six cases, English coverage, optional games, saves and layout');await ctx.close();
  }
  const ctx=await browser.newContext(),page=await ctx.newPage();await page.goto(BASE);

@@ -275,7 +275,7 @@ function readerCard(r,idx){
    +'<ellipse cx="'+(470+V.dx)+'" cy="'+(300+V.dy)+'" rx="'+V.r+'" ry="24" fill="#070b11" opacity=".3"/>'
    +'<path d="'+V.shaft+'" fill="'+V.beam+'" opacity="'+V.beamOp+'"/>'
    +'</svg><div class="act-card-tint"></div><div class="act-card-veil"></div>'
-   +'<div class="act-card-inner"><span class="act-card-year">'+a.year+'</span><span class="act-card-act">'+T('第 ','Chapter ')+(r.act+1)+T(' 幕','')+'</span><h2>'+E(a.title)+'</h2><span class="act-card-place">'+E(a.place)+'</span><span class="act-card-tap">'+T('点击继续','Tap to continue')+'</span></div>';
+   +'<div class="act-card-inner"><span class="act-card-year">'+a.year+'</span><span class="act-card-act">'+T('第 ','Chapter ')+(r.act+1)+T(' 幕','')+'</span><h2>'+E(a.title)+'</h2><span class="act-card-place">'+E(a.place)+'</span><span class="act-card-weather">'+E(a.weather)+'</span><span class="act-card-tap">'+T('点击继续','Tap to continue')+'</span></div>';
   const app=$('app');app.appendChild(card);
   let done=false;
   const close=()=>{if(done)return;done=true;card.classList.add('out');setTimeout(()=>card.remove(),420);};

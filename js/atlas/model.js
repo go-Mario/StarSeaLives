@@ -1,8 +1,9 @@
 'use strict';
 const ATLAS_MODEL = (()=>{
  const C=typeof ATLAS_CONTENT!=='undefined'?ATLAS_CONTENT:require('./content.js');
+ const V=typeof ATLAS_VOYAGE!=='undefined'?ATLAS_VOYAGE:require('./voyage.js');
  const unique=(a,valid)=>Array.isArray(a)&&a.length<=valid.length&&new Set(a).size===a.length&&a.every(v=>valid.includes(v));
- function fresh(){return {version:2,lightLab:{trials:[],solved:false,legacy:false},aftermath:{},room:'dock',x:210,y:430,visited:['dock'],evidence:[],deductions:[],power:false,signal:false,echo:false,ending:null,heard:[],notes:{},events:[],settings:{sound:false,motion:true},startedAt:Date.now()};}
+ function fresh(){return {version:3,voyages:{},lightLab:{trials:[],solved:false,legacy:false},aftermath:{},room:'dock',x:210,y:430,visited:['dock'],evidence:[],deductions:[],power:false,signal:false,echo:false,ending:null,heard:[],notes:{},events:[],settings:{sound:false,motion:true},startedAt:Date.now()};}
  function record(s,type,value){s.events.push({type,value,at:Date.now()});s.events=s.events.slice(-250);}
  function collect(s,id){if(!C.evidence[id]||s.evidence.includes(id))return false;s.evidence.push(id);record(s,'evidence',id);return true;}
  function deduce(s,id,selected,claim){const d=C.deductions.find(d=>d.id===id);if(!d||s.deductions.includes(id))return 'done';if(!Array.isArray(selected)||selected.length!==2||!d.pair.every(x=>selected.includes(x)&&s.evidence.includes(x)))return 'evidence';if(d.claim!==claim)return 'claim';if(id==='time'&&!s.lightLab.solved)return 'experiment';s.deductions.push(id);record(s,'deduction',id);return 'ok';}
@@ -28,8 +29,26 @@ const ATLAS_MODEL = (()=>{
   s.lightLab.solved=true;record(s,'puzzle','light-reconstruction');return 'ok';
  }
  function respond(s,id){const a=C.aftermath[s.ending];if(s.room!=='core'||!a||!a.options.some(o=>o.id===id)||s.aftermath[s.ending])return false;s.aftermath[s.ending]=id;record(s,'aftermath',s.ending+':'+id);return true;}
+ function voyageState(s,route=s.ending){
+  if(!C.endings[route])return null;
+  return V.replay(route,s.aftermath[route],s.voyages[route]||[]);
+ }
+ function sail(s,command){
+  if(s.room!=='dock'||!s.ending||!s.aftermath[s.ending])return '先在信标核心回应阿禾，再回接驳桥安排出航。';
+  const list=s.voyages[s.ending]||[];if(list.length>=200)return '本次航行记录已满，可以撤回或重新规划。';
+  const v=voyageState(s),error=V.apply(v,s.ending,command);if(error)return error;
+  s.voyages[s.ending]=[...list,command];record(s,'voyage',s.ending+':'+command.kind);return '';
+ }
+ function undoVoyage(s){
+  const list=s.voyages[s.ending];if(s.room!=='dock'||!list?.length||voyageState(s).complete)return false;
+  list.pop();record(s,'voyage','undo');return true;
+ }
+ function resetVoyage(s){
+  if(s.room!=='dock'||!s.ending||!s.aftermath[s.ending])return false;
+  s.voyages[s.ending]=[];record(s,'voyage','restart');return true;
+ }
  function validate(s){
-  if(!s||s.version!==2||!C.rooms[s.room]||!Number.isFinite(s.x)||!Number.isFinite(s.y)||s.x<95||s.x>905||s.y<275||s.y>550)throw Error('无法识别的存档位置');
+  if(!s||s.version!==3||!C.rooms[s.room]||!Number.isFinite(s.x)||!Number.isFinite(s.y)||s.x<95||s.x>905||s.y<275||s.y>550)throw Error('无法识别的存档位置');
   if(!unique(s.visited,Object.keys(C.rooms))||!s.visited.includes(s.room)||!unique(s.evidence,Object.keys(C.evidence))||!unique(s.deductions,C.deductions.map(d=>d.id))||!unique(s.heard,C.transmissions.map((_,i)=>i)))throw Error('存档记录无效');
   if(['power','signal','echo'].some(k=>typeof s[k]!=='boolean')||s.ending!==null&&!C.endings[s.ending])throw Error('存档状态无效');
   if(s.deductions.some(id=>!C.deductions.find(d=>d.id===id).pair.every(e=>s.evidence.includes(e)))||s.signal!==s.evidence.includes('signal')||s.visited.includes('archive')&&!s.power||s.visited.includes('core')&&(s.deductions.length<3||!s.signal)||s.ending&&(!s.visited.includes('core')||s.deductions.length<3))throw Error('存档进度不一致');
@@ -37,12 +56,14 @@ const ATLAS_MODEL = (()=>{
   if(!l||typeof l.solved!=='boolean'||typeof l.legacy!=='boolean'||!Array.isArray(l.trials)||l.trials.length>3||new Set(l.trials.map(t=>t?.distance)).size!==l.trials.length||l.trials.some(t=>!t||![1,4,7].includes(t.distance)||t.actual!==t.distance||!Number.isInteger(t.predicted)||t.predicted<0||t.predicted>20))throw Error('光行时实验记录无效');
   if(l.trials.length&&!s.evidence.includes('clock')||l.solved&&(!['clock','signal'].every(id=>s.evidence.includes(id))||!l.legacy&&l.trials.filter(t=>t.actual===t.predicted).length<2)||s.deductions.includes('time')&&!l.solved||l.legacy&&!s.deductions.includes('time'))throw Error('光行时进度不一致');
   if(!s.aftermath||typeof s.aftermath!=='object'||Array.isArray(s.aftermath)||Object.entries(s.aftermath).some(([id,choice])=>!C.aftermath[id]?.options.some(o=>o.id===choice))||Object.keys(s.aftermath).length&&!s.ending)throw Error('结局回访记录无效');
+  if(!s.voyages||typeof s.voyages!=='object'||Array.isArray(s.voyages)||Object.entries(s.voyages).some(([route,commands])=>!C.endings[route]||!s.aftermath[route]||!Array.isArray(commands)))throw Error('航行分支无效');
+  for(const route of Object.keys(s.voyages))voyageState(s,route);
   if(!s.settings||typeof s.settings.sound!=='boolean'||typeof s.settings.motion!=='boolean'||!Number.isFinite(s.startedAt))throw Error('存档设置无效');
   if(!s.notes||typeof s.notes!=='object'||Array.isArray(s.notes)||Object.entries(s.notes).some(([k,v])=>!/^([0-6]|ending)$/.test(k)||typeof v!=='string'||v.length>2000))throw Error('手记无效');
   if(!Array.isArray(s.events)||s.events.length>250||s.events.some(e=>!e||typeof e.type!=='string'||typeof e.value!=='string'||!Number.isFinite(e.at)))throw Error('调查记录无效');return s;
  }
- function decode(raw){if(typeof raw!=='string'||raw.length>300000)throw Error('存档过大');const s=JSON.parse(raw,(k,v)=>{if(['__proto__','constructor','prototype'].includes(k))throw Error('非法字段');return v;});if(s&&s.version===1){s.version=2;s.lightLab={trials:[],solved:Array.isArray(s.deductions)&&s.deductions.includes('time'),legacy:Array.isArray(s.deductions)&&s.deductions.includes('time')};s.aftermath={};}return validate(s);}
+ function decode(raw){if(typeof raw!=='string'||raw.length>300000)throw Error('存档过大');const s=JSON.parse(raw,(k,v)=>{if(['__proto__','constructor','prototype'].includes(k))throw Error('非法字段');return v;});if(s&&s.version===1){s.version=2;s.lightLab={trials:[],solved:Array.isArray(s.deductions)&&s.deductions.includes('time'),legacy:Array.isArray(s.deductions)&&s.deductions.includes('time')};s.aftermath={};}if(s&&s.version===2){s.version=3;s.voyages={};}return validate(s);}
  function dailyIndex(date=new Date()){return Math.floor(Date.UTC(date.getFullYear(),date.getMonth(),date.getDate())/86400000)%C.transmissions.length;}
- return {objects,lightTest,reconstruct,respond,fresh,record,collect,deduce,gate,travel,finish,bases,connected,signalQuality,validate,decode,dailyIndex};
+ return {voyageState,sail,undoVoyage,resetVoyage,objects,lightTest,reconstruct,respond,fresh,record,collect,deduce,gate,travel,finish,bases,connected,signalQuality,validate,decode,dailyIndex};
 })();
 if(typeof module!=='undefined')module.exports=ATLAS_MODEL;

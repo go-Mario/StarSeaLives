@@ -26,7 +26,7 @@ test('light laboratory rejects fixed-delay predictions and reversed events; save
 test('legacy completed and partial saves migrate without erasing notes or blocking progress',()=>{
  for(const source of [M.fresh(),ready()]){
   source.notes.ending='我的旧手记';const old={...source,version:1};delete old.lightLab;delete old.aftermath;
-  const restored=M.decode(JSON.stringify(old));assert.equal(restored.version,2);assert.equal(restored.notes.ending,'我的旧手记');
+  const restored=M.decode(JSON.stringify(old));assert.equal(restored.version,3);assert.equal(restored.notes.ending,'我的旧手记');
   assert.deepEqual(restored.deductions,source.deductions);assert.equal(restored.lightLab.legacy,source.deductions.includes('time'));
   assert.deepEqual(M.decode(JSON.stringify(restored)),restored);
  }
@@ -42,4 +42,50 @@ test('route responses are persistent, exclusive within a route and independent a
 });
 test('tampered laboratory and epilogue records cannot produce valid progress',()=>{
  for(const mutate of [s=>s.lightLab.trials=[],s=>s.lightLab.trials[0].actual=7,s=>s.lightLab.solved=false,s=>s.lightLab.trials.push({...s.lightLab.trials[0]}),s=>s.aftermath={sealed:'account'},s=>s.aftermath={sealed:'repair'}]){const s=ready();mutate(s);assert.throws(()=>M.decode(JSON.stringify(s)))}
+});
+
+const V=require('../js/atlas/voyage.js');
+function routeReady(route,response){const s=ready();M.finish(s,route);M.respond(s,response);M.travel(s,'dock');return s}
+function solveVoyage(route,response){
+ const begin=V.initial(route,response),q=[{v:begin,commands:[]}],seen=new Set();
+ while(q.length){const {v,commands}=q.shift();const key=[v.position,v.energy,v.carrying,v.support].join(':');if(seen.has(key))continue;seen.add(key);if(v.complete)return commands;
+  for(const command of [...V.neighbors(v.position).map(to=>({kind:'move',to})),{kind:'charge'},{kind:'collect'},{kind:'support'}]){const next={...v};if(!V.apply(next,route,command))q.push({v:next,commands:[...commands,command]})}
+ }
+ throw Error('No route home: '+route+':'+response);
+}
+test('every ending and response has a safe resource-valid retrieval route',()=>{
+ for(const [route,a] of Object.entries(C.aftermath))for(const response of a.options){
+  const s=routeReady(route,response.id),commands=solveVoyage(route,response.id);
+  for(const command of commands)assert.equal(M.sail(s,command),'');
+  const v=M.voyageState(s);assert.equal(v.complete,true);assert.equal(v.position,15);assert.ok(v.energy>=0);assert.equal(v.carrying,true);
+  assert.deepEqual(M.voyageState(M.decode(JSON.stringify(s))),v);
+  if(route!=='broadcast')assert.ok(commands.every(c=>c.kind!=='move'||!V.radiation.includes(c.to)));
+  if(route==='shelter'&&response.id==='rest')assert.ok(commands.some(c=>c.kind==='support'));
+  console.log(route,response.id,'steps',v.moves,'charges',v.charges);
+ }
+});
+test('resource and radiation constraints reject impossible commands without mutating progress',()=>{
+ const s=routeReady('sealed','quiet');const before=JSON.stringify(s);
+ assert.match(M.sail(s,{kind:'move',to:4}),/相邻/);assert.equal(JSON.stringify(s),before);
+ for(const n of [16,17])assert.equal(M.sail(s,{kind:'move',to:n}),'');
+ assert.match(M.sail(s,{kind:'move',to:12}),/屏蔽/);
+ assert.match(M.sail(s,{kind:'charge'}),/不能补能/);
+ assert.match(M.sail(s,{kind:'collect'}),/E1/);
+ for(const n of [16,17,16,17])assert.equal(M.sail(s,{kind:'move',to:n}),'');
+ assert.equal(M.voyageState(s).energy,0);assert.match(M.sail(s,{kind:'move',to:16}),/电量耗尽/);
+ assert.equal(M.undoVoyage(s),true);assert.equal(M.voyageState(s).energy,1);
+});
+test('mission cargo is awarded only on return; undo and reset preserve other route histories',()=>{
+ const s=routeReady('broadcast','account'),commands=solveVoyage('broadcast','account');
+ const pick=commands.findIndex(c=>c.kind==='collect');for(const c of commands.slice(0,pick+1))M.sail(s,c);
+ assert.equal(M.voyageState(s).carrying,true);assert.equal(M.voyageState(s).complete,false);
+ M.undoVoyage(s);assert.equal(M.voyageState(s).carrying,false);M.sail(s,{kind:'collect'});
+ for(const c of commands.slice(pick+1))M.sail(s,c);assert.equal(M.undoVoyage(s),false);
+ const saved=JSON.stringify(s.voyages.broadcast);M.travel(s,'core');M.finish(s,'shelter');M.respond(s,'share');M.travel(s,'dock');M.sail(s,{kind:'move',to:16});M.resetVoyage(s);
+ assert.deepEqual(s.voyages.shelter,[]);assert.equal(JSON.stringify(s.voyages.broadcast),saved);assert.equal(s.aftermath.broadcast,'account');
+});
+test('v2 migration keeps epilogue responses and rejects corrupt v3 voyage commands',()=>{
+ const old=routeReady('sealed','repair');old.version=2;delete old.voyages;
+ const restored=M.decode(JSON.stringify(old));assert.equal(restored.version,3);assert.deepEqual(restored.voyages,{});assert.equal(restored.aftermath.sealed,'repair');
+ for(const commands of [[{kind:'move',to:4}],[{kind:'collect'}],[{kind:'warp',to:1}],new Array(201).fill({kind:'charge'})]){const bad=structuredClone(restored);bad.voyages.sealed=commands;assert.throws(()=>M.decode(JSON.stringify(bad)))}
 });

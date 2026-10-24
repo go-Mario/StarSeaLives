@@ -231,6 +231,14 @@ button:active{transform:translateY(1px)}
 @media(max-width:650px){.tray{flex-direction:column;align-items:stretch;gap:8px}.tray-label{display:flex;justify-content:space-between;align-items:baseline}.tray-label b{display:inline;margin-left:6px}.tray-cards{flex-direction:column;gap:8px}.tray-card{min-height:0}}
 
 /* ===================== 结论卡 ===================== */
+.deduce-prompt{margin:2px 0 12px;font-size:13.5px;color:var(--muted)}
+.evidence-chip{position:relative;margin:0 0 14px;padding:12px 16px 12px 18px;border-radius:8px;
+  background:linear-gradient(180deg,#16242c,#101b22);border:1px solid rgba(223,189,135,.28);border-left:3px solid var(--gold)}
+.evidence-chip .evidence-tag{display:block;font-size:10px;letter-spacing:.22em;color:var(--gold);margin-bottom:6px}
+.evidence-chip p{margin:0;font-size:14px;line-height:1.8;color:var(--ink)}
+/* 连对了：证据卡亮一下，像证据和结论之间接通了 */
+.deduce-link:has(.conclusions.stamped) .evidence-chip{border-color:rgba(223,189,135,.72);box-shadow:0 0 22px rgba(223,189,135,.14);animation:linkPulse .6s ease}
+@keyframes linkPulse{0%{transform:scale(1)}38%{transform:scale(1.025)}100%{transform:scale(1)}}
 .conclusions{display:grid;gap:10px;margin:14px 0 4px}
 .choice{position:relative;display:block;width:100%;text-align:left;background:#132430;border:1px solid var(--line);
   border-radius:10px;padding:16px 18px 16px 64px;font-size:14.5px;line-height:1.85;color:var(--ink);
@@ -311,6 +319,11 @@ button:active{transform:translateY(1px)}
   background:radial-gradient(120% 80% at 50% 0%,rgba(120,170,200,.05) 0%,transparent 55%),
              radial-gradient(90% 60% at 50% 100%,rgba(223,189,135,.035) 0%,transparent 60%);
   animation:ambBreathe 24s ease-in-out infinite}
+/* 这一幕的光：整屏染上当前章节的光色，随年份缓慢变化（放在 #app 外，不会因重渲染而闪） */
+.amb-haze{position:absolute;inset:0;background:var(--act-beam,#8fb6c9);opacity:.05;
+  -webkit-mask-image:radial-gradient(130% 85% at 50% 12%,#000 0%,transparent 62%);
+  mask-image:radial-gradient(130% 85% at 50% 12%,#000 0%,transparent 62%);
+  transition:background 1.4s ease;animation:ambBreathe 30s ease-in-out infinite}
 @keyframes ambDrift{from{transform:translate3d(0,0,0)}to{transform:translate3d(-2.4%,-1.6%,0)}}
 @keyframes ambBreathe{0%,100%{opacity:.75}50%{opacity:1}}
 @media(prefers-reduced-motion:reduce){.amb-dust,.amb-glow{animation:none!important}}

@@ -244,6 +244,14 @@ button:active{transform:translateY(1px)}
 @media(max-width:650px){.tray{flex-direction:column;align-items:stretch;gap:8px}.tray-label{display:flex;justify-content:space-between;align-items:baseline}.tray-label b{display:inline;margin-left:6px}.tray-cards{flex-direction:column;gap:8px}.tray-card{min-height:0}}
 
 /* ===================== 结论卡 ===================== */
+.deduce-prompt{margin:2px 0 12px;font-size:13.5px;color:var(--muted)}
+.evidence-chip{position:relative;margin:0 0 14px;padding:12px 16px 12px 18px;border-radius:8px;
+  background:linear-gradient(180deg,#16242c,#101b22);border:1px solid rgba(223,189,135,.28);border-left:3px solid var(--gold)}
+.evidence-chip .evidence-tag{display:block;font-size:10px;letter-spacing:.22em;color:var(--gold);margin-bottom:6px}
+.evidence-chip p{margin:0;font-size:14px;line-height:1.8;color:var(--ink)}
+/* 连对了：证据卡亮一下，像证据和结论之间接通了 */
+.deduce-link:has(.conclusions.stamped) .evidence-chip{border-color:rgba(223,189,135,.72);box-shadow:0 0 22px rgba(223,189,135,.14);animation:linkPulse .6s ease}
+@keyframes linkPulse{0%{transform:scale(1)}38%{transform:scale(1.025)}100%{transform:scale(1)}}
 .conclusions{display:grid;gap:10px;margin:14px 0 4px}
 .choice{position:relative;display:block;width:100%;text-align:left;background:#132430;border:1px solid var(--line);
   border-radius:10px;padding:16px 18px 16px 64px;font-size:14.5px;line-height:1.85;color:var(--ink);
@@ -324,6 +332,11 @@ button:active{transform:translateY(1px)}
   background:radial-gradient(120% 80% at 50% 0%,rgba(120,170,200,.05) 0%,transparent 55%),
              radial-gradient(90% 60% at 50% 100%,rgba(223,189,135,.035) 0%,transparent 60%);
   animation:ambBreathe 24s ease-in-out infinite}
+/* 这一幕的光：整屏染上当前章节的光色，随年份缓慢变化（放在 #app 外，不会因重渲染而闪） */
+.amb-haze{position:absolute;inset:0;background:var(--act-beam,#8fb6c9);opacity:.05;
+  -webkit-mask-image:radial-gradient(130% 85% at 50% 12%,#000 0%,transparent 62%);
+  mask-image:radial-gradient(130% 85% at 50% 12%,#000 0%,transparent 62%);
+  transition:background 1.4s ease;animation:ambBreathe 30s ease-in-out infinite}
 @keyframes ambDrift{from{transform:translate3d(0,0,0)}to{transform:translate3d(-2.4%,-1.6%,0)}}
 @keyframes ambBreathe{0%,100%{opacity:.75}50%{opacity:1}}
 @media(prefers-reduced-motion:reduce){.amb-dust,.amb-glow{animation:none!important}}
@@ -331,7 +344,7 @@ button:active{transform:translateY(1px)}
 </style>
 </head>
 <body>
-<div class="ambient" aria-hidden="true"><i class="amb-dust a"></i><i class="amb-dust b"></i><i class="amb-dust c"></i><i class="amb-glow"></i></div>
+<div class="ambient" aria-hidden="true"><i class="amb-dust a"></i><i class="amb-dust b"></i><i class="amb-dust c"></i><i class="amb-haze"></i><i class="amb-glow"></i></div>
 <div id="app"></div>
 <div id="notice" role="status" aria-live="polite"></div>
 <input id="saveFile" type="file" accept=".json,application/json" aria-label="选择要导入的备份文件 / Choose a backup file to import" hidden>
@@ -518,35 +531,64 @@ const SETTLEMENTS={
 /* Source: js/lives/audio.js */
 'use strict';
 const LIFE_AUDIO=(()=>{
- const KEY='SS_LIVES_SOUND';let enabled=false,ctx=null,bus=null,ambient=[];
+ const KEY='SS_LIVES_SOUND';let enabled=false,ctx=null,bus=null,master=null,wet=null,ambient=[],motifTimer=null;
  try{enabled=localStorage.getItem(KEY)!=='off';}catch(e){enabled=true;}
+ /* 一段合成的厅堂混响（指数衰减噪声脉冲）。空间感是"沉浸"的一半——
+    没有它，所有声音都贴在屏幕上，像电子表。 */
+ let irBuf=null;
+ function reverb(){
+  if(!irBuf){const len=Math.floor(ctx.sampleRate*2.4);irBuf=ctx.createBuffer(2,len,ctx.sampleRate);
+   for(let c=0;c<2;c++){const d=irBuf.getChannelData(c);for(let i=0;i<len;i++){d[i]=(Math.random()*2-1)*Math.pow(1-i/len,2.6);}}}
+  const cv=ctx.createConvolver();cv.buffer=irBuf;return cv;
+ }
  function start(){
   if(!enabled)return false;
   try{
    if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();
    if(ctx.state==='suspended')ctx.resume().catch(()=>{});
-   if(!bus){bus=ctx.createGain();bus.gain.value=.22;bus.connect(ctx.destination);}else bus.gain.setTargetAtTime(.22,ctx.currentTime,.12)
-   if(!ambient.length){for(const [hz,volume] of [[55,.018],[82.4,.009]]){const osc=ctx.createOscillator(),gain=ctx.createGain(),filter=ctx.createBiquadFilter();osc.type='sine';osc.frequency.value=hz;filter.type='lowpass';filter.frequency.value=170;gain.gain.value=volume;osc.connect(filter);filter.connect(gain);gain.connect(bus);osc.start();ambient.push(osc);}}
+   if(!bus){
+    bus=ctx.createGain();bus.gain.value=.22;
+    master=ctx.createGain();master.gain.value=1;master.connect(ctx.destination);
+    bus.connect(master);                                   // 干声
+    wet=ctx.createGain();wet.gain.value=.5;                // 湿声（混响送回）
+    const cv=reverb();bus.connect(cv);cv.connect(wet);wet.connect(master);
+   }else bus.gain.setTargetAtTime(.22,ctx.currentTime,.12);
+   if(!ambient.length){
+    // 低频嗡鸣（舱体共振）
+    for(const [hz,volume] of [[55,.016],[82.4,.008]]){const osc=ctx.createOscillator(),gain=ctx.createGain(),filter=ctx.createBiquadFilter();osc.type='sine';osc.frequency.value=hz;filter.type='lowpass';filter.frequency.value=170;gain.gain.value=volume;osc.connect(filter);filter.connect(gain);gain.connect(bus);osc.start();ambient.push(osc);}
+    // 一层极轻的"空气"：滤波噪声，像通风与远处设备的白噪，让房间不停下来
+    const air=ctx.createBufferSource(),ag=ctx.createGain(),af=ctx.createBiquadFilter();air.loop=true;
+    const alen=Math.floor(ctx.sampleRate*3),ab=ctx.createBuffer(1,alen,ctx.sampleRate),ad=ab.getChannelData(0);
+    for(let i=0;i<alen;i++)ad[i]=Math.random()*2-1;air.buffer=ab;
+    af.type='bandpass';af.frequency.value=520;af.Q.value=.5;ag.gain.value=.012;
+    air.connect(af);af.connect(ag);ag.connect(bus);air.start();ambient.push(air);
+   }
+   if(!motifTimer)motifTimer=setTimeout(motif,9000);
    return true;
   }catch(e){enabled=false;try{localStorage.setItem(KEY,'off');}catch(_){}return false;}
  }
- function tone(frequency,duration=.14,volume=.08,delay=0,type='sine'){
+ function tone(frequency,duration=.14,volume=.08,delay=0,type='sine',send=.5){
   if(!enabled||!start())return;
-  const t=ctx.currentTime+delay,osc=ctx.createOscillator(),gain=ctx.createGain();osc.type=type;osc.frequency.setValueAtTime(frequency,t);gain.gain.setValueAtTime(.0001,t);gain.gain.exponentialRampToValueAtTime(volume,t+.018);gain.gain.exponentialRampToValueAtTime(.0001,t+duration);osc.connect(gain);gain.connect(bus);osc.start(t);osc.stop(t+duration+.025);
+  const t=ctx.currentTime+delay,osc=ctx.createOscillator(),gain=ctx.createGain();osc.type=type;osc.frequency.setValueAtTime(frequency,t);gain.gain.setValueAtTime(.0001,t);gain.gain.exponentialRampToValueAtTime(volume,t+.018);gain.gain.exponentialRampToValueAtTime(.0001,t+duration);osc.connect(gain);gain.connect(bus);
+  if(send>0&&wet){const s=ctx.createGain();s.gain.value=send;gain.connect(s);s.connect(wet);}
+  osc.start(t);osc.stop(t+duration+.025);
  }
- /* 噪声质感：纸张的摩擦、盖章的闷响，都靠它。纯音堆不出"手里有纸"的感觉。 */
+ /* 噪声质感：纸张的摩擦、盖章的闷响，都靠它。 */
  let noiseBuf=null;
- function noise(duration=.12,volume=.05,delay=0,type='bandpass',freq=1800,q=.8){
+ function noise(duration=.12,volume=.05,delay=0,type='bandpass',freq=1800,q=.8,send=.25){
   if(!enabled||!start())return;
   if(!noiseBuf){const len=Math.floor(ctx.sampleRate*.6);noiseBuf=ctx.createBuffer(1,len,ctx.sampleRate);const data=noiseBuf.getChannelData(0);for(let i=0;i<len;i++)data[i]=Math.random()*2-1;}
   const t=ctx.currentTime+delay,src=ctx.createBufferSource(),gain=ctx.createGain(),filter=ctx.createBiquadFilter();
   src.buffer=noiseBuf;src.loop=true;filter.type=type;filter.frequency.value=freq;filter.Q.value=q;
   gain.gain.setValueAtTime(.0001,t);gain.gain.exponentialRampToValueAtTime(volume,t+.01);gain.gain.exponentialRampToValueAtTime(.0001,t+duration);
-  src.connect(filter);filter.connect(gain);gain.connect(bus);src.start(t);src.stop(t+duration+.04);
+  src.connect(filter);filter.connect(gain);gain.connect(bus);
+  if(send>0&&wet){const s=ctx.createGain();s.gain.value=send;gain.connect(s);s.connect(wet);}
+  src.start(t);src.stop(t+duration+.04);
  }
- /* 每一幕的环境乐：三个音的和弦垫，慢速滤波起伏，外加很稀疏的钟声。
-     全部实时合成，音量压得很低，只为让房间“有空气”。 */
+ /* 每一幕的环境乐：三个音的和弦垫，慢速滤波起伏，外加很稀疏的钟声。 */
  const ACT_CHORDS=[[110,164.8,220],[98,146.8,196],[123.5,185,246.9],[110,164.8,277.2],[87.3,130.8,174.6],[82.4,123.5,207.7]];
+ /* 一段忧郁的五声动机，偶尔在空气里浮现——给世界一个"声音"，而不只是底噪 */
+ const MOTIF=[[0,392],[3,440],[5,523.25],[3,440],[0,392],[-2,349.23]];
  let padNodes=null;
  function pad(index){
   if(!enabled||!start())return;
@@ -559,32 +601,36 @@ const LIFE_AUDIO=(()=>{
   const oscs=chord.map(hz=>{const o=ctx.createOscillator(),og=ctx.createGain();o.type='sine';o.frequency.value=hz;o.detune.value=(Math.random()-.5)*7;og.gain.value=1/chord.length;o.connect(og);og.connect(lp);o.start(t);return o;});
   lp.connect(g);g.connect(bus);lfo.start(t);
   padNodes={oscs:oscs.concat([lfo]),g:g};
-  /* 稀疏钟声 */
-  const ring=()=>{if(!enabled||!padNodes)return;tone(chord[2]*2,.9,.018,0,'sine');setTimeout(ring,16000+Math.random()*12000);};
+  const ring=()=>{if(!enabled||!padNodes)return;tone(chord[2]*2,.9,.016,0,'sine',1);setTimeout(ring,16000+Math.random()*12000);};
   setTimeout(ring,6000);
+ }
+ function motif(){
+  if(!enabled||!start()){motifTimer=null;return;}
+  const base=110;let when=0;
+  for(const [step,hz] of MOTIF){tone(hz,.9,.028,when,'sine',1);tone(hz*2,.5,.01,when,'sine',1);when+=.62;}
+  motifTimer=setTimeout(motif,34000+Math.random()*26000);
  }
  function stopPad(){if(!padNodes)return;const t=ctx.currentTime,p=padNodes;padNodes=null;
   try{p.g.gain.cancelScheduledValues(t);p.g.gain.setValueAtTime(p.g.gain.value,t);p.g.gain.linearRampToValueAtTime(.0001,t+1.6);}catch(e){}
   setTimeout(()=>{p.oscs.forEach(o=>{try{o.stop();}catch(e){}});try{p.g.disconnect();}catch(e){}},1900);}
- function stop(){if(!ctx)return;stopPad();const old=ambient.splice(0);for(const osc of old){try{osc.stop();}catch(e){}}try{bus.gain.setTargetAtTime(.0001,ctx.currentTime,.08);}catch(e){}setTimeout(()=>{if(!enabled&&bus){try{bus.disconnect();}catch(e){}bus=null;}},550);}
+ function stop(){if(!ctx)return;stopPad();if(motifTimer){clearTimeout(motifTimer);motifTimer=null;}const old=ambient.splice(0);for(const osc of old){try{osc.stop();}catch(e){}}try{bus.gain.setTargetAtTime(.0001,ctx.currentTime,.08);}catch(e){}setTimeout(()=>{if(!enabled&&bus){try{bus.disconnect();}catch(e){}bus=null;}},550);}
  function toggle(){enabled=!enabled;try{localStorage.setItem(KEY,enabled?'on':'off');}catch(e){}if(enabled){if(!start())enabled=false;}else{stop();stopPad();}return enabled;}
  document.addEventListener('visibilitychange',()=>{if(!ctx)return;try{if(document.hidden)ctx.suspend();else if(enabled)ctx.resume();}catch(e){}});
  return {toggle,pad,get enabled(){return enabled;},
-  /* 通用点击：短促的机械"嗒"，像按下一样东西 */
-  tap(){noise(.028,.05,0,'highpass',2200);tone(1180,.04,.028);},
-  /* 翻开一份记录：纸张滑动 + 很轻的一声 */
-  read(){noise(.2,.03,0,'bandpass',1500,.6);tone(523,.12,.03);tone(784,.16,.02,.07);},
-  /* 翻到下一份：纸页摩擦 */
+  /* 通用点击：短促的机械"嗒" */
+  tap(){noise(.028,.05,0,'highpass',2200,0,0);tone(1180,.04,.026,0,'sine',0);},
+  /* 翻开一份记录：纸张滑动 */
+  read(){noise(.2,.03,0,'bandpass',1500,.6);tone(523,.12,.028,0,'sine',.4);tone(784,.16,.018,.07,'sine',.6);},
   page(){noise(.15,.035,0,'bandpass',1750,.55);},
-  /* 把记录收好：纸被折起放低 */
-  close(){noise(.24,.028,0,'lowpass',850,.7);tone(300,.12,.018,.02);},
-  /* 盖章：先有闷响，再有一声落定 */
-  stamp(){noise(.08,.085,0,'lowpass',380);tone(96,.18,.05);},
-  solve(){tone(523,.24,.06);tone(659,.24,.045,.09);tone(784,.3,.04,.18);},
-  choose(n){tone(n?392:587,.2,.055);tone(n?494:740,.26,.04,.07);},
-  wrong(){tone(196,.22,.022,0,'triangle');noise(.09,.02,0,'lowpass',500);},
-  rest(){noise(.3,.025,0,'lowpass',700,.6);tone(440,.32,.032);tone(587,.42,.022,.12);},
-  enter(){tone(392,.6,.045);tone(523,.7,.035,.14);tone(659,.9,.025,.3);}};
+  close(){noise(.24,.028,0,'lowpass',850,.7);tone(300,.12,.016,.02,'sine',.3);},
+  stamp(){noise(.08,.085,0,'lowpass',380,1,.4);tone(96,.18,.05,0,'sine',.3);},
+  solve(){tone(523,.24,.06,0,'sine',.5);tone(659,.24,.045,.09,'sine',.6);tone(784,.3,.04,.18,'sine',.8);},
+  /* 顿悟：把线索连起来那一刻——比普通"解决"更亮、更延绵，像一束光落下 */
+  insight(){tone(587.33,.5,.06,0,'sine',1);tone(880,.55,.045,.1,'sine',1);tone(1174.66,.7,.032,.22,'sine',1);noise(.5,.02,.02,'highpass',3000,.5,.8);},
+  choose(n){tone(n?392:587,.2,.05,0,'sine',.5);tone(n?494:740,.26,.035,.07,'sine',.6);},
+  wrong(){tone(196,.22,.02,0,'triangle',.2);noise(.09,.02,0,'lowpass',500);},
+  rest(){noise(.3,.025,0,'lowpass',700,.6);tone(440,.32,.03,0,'sine',.6);tone(587,.42,.02,.12,'sine',.8);},
+  enter(){tone(392,.6,.04,0,'sine',.7);tone(523,.7,.03,.14,'sine',.7);tone(659,.9,.022,.3,'sine',.9);}};
 })();
 
 </script>
@@ -875,7 +921,7 @@ function readerCard(r,idx){
  function play(){const r=current();if(r.act>=6)return ending();const a=LIVES.acts[r.act],d=SCENES[r.role][r.act],role=LIVES.roles[r.role],canDeduce=r.read.length>=2&&(r.act!==0||(r.investigationDone&&r.searchDone));let body='';
  if(r.history.length>r.act){const c=r.history[r.act].choice===0?d.a:d.b;body='<section class="paper"><div class="eyebrow">'+T('这一年的选择','The choice you made')+'</div><h2>'+E(c.title)+'</h2><p>'+E(c.result)+'</p>'+(r.act===4?'<p class="ripple">'+E(SETTLEMENTS[LIFE_MODEL.world(r).settlement])+'</p>':'')+'<p class="ripple">'+E(a.reveal)+'</p>'+button(r.act===5?T('走向余生','The years that followed'):T('继续生活 · ','Life goes on · ')+LIVES.acts[r.act+1].year,'next')+'</section>';}
  else if(r.solved){body='<section class="paper"><div class="eyebrow">'+T('真相之后，生活还在继续','Life continues after the discovery')+'</div><h2>'+E(a.question)+'</h2><p>'+E(a.reveal)+'</p><p class="muted">'+T('你能决定的是自己下一步怎样做。两条路都留下一些东西，也失去一些东西。','You can decide what you do next. Each path preserves something and gives something up.')+'</p>'+[d.a,d.b].map((c,i)=>'<button class="choice" data-act="choose" data-id="'+i+'"><b>'+E(c.title)+'</b><span>'+E(c.detail)+'</span></button>').join('')+'</section>';}
- else{body='<section class="paper" id="scene-body"><div class="eyebrow">'+T('你的现场','Your part of the scene')+'</div><p>'+E(d.opening)+'</p>'+(r.act?'<p class="ripple">'+esc(ripple(r))+'</p>':'')+(documentIndex===null?'<p class="muted">'+T('点击场景里的标记，查看你能接触到的材料。','Explore the marked places to examine records available to you.')+'</p>':'<p class="doc-open">'+T('正在阅读：','Now reading: ')+E(documentIndex===2?B('交叉核对','Cross-check'):d.docs[documentIndex].name)+'</p>')+openingAction(r)+'<hr><h2>'+E(a.question)+'</h2>'+(canDeduce?'<p class="muted">'+T('试着把线索连起来。不确定时可以继续查看，没有惩罚。','Connect the clues. You can keep exploring; an uncertain answer carries no penalty.')+'</p>'+'<div class="conclusions">'+deductions(r).map((x,i)=>'<button class="choice" data-act="deduce" data-id="'+i+'"><i>'+T('推断 ','Infer ')+(i+1)+'</i>'+E(x.text)+'</button>').join('')+'</div>':'<p class="gate-hint">'+gateHint(r)+'</p>')+(hint&&!(r.act===0&&r.investigationDone&&!r.searchDone)?'<p role="status" class="hint">'+esc(hint)+'</p>':'')+'</section>';}
+ else{body='<section class="paper" id="scene-body"><div class="eyebrow">'+T('你的现场','Your part of the scene')+'</div><p>'+E(d.opening)+'</p>'+(r.act?'<p class="ripple">'+esc(ripple(r))+'</p>':'')+(documentIndex===null?'<p class="muted">'+T('点击场景里的标记，查看你能接触到的材料。','Explore the marked places to examine records available to you.')+'</p>':'<p class="doc-open">'+T('正在阅读：','Now reading: ')+E(documentIndex===2?B('交叉核对','Cross-check'):d.docs[documentIndex].name)+'</p>')+openingAction(r)+'<hr><h2>'+E(a.question)+'</h2>'+(canDeduce?'<div class="deduce-link"><p class="deduce-prompt">'+T('把两份记录连起来：它们共同说明了什么？','Connect the two records: what do they show together?')+'</p><div class="evidence-chip"><span class="evidence-tag">'+T('记录显示','The records show')+'</span><p>'+E(a.clue)+'</p></div><div class="conclusions">'+deductions(r).map((x,i)=>'<button class="choice" data-act="deduce" data-id="'+i+'"><i>'+T('理解 ','Reading ')+(i+1)+'</i>'+E(x.text)+'</button>').join('')+'</div></div>':'<p class="gate-hint">'+gateHint(r)+'</p>')+(hint&&!(r.act===0&&r.investigationDone&&!r.searchDone)?'<p role="status" class="hint">'+esc(hint)+'</p>':'')+'</section>';}
  const reader=documentIndex===null?'':readerCard(r,documentIndex);
   return '<div class="chapter-head"><div><div class="eyebrow">'+a.year+' · '+T('第 ','Chapter ')+(r.act+1)+T(' 幕','')+'</div><h1>'+E(a.title)+'</h1></div><div class="age">'+E(role.name)+' · '+(a.year-role.born)+' '+T('岁','years old')+'</div></div><div class="layout"><main>'+(!r.solved&&r.history.length===r.act?sceneArt(r)+clueTray(r):'')+body+'</main>'+aside(r)+'</div>'+reader;}
  function deductions(r){const a=LIVES.acts[r.act],items=[{text:a.answer,correct:true},...a.wrong.map(text=>({text,correct:false}))];for(let i=0;i<(r.act+Object.keys(LIVES.roles).indexOf(r.role))%3;i++)items.push(items.shift());return items;}
@@ -942,6 +988,8 @@ function readerCard(r,idx){
   setTimeout(close,2100);
  }
  function render(focus=true){const prev=window.scrollY;const enter=screen!==lastScreen;lastScreen=screen;
+  // 让整屏的环境光跟随这一幕的色调：五十年在墙上、也在空气里慢慢变
+  const rr=current();if(screen==='play'&&rr&&rr.act<6){const V=ACT_VIEW[rr.act],root=document.documentElement.style;root.setProperty('--act-beam',V.beam);root.setProperty('--act-tint',V.tint);}
   // 记录卡只在"首次打开"时滑入；同一张卡内翻页(nextDoc)时不再重复位移，避免抖动
   docFresh=(documentIndex!==lastDocIndex);lastDocIndex=documentIndex;
   document.documentElement.lang=state.language==='zh'?'zh-CN':'en';document.title=T('星海公约 · 人间星海','Stellar Covenant · Ordinary Lives');const isTitle=screen==='title';let content=isTitle?titleScreen():screen==='home'?home():screen==='select'?selection():screen==='settings'?settings():screen==='journal'?journal():screen==='cases'?cases():screen==='case'?casePage():screen==='rest'?rest():play();$('app').innerHTML=isTitle?'<div class="cover-wrap'+(enter?' enter':'')+'">'+content+'</div>':'<div class="wrap'+(enter?' enter':'')+'">'+header()+(screen==='settings'?'':warning())+(screen==='play'?progressStrip():'')+content+'</div>';if(focus){window.scrollTo(0,0);const h=$('app').querySelector('h1');if(h){h.tabIndex=-1;h.focus({preventScroll:true});}}else window.scrollTo(0,prev);}
@@ -953,8 +1001,8 @@ function readerCard(r,idx){
  const acts={closeDoc:()=>{documentIndex=null;LIFE_AUDIO.close();render(false);},
  nextDoc:()=>{const r=current(),nxt=(documentIndex+1)%3;if(!r.read.includes(nxt)){LIFE_MODEL.read(r,nxt);persist();}documentIndex=nxt;LIFE_AUDIO.page();render(false);},begin:()=>{screen='home';LIFE_AUDIO.enter();render();},home:()=>{screen='home';render();},settings:()=>{screen='settings';render();},sound:()=>{LIFE_AUDIO.toggle();render(false);},alignClock:()=>{const r=current();if(!r||r.role!=='lin'||r.act!==0||!r.read.includes(2))return;const v=Number($('clockShift')?.value);if(v!==84){LIFE_AUDIO.wrong();hint=T('时钟仍有偏差，继续微调；不会扣分。','The clocks are still apart. Keep adjusting; there is no penalty.');render(false);return;}r.clockAligned=true;r.investigationDone=true;LIFE_AUDIO.solve();persist();render(false);},searchRecord:()=>{const r=current(),query=$('archiveQuery')?.value;if(LIFE_MODEL.searchRecord(r,query)){hint='';LIFE_AUDIO.solve();persist();}else{hint=T('没有找到匹配记录。回看工牌、订单或路线上的编号和地点；可以反复试，不扣分。','No matching record. Recheck the code or place on the badge, order, or route. You can try again without penalty.');LIFE_AUDIO.wrong();}render(false);},dispatchMeal:id=>{const r=current();if(!r||r.role!=='su'||r.act!==0||!r.read.includes(2))return;if(id==='allergy'){r.investigationDone=true;hint='';LIFE_AUDIO.solve();persist();}else{hint=T('再看一眼饭盒上留下的提示：什么信息是安全出餐必需的？','Look again at the labels on the boxes: what information is essential for a safe meal?');LIFE_AUDIO.wrong();}render(false);},triage:id=>{const r=current();if(!r||r.role!=='jian'||r.act!==0||!r.read.includes(2))return;if(id==='care'){r.investigationDone=true;hint='';LIFE_AUDIO.solve();persist();}else{hint=T('她已经说清楚了眼下最急的事，也划定了哪些内容暂不公开。','She has stated what is urgent and what must remain private for now.');LIFE_AUDIO.wrong();}render(false);},routeStep:id=>{const r=current(),result=LIFE_MODEL.advanceRoute(r,Number(id));if(result.done){hint='';LIFE_AUDIO.solve();persist();}else if(!result.ok){hint=T('顺序不对，缓存没有丢；从第九泊位重新拼。','That order does not fit. The cache is safe; rebuild from Berth Nine.');LIFE_AUDIO.wrong();persist();}else{hint='';LIFE_AUDIO.read();persist();}render(false);},select:id=>{selected=id;screen='select';render();},start,restart:id=>ask(T('只重置这个人物的一生？其他人物不受影响。建议先导出备份。','Restart only this character’s life? Other lives are unaffected. Export a backup first.'),()=>{state.runs[id]=LIFE_MODEL.run(id);start(id);}),resume,
  read:id=>{const r=current(),n=Number(id);if(LIFE_MODEL.read(r,n)){LIFE_AUDIO.read();documentIndex=n;hint='';persist();render(false);const el=$('document');if(el){el.tabIndex=-1;el.focus({preventScroll:true});}const btn=document.querySelector('.reader-foot [data-act="closeDoc"]');if(btn)btn.focus({preventScroll:true});}},
- deduce:id=>{const r=current(),item=deductions(r)[Number(id)];if(!item||r.read.length<2||deduceLock)return;
-   if(item.correct){deduceLock=true;LIFE_AUDIO.stamp();setTimeout(()=>LIFE_AUDIO.solve(),130);const el=document.querySelector('[data-act="deduce"][data-id="'+id+'"]');
+  deduce:id=>{const r=current(),item=deductions(r)[Number(id)];if(!item||r.read.length<2||deduceLock)return;
+   if(item.correct){deduceLock=true;LIFE_AUDIO.insight();setTimeout(()=>LIFE_AUDIO.stamp(),90);const el=document.querySelector('[data-act="deduce"][data-id="'+id+'"]');
     if(el){el.classList.add('right');const box=el.closest('.conclusions');if(box)box.classList.add('stamped');const st=document.createElement('span');st.className='stamp';st.textContent=T('材料支持','Supported');el.appendChild(st);}
     // 留足时间让玩家读到"材料支持"的盖章：这是每一幕的"啊，对了"时刻
     setTimeout(function(){deduceLock=false;LIFE_MODEL.solve(r);hint='';persist();render(false);},1150);}

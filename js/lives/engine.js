@@ -263,10 +263,19 @@ function readerCard(r,idx){
  /* 幕间转场卡：年份 + 幕题，短暂停留，点击可立即收起 */
  function actCard(){
   const r=current();if(!r||r.act>=6)return;
-  const a=LIVES.acts[r.act];
+  const a=LIVES.acts[r.act],V=ACT_VIEW[r.act];
   const card=document.createElement('div');
   card.className='act-card';card.setAttribute('role','dialog');card.setAttribute('aria-modal','true');card.setAttribute('aria-label',a.year+' · '+t(a.title));card.tabIndex=0;
-  card.innerHTML='<div class="act-card-inner"><span class="act-card-year">'+a.year+'</span><span class="act-card-act">'+T('第 ','Chapter ')+(r.act+1)+T(' 幕','')+'</span><h2>'+E(a.title)+'</h2><span class="act-card-place">'+E(a.place)+'</span><span class="act-card-tap">'+T('点击继续','Tap to continue')+'</span></div>';
+  card.style.setProperty('--act-tint',V.tint);card.style.setProperty('--act-beam',V.beam);
+  const stars=[[120,90,1.6],[300,60,1.1],[520,120,1.5],[760,50,1.7],[980,100,1.3],[1100,70,1.4],[200,200,1.0],[640,180,1.2],[880,210,1.1]].map(([x,y,rr])=>'<circle cx="'+x+'" cy="'+y+'" r="'+rr+'" opacity=".5"/>').join('');
+  card.innerHTML='<svg class="act-card-sky" viewBox="0 0 1200 720" preserveAspectRatio="xMidYMid slice" aria-hidden="true">'
+   +'<defs><radialGradient id="actEarthG" cx="'+V.lit+'" cy=".34"><stop stop-color="'+V.e[0]+'"/><stop offset=".55" stop-color="'+V.e[1]+'"/><stop offset="1" stop-color="'+V.e[2]+'"/></radialGradient></defs>'
+   +'<rect width="1200" height="720" fill="#070b11"/><g fill="#e8f0f2">'+stars+'</g>'
+   +'<circle cx="'+(470+V.dx)+'" cy="'+(300+V.dy)+'" r="'+V.r+'" fill="url(#actEarthG)" opacity=".92"/>'
+   +'<ellipse cx="'+(470+V.dx)+'" cy="'+(300+V.dy)+'" rx="'+V.r+'" ry="24" fill="#070b11" opacity=".3"/>'
+   +'<path d="'+V.shaft+'" fill="'+V.beam+'" opacity="'+V.beamOp+'"/>'
+   +'</svg><div class="act-card-tint"></div><div class="act-card-veil"></div>'
+   +'<div class="act-card-inner"><span class="act-card-year">'+a.year+'</span><span class="act-card-act">'+T('第 ','Chapter ')+(r.act+1)+T(' 幕','')+'</span><h2>'+E(a.title)+'</h2><span class="act-card-place">'+E(a.place)+'</span><span class="act-card-tap">'+T('点击继续','Tap to continue')+'</span></div>';
   const app=$('app');app.appendChild(card);
   let done=false;
   const close=()=>{if(done)return;done=true;card.classList.add('out');setTimeout(()=>card.remove(),420);};

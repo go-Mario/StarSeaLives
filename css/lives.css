@@ -263,9 +263,12 @@ button:active{transform:translateY(1px)}
 
 /* ===================== 幕间转场卡 ===================== */
 .act-card{position:fixed;inset:0;z-index:70;display:grid;place-items:center;cursor:pointer;
-  background:rgba(6,10,15,.9);backdrop-filter:blur(6px);animation:fadeIn .3s ease both}
+  background:transparent;backdrop-filter:blur(6px);animation:fadeIn .3s ease both}
 .act-card.out{animation:fadeIn .3s ease reverse both;pointer-events:none}
-.act-card-inner{text-align:center;animation:coverIn .5s cubic-bezier(.2,.7,.3,1) both;padding:20px}
+.act-card-sky{position:absolute;inset:0;width:100%;height:100%;z-index:0;opacity:.9}
+.act-card-tint{position:absolute;inset:0;z-index:1;background:var(--act-tint,#2a4655);opacity:.18;mix-blend-mode:screen;pointer-events:none}
+.act-card-veil{position:absolute;inset:0;z-index:2;background:radial-gradient(130% 90% at 50% 45%,rgba(5,9,14,.22) 0%,rgba(5,9,14,.66) 55%,rgba(5,9,14,.95) 100%);pointer-events:none}
+.act-card-inner{position:relative;z-index:3;text-align:center;animation:coverIn .5s cubic-bezier(.2,.7,.3,1) both;padding:20px}
 .act-card-year{display:block;font-family:Georgia,"Songti SC",serif;font-size:clamp(56px,12vw,110px);line-height:1;
   color:var(--gold);letter-spacing:.06em}
 .act-card-act{display:block;margin-top:14px;font-size:11px;letter-spacing:.34em;color:var(--muted)}

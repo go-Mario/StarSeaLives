@@ -1,115 +1,96 @@
 <div align="center">
 
-# 人间星海 · Ordinary Lives
+# 静默星图 · The Silent Atlas
 
-**一座空间站，四个人，五十年。你只知道 ta 能知道的事。**
+**这座空间站，已经空了七年。三分钟前，里面的人向你求救。**
 
-[在线游玩](https://go-mario.github.io/StarSeaLives/) · [下载离线单文件](dist/index.html) · [English](#english)
+一款关于证据、记忆与被遗忘之人的 2D 星际悬疑游戏。
+
+[在线试玩](https://go-mario.github.io/StarSeaLives/) · [离线单文件](dist/index.html) · [研究记录](docs/RESEARCH.md) · [验证记录](docs/VERIFICATION.md)
 
 </div>
 
----
+## 从一座灯塔开始
 
-## 这是什么
+你是航路勘验员林渡。带着船载助手「鸣」，你进入一座被登记为“无人”的中继站：杯子尚有温度，温室仍在呼吸，七年前的回声里，有人问了一个没有得到回答的问题。
 
-2077 年，归港空间站。
+走进现场，寻找证据，恢复信号，再决定真相应该如何抵达。
 
-维修员在夜里修好了中继机房的时钟；食堂经营者把十三份早餐送去了医护舱；
-快递员按离线缓存复原了一条不该存在的路线；法律援助律师签下了一份保密救治的授权。
+## 现在能玩到什么
 
-四段人生，六个相互牵连的事件，从 2077 年一直走到 2127 年。
-你每次只扮演其中一个人，只看见 ta 能看见的东西——
-**同一件事，在不同人的记录里，是四个不同的故事。**
+- **六个可探索舱室**：接驳桥、中庭、观测室、温室、档案库和信标核心。
+- **真实的 2D 移动**：键盘行走、碰撞、点按寻路；点按物件会先走到它面前。
+- **回声扫描**：同一地点的实时状态与有限历史记录，显现不同线索。
+- **设备调查**：旋转管线恢复供电；调节频率与相位还原求救信号。
+- **证据连线**：八份有来源的证据，三个需要两份证据共同支持的推论。
+- **三个结局**：公开真相、密封留证、留站供氧；选择会改变站内状态和结尾。
+- **七段短波档案**：每日轮换推荐，全部随时可听、没有错过惩罚；可以留下自己的手记。
+- 自动保存、JSON 导入导出、离线游玩、默认静音、减少动态设置。
 
-## 玩法
+**这是 v0.1 可玩序章，不是完整商业版。** 更远的五个星域目前是世界设定，尚未制作成可玩章节。未开展独立玩家测试，尚无付费意愿、回访率或“超过 90% 游戏”的证据。
 
-- **四条人物线**，各自独立存档；同一个人物可以重玩，换一种可能
-- **每幕三段**：读材料 → 做一次调查 → 下一个决定。决定会留下后果
-- **调查各不相同**：校准设备时钟、在餐食信息里保留关键提示、按记录复原路线、按授权核对身份
-- **站内检索**：用找到的编号或地点检索档案，命中会标出来源与范围
-- **没有倒计时，搜错不扣分**；想慢慢读就慢慢读
-- **手记**：每个选择、每条记录都留在人物手记里，结局会回看它们
-- **四种休憩**：空间站对接、翻牌、调频、呼吸停留——不影响主线，只影响你自己
+## 直接开始
 
-## 开始游戏
+[在线试玩](https://go-mario.github.io/StarSeaLives/)。离线游玩请下载 `dist/index.html` 后用现代浏览器打开，不需要安装依赖或联网。
 
-**在线**：<https://go-mario.github.io/StarSeaLives/>
+本地预览：
 
-**本地**：
-
-```bash
-python3 -m http.server 8766
-# 打开 http://127.0.0.1:8766/
+```sh
+python3 -m http.server 8766 --bind 127.0.0.1
+# 浏览器打开 http://127.0.0.1:8766/
 ```
 
-**离线单文件**：直接双击 `dist/index.html`，不需要服务器、不联网。
+| 操作 | 键盘 | 鼠标 / 触屏 |
+| --- | --- | --- |
+| 移动 | WASD / 方向键 | 点按地面 |
+| 调查 | 靠近后 E | 点按物件或场景下方按钮 |
+| 回声 | Q | 回声扫描 |
+| 证据册 | J | 证据连线 |
+| 星图 | M | 航行星图 |
+| 短波 | R | 短波档案 |
+| 关闭面板 | Esc | 右上角 × |
 
-## 操作
+没有实时倒计时。调查错误不扣除资源。已到访房间可以从星图快速返回。剧情中的“90 分钟氧气”随故事选择处理，不会因为慢慢阅读而耗尽。
 
-| 平台 | 操作 |
-| --- | --- |
-| 电脑 | 点击选项推进；`Tab` 在可交互处移动；`Esc` 关闭面板 |
-| 手机 | 点按推进，竖屏优先，适配刘海屏安全区 |
+## 内容与数据
 
-## 语言
+当前剧情和界面为中文，英文为标题与环境标识；尚未提供完整英文翻译。画面由 Canvas 原创绘制，声音实时合成，没有第三方游戏素材或运行时依赖。
 
-中文 / English 随时切换，进度与线索不丢。
-所有人物对白、卷宗、按钮与提示均为双语，同一处维护。
+没有账号、广告、内购、远程请求或玩家遥测。进度、手记与有限调查事件保存在当前浏览器，仅在你导出存档时一起下载。清理浏览器前请备份，网页和离线文件的存档可能各自独立。
 
-## 无障碍
+旧版「人间星海」保留在 Git 历史提交 `b533164` 及本地归档分支 `archive/before-silent-atlas`，新版采用独立存档键，不会读取或覆盖旧角色存档。
 
-- 尊重系统「减少动态效果」偏好，动画会自动收敛
-- 无时间压力、无失败惩罚、无强制重复操作
-- 音效与音乐可单独关闭
+## 开发和验证
 
-## 技术
+游戏运行不需要 Node。开发测试使用 Node 与 Playwright；构建仅用 Python 标准库。
 
-- **零第三方依赖**：纯 HTML / CSS / JavaScript，无框架、无 CDN、无网络请求
-- 音乐与音效实时合成（Web Audio），不使用采样素材
-- 存档在浏览器本地，可导出 / 导入 JSON；损坏时可从备份恢复
-- 四个人物各用独立存档键，互不覆盖
-
-```bash
-python3 tools/build.py          # 生成离线单文件
-python3 tools/build.py --check  # 校验单文件与源码一致
+```sh
+npm install
+npx playwright install chromium
+npm test
+python3 tools/build.py
+python3 tools/build.py --check
+# 先在另一个终端运行上述本地预览服务器
+npm run test:browser
 ```
 
-## 说明
+`ATLAS_URL` 可指定其他测试地址。浏览器测试的截图与测试存档写入忽略的 `artifacts/` 目录。不要把测试玩家存档发布到仓库。
 
-故事、人物、机构均为虚构，与任何现实政府、企业或个人无关。
-本作不含内购，不采集个人信息。
+```text
+index.html             网页入口
+css/atlas.css          界面与响应式布局
+js/atlas/content.js    世界、证据、角色文本与结局
+js/atlas/model.js      推理规则、进度门槛、存档校验
+js/atlas/scene.js      2D 场景和人物渲染
+js/atlas/game.js       输入、移动、谜题、界面和音效
+tests/                状态模型与浏览器通关测试
+tools/build.py        可复现的离线打包
+dist/index.html       可直接打开的离线游戏
+docs/                 研究、世界设定、质量门槛与接续计划
+```
 
-设计笔记：[世界路线](docs/WORLD_ROADMAP.md) · [平台计划](docs/LAUNCH-2D.md) · [机制研究](docs/RESEARCH-2026-10-21.md) · [验证记录](docs/VERIFICATION-2026-10-21.md)
+## 下一阶段
 
----
+优先改进推理深度、三种选择的真实代价和角色行动反馈，再扩大世界。完整计划见 [接续计划](docs/NEXT.md)；[质量门槛](docs/QUALITY.md) 明确哪些结果需要真实玩家验证。
 
-<a id="english"></a>
-
-## English
-
-**One station. Four people. Fifty years. You know only what they can know.**
-
-2077, Homeward Station. A maintenance engineer realigns a clock in the relay room. A canteen keeper
-sends thirteen breakfasts to the medical bay. A courier rebuilds a route that should not exist.
-A legal-aid lawyer signs an authorisation for confidential care.
-
-Four lives, six connected events, from 2077 to 2127. You play one person at a time and see only
-what they can see — **the same event is four different stories in four different records.**
-
-**Play:** [online](https://go-mario.github.io/StarSeaLives/) · or open `dist/index.html` offline.
-
-**Features**
-
-- Four separate lives, each with its own save; replay a life for another possibility
-- Each act: read the material, run one investigation, make one choice — choices leave consequences
-- Investigations differ by role: calibrate a device clock, keep a safety detail in a meal order,
-  rebuild a route from a cache, verify identity within consent
-- Station archive search, with sources and limits shown
-- No timers, no penalties for wrong guesses
-- A life journal that keeps every choice and record, revisited in the ending
-- Four optional rest activities that never gate the main story
-- Full Chinese / English switch at any time without losing progress
-- No dependencies, no network requests, no microtransactions; all audio synthesised at runtime
-
-**Note:** all characters, institutions and events are fictional and unrelated to any real
-government, company or person.
+本轮研究涵盖《Outer Wilds》《奥伯拉丁的回归》《Animal Well》《Celeste》《Hades》等十部 2D / 3D 游戏，区分官方事实与我们自己的设计分析。[查看来源与落实方式](docs/RESEARCH.md)。

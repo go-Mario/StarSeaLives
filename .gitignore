@@ -1,3 +1,4 @@
 __pycache__/
-tools/test/out/
-dist/starsea.html
+node_modules/
+artifacts/
+.DS_Store

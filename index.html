@@ -2,22 +2,29 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#111d29">
-<meta name="description" content="星海公约：在星际社会里，过一个人的一生。A mystery told through ordinary lives among the stars.">
-<title>星海公约 · 人间星海</title>
-<link rel="stylesheet" href="css/lives.css">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#080f19">
+<meta name="description" content="静默星图：一款关于失踪星辰、矛盾证词与被遗忘之人的 2D 星际悬疑游戏。探索、聆听、推理，决定真相如何抵达。">
+<title>静默星图 · The Silent Atlas</title>
+<link rel="stylesheet" href="css/atlas.css">
 </head>
 <body>
-<div class="ambient" aria-hidden="true"><i class="amb-dust a"></i><i class="amb-dust b"></i><i class="amb-dust c"></i><i class="amb-haze"></i><i class="amb-glow"></i></div>
-<div id="app"></div>
-<div id="notice" role="status" aria-live="polite"></div>
-<input id="saveFile" type="file" accept=".json,application/json" aria-label="选择要导入的备份文件 / Choose a backup file to import" hidden>
-<script src="js/lives/content.js"></script>
-<script src="js/lives/audio.js"></script>
-<script src="js/lives/cases.js"></script>
-<script src="js/lives/model.js"></script>
-<script src="js/lives/engine.js"></script>
-<noscript>This game needs JavaScript. 此游戏需要启用 JavaScript。</noscript>
+<main id="game">
+<canvas id="scene" width="1280" height="800" aria-label="第七灯塔空间站。方向键移动，E 调查；也可使用场景交互按钮。" tabindex="0"></canvas>
+<header id="hud" hidden><a class="wordmark" href="#" id="home">◈ <span>静默星图</span></a><div class="location"><span id="room-number"></span><strong id="room-title"></strong><small id="room-subtitle"></small></div><div class="hud-right"><span id="save-state">本地存档</span><button id="sound" aria-label="开启声音">♫ 关</button><button id="settings" aria-label="打开设置">☷</button></div></header>
+<section id="cover" aria-label="游戏标题画面"><div class="cover-content"><div class="eyebrow">A SIGNAL FROM THE FORGOTTEN</div><h1>静默星图</h1><div class="english-title">THE SILENT ATLAS</div><div class="cover-rule"></div><p class="hook">这座空间站，已经空了七年。<br>三分钟前，里面的人向你求救。</p><p class="cover-sub">在星海的边缘，寻找没有被记录的人。</p><div class="cover-actions"><button class="primary" id="begin">接入求救信号 <span>↗</span></button><button id="continue" hidden>继续调查 →</button></div><button class="text-button" id="cover-archive">收听短波档案</button><div class="cover-meta">序章 · 第七灯塔 <span>2D 探索 / 悬疑推理</span></div></div><div class="cover-coordinate">SECTOR 07 — NEREID<br><span>22h 16m / −07° 32′</span></div><div class="cover-bottom"><span>一颗星消失之前，总有人最后一次看见它。</span><span>可玩序章 · v0.1</span></div></section>
+<aside id="journal" hidden><div class="eyebrow">FIELD JOURNAL <span id="chapter-counter">01 / 06</span></div><h2 id="objective-title">一个不该存在的信号</h2><p id="objective-text"></p><div id="progress-dots"></div><div class="journal-divider"></div><span class="small-label">随行记录 / 鸣</span><p id="companion"></p><button id="hint" class="text-button">需要一个方向？ ↗</button><div class="journal-foot"><span id="evidence-count">00 份证据</span><span id="deduction-count">0 / 3 推论</span></div></aside>
+<div id="scene-tag" hidden><span id="mode-tag">● 实时现场</span><small>第七灯塔 / 轨道黄昏</small></div>
+<section id="interactions" hidden aria-label="当前场景可调查的物件"></section>
+<nav id="toolbar" hidden aria-label="调查工具"><button id="echo" aria-pressed="false"><kbd>Q</kbd><span>回声扫描</span><i>切换历史</i></button><button id="board"><kbd>J</kbd><span>证据连线</span><i id="board-count">0 / 8</i></button><button id="map"><kbd>M</kbd><span>航行星图</span><i>所在之处</i></button><button id="archive"><kbd>R</kbd><span>短波档案</span><i>来自远方</i></button><div class="controls-note">WASD / 方向键 移动 <b>·</b> E 调查 <b>·</b> 点按物件自动靠近</div></nav>
+<div id="toast" role="status" aria-live="polite"></div>
+</main>
+<dialog id="panel" aria-labelledby="panel-title"><button id="close-panel" aria-label="关闭面板">×</button><div id="panel-body"></div></dialog>
+<input id="import-file" type="file" accept=".json,application/json" hidden aria-label="导入静默星图存档">
+<noscript>请启用 JavaScript 以游玩《静默星图》。</noscript>
+<script src="js/atlas/content.js"></script>
+<script src="js/atlas/model.js"></script>
+<script src="js/atlas/scene.js"></script>
+<script src="js/atlas/game.js"></script>
 </body>
 </html>
